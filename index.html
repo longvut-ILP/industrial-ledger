@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Ledger Partners | Systems Architect for Field Services</title>
+    <title>Industrial Ledger Partners | Field2Bill — Field Service Billing Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
-
     <link rel="icon" type="image/x-icon" href="favicon.png">
-    
     <style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, .brand-font { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
         .industrial-blue { background-color: #1a2e44; }
         .f2b-blue { background-color: #2f6bff; }
+        .mock { border-radius: 12px; overflow: hidden; box-shadow: 0 30px 60px -15px rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.12); }
+        .mock-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #0f1830; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
     </style>
 </head>
 <body class="font-sans text-slate-900 bg-slate-50">
@@ -25,44 +26,183 @@
                 </div>
                 <span class="font-bold text-xl tracking-tight text-slate-800">Industrial Ledger <span class="text-blue-600">Partners</span></span>
             </div>
-            <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
-                <a href="index.html" class="hover:text-blue-600 transition">Home</a>
-                <a href="#services" class="hover:text-blue-600 transition">Systems</a>
+            <div class="hidden md:flex items-center gap-7 font-medium text-slate-600">
+                <a href="#platform" class="hover:text-blue-600 transition">Platform</a>
+                <a href="#approach" class="hover:text-blue-600 transition">Approach</a>
                 <a href="insights.html" class="hover:text-blue-600 transition">ROI Insights</a>
                 <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-5 py-2 rounded-md font-bold transition shadow-md hover:opacity-90 f2b-blue whitespace-nowrap">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
                     <span>Launch Field<span class="text-amber-300">2</span>Bill</span>
                 </a>
-                <a href="#contact" class="bg-slate-900 text-white px-5 py-2 rounded-md hover:bg-blue-600 transition">Get Started</a>
             </div>
         </div>
     </nav>
 
-    <header class="relative py-24 px-6 overflow-hidden bg-slate-900 text-white">
-        <img src="https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80&w=2000" 
-             alt="Industrial Facility" 
-             class="absolute inset-0 w-full h-full object-cover opacity-30">
-        
-        <div class="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <!-- HERO -->
+    <header class="relative py-20 px-6 overflow-hidden bg-slate-900 text-white">
+        <img src="https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80&w=2000" alt="Industrial Facility" class="absolute inset-0 w-full h-full object-cover opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40"></div>
+
+        <div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
             <div>
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
-                    Field Ops Meet <br><span class="text-blue-400">Financial Strategy</span>
+                <div class="inline-flex items-center gap-2 bg-blue-600/15 border border-blue-500/30 rounded-full px-4 py-1.5 mb-7">
+                    <span class="dot bg-blue-400"></span>
+                    <span class="text-sm font-semibold text-blue-200 tracking-wide">An in-house platform — engineered, not just advised</span>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold leading-[1.05] mb-6">
+                    From field ticket<br>to <span class="text-blue-400">paid invoice</span>
                 </h1>
-                <p class="text-xl text-slate-300 mb-8 border-l-4 border-blue-500 pl-4">
-                    Specialized systems architecture for industrial firms. We bridge the gap between field tickets and the general ledger.
+                <p class="text-lg text-slate-300 mb-8 max-w-xl">
+                    Most consultants diagnose the gap between your field crews and your general ledger. We built the platform that closes it — <span class="text-white font-semibold">Field2Bill</span> turns field tickets into QuickBooks invoices, backed by real systems architecture.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-8 py-4 rounded-md font-bold text-lg transition hover:opacity-90 f2b-blue" style="box-shadow:0 10px 25px rgba(47,107,255,.35);">
+                    <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-7 py-4 rounded-md font-bold text-lg transition hover:opacity-90 f2b-blue" style="box-shadow:0 10px 25px rgba(47,107,255,.35);">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
                         <span>Launch Field<span class="text-amber-300">2</span>Bill</span>
                     </a>
-                    <a href="#contact" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-md font-bold text-lg hover:bg-white/20 transition">Request Systems Audit</a>
-                    <a href="insights.html" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-md font-bold text-lg hover:bg-white/20 transition">View ROI Case Studies</a>
+                    <a href="#platform" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-7 py-4 rounded-md font-bold text-lg hover:bg-white/20 transition">See how it works</a>
+                </div>
+            </div>
+            <div class="lg:pl-6">
+                <div class="mock">
+                    <div class="mock-bar">
+                        <span class="dot" style="background:#ff5f57;"></span>
+                        <span class="dot" style="background:#febc2e;"></span>
+                        <span class="dot" style="background:#28c840;"></span>
+                        <div class="ml-3 flex-1 rounded px-3 py-1 text-xs text-slate-400" style="background:#1a2740;">app.field2bill.com</div>
+                    </div>
+                    <img src="screenshots/01-f2b.png" alt="Field2Bill dashboard" class="w-full block">
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- STAT STRIP -->
+    <section class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">1-Click</div>
+                <div class="text-sm text-slate-500 mt-1">QuickBooks invoicing</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">5 Roles</div>
+                <div class="text-sm text-slate-500 mt-1">Role-based access</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">Real-Time</div>
+                <div class="text-sm text-slate-500 mt-1">Job costing</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">Zero</div>
+                <div class="text-sm text-slate-500 mt-1">Billable hours lost</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLATFORM -->
+    <section id="platform" class="py-24 px-6 bg-slate-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3">The platform</p>
+                <h2 class="text-5xl font-bold text-blue-900 mb-4">Meet Field<span class="text-blue-600">2</span>Bill</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">The field-service billing system we engineered in-house — purpose-built for industrial firms that bleed margin between the field and the office.</p>
+            </div>
+
+            <!-- Feature row A -->
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <p class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-3">Billing &amp; QuickBooks</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mb-4 brand-font">One click from field ticket to QuickBooks</h3>
+                    <p class="text-slate-600 mb-6">Crews capture tickets on site. Operations approves. Billing sends — straight into QuickBooks Online, where your invoicing and payments already live. No re-keying, no lost billable hours.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Approve → invoice workflow</span> with a clear review gate before anything bills.</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Native QuickBooks Online sync</span> — sending and payments stay in QuickBooks.</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Customer mapping</span> so contact details never get re-entered.</span></li>
+                    </ul>
+                </div>
+                <div class="mock">
+                    <div class="mock-bar">
+                        <span class="dot" style="background:#ff5f57;"></span>
+                        <span class="dot" style="background:#febc2e;"></span>
+                        <span class="dot" style="background:#28c840;"></span>
+                        <div class="ml-3 flex-1 rounded px-3 py-1 text-xs text-slate-400" style="background:#1a2740;">app.field2bill.com/billing</div>
+                    </div>
+                    <img src="screenshots/02-f2b.png" alt="Field2Bill billing and QuickBooks" class="w-full block">
+                </div>
+            </div>
+
+            <!-- Feature row B -->
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="order-2 lg:order-1 mock">
+                    <div class="mock-bar">
+                        <span class="dot" style="background:#ff5f57;"></span>
+                        <span class="dot" style="background:#febc2e;"></span>
+                        <span class="dot" style="background:#28c840;"></span>
+                        <div class="ml-3 flex-1 rounded px-3 py-1 text-xs text-slate-400" style="background:#1a2740;">app.field2bill.com/dispatch</div>
+                    </div>
+                    <img src="screenshots/03-f2b.png" alt="Field2Bill dispatch and scheduling" class="w-full block">
+                </div>
+                <div class="order-1 lg:order-2">
+                    <p class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-3">Dispatch &amp; field ops</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mb-4 brand-font">Run the field in real time</h3>
+                    <p class="text-slate-600 mb-6">Assign crews and equipment, track who's on site, and capture digital LEM tickets — with expired-certification workers automatically blocked from dispatch.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Real-time dispatch</span> of crews and equipment to job sites.</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Certification tracking</span> that blocks non-compliant workers automatically.</span></li>
+                        <li class="flex items-start gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-slate-700"><span class="font-semibold">Inventory &amp; rentals</span> tracked from checkout to billing.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- role band -->
+            <div class="mt-16 bg-blue-900 rounded-2xl px-8 py-7 flex flex-col md:flex-row items-center justify-between gap-4 text-white">
+                <div>
+                    <div class="font-bold text-xl brand-font">Role-based access, built in</div>
+                    <p class="text-blue-200 text-sm mt-1">Owner, Operations, Dispatcher, Billing, and Viewer logins — everyone sees exactly what they need, nothing they don't.</p>
+                </div>
+                <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-6 py-3 rounded-md font-bold transition hover:opacity-90 f2b-blue whitespace-nowrap flex-shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+                    <span>Try the live demo</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- APPROACH (reframed services) -->
+    <section id="approach" class="industrial-blue text-white py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-3">How we work</p>
+                <h2 class="text-4xl font-bold mb-5 leading-tight">The Platform — and the Architect Who Runs It</h2>
+                <p class="text-slate-300 max-w-2xl mx-auto">Software alone doesn't fix a broken billing process. You also need someone who understands the field and the ledger. You get both.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
+                    <div class="w-12 h-12 rounded-lg f2b-blue flex items-center justify-center mb-6">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 brand-font">The Platform</h3>
+                    <p class="text-slate-300 text-sm">Field2Bill replaces spreadsheets and disconnected tools with one system that runs from the field ticket to the general ledger.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
+                    <div class="w-12 h-12 rounded-lg f2b-blue flex items-center justify-center mb-6">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 brand-font">The Implementation</h3>
+                    <p class="text-slate-300 text-sm">Long architects your data flow and QuickBooks integration so the system runs clean from day one — no learning by trial and error.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
+                    <div class="w-12 h-12 rounded-lg f2b-blue flex items-center justify-center mb-6">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 13v5M12 9v9M17 5v13"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 brand-font">The Strategy</h3>
+                    <p class="text-slate-300 text-sm">Profitability analysis by service line and 13-week cash-flow forecasts to scale your $5M+ firm with confidence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT (kept) -->
     <section id="about" class="py-20 px-6 max-w-7xl mx-auto border-b">
         <div class="grid md:grid-cols-2 gap-16 items-center">
             <div class="rounded-2xl overflow-hidden shadow-2xl order-2 md:order-1 relative">
@@ -74,7 +214,7 @@
             </div>
             <div class="order-1 md:order-2">
                 <h2 class="text-4xl font-bold mb-6 text-blue-900 tracking-tight">The Architect's Edge</h2>
-                <p class="text-lg text-slate-600 mb-6 italic">"I don't just record your numbers; I engineer the systems that generate them."</p>
+                <p class="text-lg text-slate-600 mb-6 italic">"I don't just record your numbers; I engineer the systems that generate them — and I built Field2Bill to prove it."</p>
                 <p class="text-slate-600 mb-8">With a BS in Mechanical Engineering from the University of Houston and an MBA from Texas A&M, Long brings a rare combination of field engineering experience and financial strategy to industrial firms. His background spans oilfield data analytics, structural engineering, and project management — giving him a ground-level understanding of how field operations translate to the bottom line.</p>
                 <div class="space-y-6">
                     <div class="flex gap-4">
@@ -94,38 +234,7 @@
         </div>
     </section>
 
-    <section id="services" class="industrial-blue text-white py-24 px-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">Precision Field Finance</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
-                    <img src="https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?auto=format&fit=crop&q=80&w=600" class="rounded mb-6 h-40 w-full object-cover opacity-80" alt="Data Analytics">
-                    <h3 class="text-xl font-bold mb-4 brand-font">Leak Detection</h3>
-                    <p class="text-slate-300 text-sm">We audit your field ticketing process to ensure no billable time is lost between the field and the office.</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600" class="rounded mb-6 h-40 w-full object-cover opacity-80" alt="Spreadsheet Strategy">
-                    <h3 class="text-xl font-bold mb-4 brand-font">Cash Flow Modeling</h3>
-                    <p class="text-slate-300 text-sm">Managing payroll for large field crews requires foresight. We build 13-week cash flow forecasts tailored to your cycle.</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10">
-                    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=600" class="rounded mb-6 h-40 w-full object-cover opacity-80" alt="Industrial Tech">
-                    <h3 class="text-xl font-bold mb-4 brand-font">Implementation</h3>
-                    <p class="text-slate-300 text-sm">Moving from paper to Field2Bill? We handle the data architecture so your team doesn't have to learn by trial and error.</p>
-                </div>
-            </div>
-
-            <div class="mt-14 text-center">
-                <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-white px-8 py-4 rounded-md font-bold text-lg transition hover:opacity-90 f2b-blue" style="box-shadow:0 10px 25px rgba(47,107,255,.35);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
-                    <span>Explore the Field<span class="text-amber-300">2</span>Bill platform</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
+    <!-- CONTACT (kept) -->
     <section id="contact" class="py-24 px-6 bg-slate-50">
         <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200">
             <div class="md:w-1/3 bg-blue-900 text-white p-10 flex flex-col justify-center">
