@@ -1608,19 +1608,52 @@ class Component extends DCLogic {
     return { form: { ...s.form, crewEquip: has ? s.form.crewEquip.filter(x => x !== n) : [...s.form.crewEquip, n] } };
   });
 
-  saveCrew = () => {
-    const f = this.state.form;
-    const name = f.crewName.trim();
-    if (!name) return this.setMsg('crew', 'Enter a crew name');
+  // Update the in-memory crew list (also the fallback when no API is reachable, e.g. local preview)
+  applyCrewLocally = (rec, editCrew) => {
     this.setState(s => {
       const crews = [...s.crews];
-      const rec = { name, members: [...f.crewMembers], equipment: [...f.crewEquip] };
-      const target = f.editCrew || name;
+      const target = editCrew || rec.name;
       const i = crews.findIndex(c => c.name === target);
       if (i >= 0) crews[i] = rec; else crews.push(rec);
       return { crews, form: { ...s.form, crewName: '', crewMembers: [], crewEquip: [], editCrew: '' } };
     });
+  };
+
+  // Pull crews from the database (no-ops silently if the API isn't there yet)
+  refreshCrews = async () => {
+    try {
+      const res = await fetch('/api/crews');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState({ crews: rows.map(r => ({
+          name: r.name,
+          members: r.members || [],
+          equipment: r.equipment || [],
+        })) });
+      }
+    } catch (e) { /* offline / no backend in preview — keep local state */ }
+  };
+
+  saveCrew = async () => {
+    const f = this.state.form;
+    const name = f.crewName.trim();
+    if (!name) return this.setMsg('crew', 'Enter a crew name');
+    const rec = { name, members: [...f.crewMembers], equipment: [...f.crewEquip] };
+
+    // optimistic local update so the UI responds instantly
+    this.applyCrewLocally(rec, f.editCrew);
     this.setMsg('crew', f.editCrew ? 'Crew updated ✓' : 'Crew saved ✓');
+
+    // persist to the database, then re-sync from the server
+    try {
+      const res = await fetch('/api/crews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rec),
+      });
+      if (res.ok) this.refreshCrews();
+    } catch (e) { /* no backend in preview — local state already updated */ }
   };
 
   saveEmployee = () => {
@@ -1827,6 +1860,7 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
+    this.refreshCrews(); // load saved crews from the database (silently skipped in local preview)
     const load = () => {
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
