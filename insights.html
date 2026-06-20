@@ -6,67 +6,133 @@
     <title>ROI Insights | Industrial Ledger Partners</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
     <style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, .brand-font { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
         .industrial-blue { background-color: #1a2e44; }
+        .f2b-blue { background-color: #2f6bff; }
+        .mock { border-radius: 12px; overflow: hidden; box-shadow: 0 30px 60px -15px rgba(0,0,0,.35); border: 1px solid rgba(15,24,48,.12); }
+        .mock-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #0f1830; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900">
 
-    <nav class="p-6 bg-white shadow-sm flex justify-between items-center border-b-4 border-blue-900 sticky top-0 z-50">
-        <div class="text-2xl font-bold brand-font text-blue-900"><a href="index.html">Industrial Ledger <span class="text-blue-600">Partners</span></a></div>
-        <div class="hidden md:flex space-x-8 font-semibold text-sm">
-            <a href="index.html" class="hover:text-blue-700">Back to Home</a>
-            <a href="#contact" class="bg-blue-900 text-white px-5 py-2 rounded hover:bg-blue-800 transition">Get Audit</a>
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">I</span>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-slate-800">Industrial Ledger <span class="text-blue-600">Partners</span></span>
+            </a>
+            <div class="hidden md:flex items-center gap-7 font-medium text-slate-600">
+                <a href="index.html" class="hover:text-blue-600 transition">Home</a>
+                <a href="index.html#platform" class="hover:text-blue-600 transition">Platform</a>
+                <a href="insights.html" class="text-blue-600 font-semibold">ROI Insights</a>
+                <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-5 py-2 rounded-md font-bold transition shadow-md hover:opacity-90 f2b-blue whitespace-nowrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+                    <span>Launch Field<span class="text-amber-300">2</span>Bill</span>
+                </a>
+            </div>
         </div>
     </nav>
 
-    <header class="py-20 bg-slate-900 text-white text-center">
-        <div class="max-w-4xl mx-auto px-6">
-            <h1 class="text-5xl font-bold mb-4">Industrial ROI Insights</h1>
-            <p class="text-blue-400 font-bold tracking-widest uppercase">System Architecture Case Studies</p>
+    <header class="py-20 px-6 bg-slate-900 text-white text-center">
+        <div class="max-w-4xl mx-auto">
+            <p class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-4">How the ROI works</p>
+            <h1 class="text-5xl md:text-6xl font-bold mb-5">Industrial ROI Insights</h1>
+            <p class="text-lg text-slate-300 max-w-2xl mx-auto">Where the margin hides between the field and the office — and how Field2Bill closes the gap.</p>
         </div>
     </header>
 
-    <main class="py-20 px-6 max-w-5xl mx-auto">
-        <article class="grid md:grid-cols-2 gap-12 items-center mb-24">
-            <div>
-                <img src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="rounded-2xl shadow-xl" alt="Data Analytics">
+    <!-- STAT STRIP -->
+    <section class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">$100K</div>
+                <div class="text-sm text-slate-500 mt-1">At risk from a 2% billing leak*</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">40h+</div>
+                <div class="text-sm text-slate-500 mt-1">Admin hours saved / month</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">Real-Time</div>
+                <div class="text-sm text-slate-500 mt-1">Job costing &amp; variance</div>
+            </div>
+            <div class="px-6 py-8 text-center">
+                <div class="text-4xl font-bold text-blue-900 brand-font">1-Click</div>
+                <div class="text-sm text-slate-500 mt-1">QuickBooks invoicing</div>
+            </div>
+        </div>
+    </section>
+
+    <main class="py-24 px-6 max-w-6xl mx-auto">
+        <!-- Article 1 -->
+        <article class="grid lg:grid-cols-2 gap-14 items-center mb-24">
+            <div class="mock">
+                <div class="mock-bar">
+                    <span class="dot" style="background:#ff5f57;"></span>
+                    <span class="dot" style="background:#febc2e;"></span>
+                    <span class="dot" style="background:#28c840;"></span>
+                    <div class="ml-3 flex-1 rounded px-3 py-1 text-xs text-slate-400" style="background:#1a2740;">app.field2bill.com/reporting</div>
+                </div>
+                <img src="screenshots/04-reporting.png" alt="Field2Bill job costing and margin reporting" class="w-full block">
             </div>
             <div>
-                <h2 class="text-3xl font-bold text-blue-900 mb-4">The 2% Margin Miracle</h2>
-                <p class="text-slate-600 mb-6 text-lg">For a firm generating $5M in annual revenue, a mere 2% leak in field ticket accuracy results in <strong>$100,000 of lost profit</strong>. We analyze where your "Prime Cost" is slipping through the cracks.</p>
+                <p class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-3">The margin leak</p>
+                <h2 class="text-4xl font-bold text-blue-900 mb-4 leading-tight">The 2% Margin Miracle</h2>
+                <p class="text-slate-600 mb-6 text-lg">For a firm doing $5M a year, a mere 2% leak in field-ticket accuracy can quietly cost <strong>$100,000 in profit</strong>. Field2Bill surfaces live job costing and budget-vs-actual variance, so you see exactly where your prime cost is slipping — before the job closes, not after.</p>
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-4 italic text-blue-900">
                     "We don't just find errors; we engineer the automation to prevent them from ever happening again."
                 </div>
             </div>
         </article>
 
-        <article class="grid md:grid-cols-2 gap-12 items-center mb-24">
-            <div class="order-2 md:order-1">
-                <h2 class="text-3xl font-bold text-blue-900 mb-4">Aimsio + QuickBooks: Zero-Touch Sync</h2>
-                <p class="text-slate-600 mb-6 text-lg">Manual data entry from field tickets to accounting is the #1 cause of administrative burnout and late invoicing. Our systems architecture bridges this gap natively.</p>
+        <!-- Article 2 -->
+        <article class="grid lg:grid-cols-2 gap-14 items-center">
+            <div class="order-2 lg:order-1">
+                <p class="text-blue-600 font-bold tracking-widest uppercase text-xs mb-3">Field2Bill + QuickBooks</p>
+                <h2 class="text-4xl font-bold text-blue-900 mb-4 leading-tight">Zero-Touch Sync</h2>
+                <p class="text-slate-600 mb-6 text-lg">Manual data entry from field tickets to accounting is the #1 cause of administrative burnout and late invoicing. Field2Bill bridges that gap natively — approved tickets flow straight into QuickBooks Online in one click.</p>
                 <ul class="space-y-3 font-semibold text-blue-800">
-                    <li class="flex items-center gap-2">✓ 40+ Admin Hours Saved Monthly</li>
-                    <li class="flex items-center gap-2">✓ 99.9% Data Accuracy</li>
-                    <li class="flex items-center gap-2">✓ Real-time Job Costing</li>
+                    <li class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs">✓</span> Up to 40+ admin hours saved monthly</li>
+                    <li class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs">✓</span> Manual re-keying errors eliminated</li>
+                    <li class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs">✓</span> Real-time job costing</li>
                 </ul>
             </div>
-            <div class="order-1 md:order-2">
-                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" class="rounded-2xl shadow-xl" alt="Industrial Technology">
+            <div class="order-1 lg:order-2 mock">
+                <div class="mock-bar">
+                    <span class="dot" style="background:#ff5f57;"></span>
+                    <span class="dot" style="background:#febc2e;"></span>
+                    <span class="dot" style="background:#28c840;"></span>
+                    <div class="ml-3 flex-1 rounded px-3 py-1 text-xs text-slate-400" style="background:#1a2740;">app.field2bill.com/billing</div>
+                </div>
+                <img src="screenshots/02-f2b.png" alt="Field2Bill billing synced with QuickBooks" class="w-full block">
             </div>
         </article>
+
+        <p class="text-xs text-slate-400 mt-12 text-center max-w-2xl mx-auto">*Illustrative example. $5M annual revenue × 2% billing leakage = $100,000. Actual results depend on your ticket volume, process, and accuracy baseline.</p>
     </main>
 
-    <section id="contact" class="py-20 bg-blue-900 text-white text-center">
-        <h2 class="text-3xl font-bold mb-6">Ready to Engineer Your Profits?</h2>
-        <a href="index.html#contact" class="bg-blue-500 hover:bg-blue-400 text-white px-10 py-4 rounded-md font-bold transition inline-block">Request a System Audit</a>
+    <section id="contact" class="industrial-blue text-white text-center py-20 px-6">
+        <h2 class="text-4xl font-bold mb-3">Ready to Engineer Your Profits?</h2>
+        <p class="text-slate-300 mb-8 max-w-xl mx-auto">See Field2Bill in action, or talk to Long Vu about a systems audit of your field-to-ledger workflow.</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="Field2Bill-App.html" target="_blank" rel="noopener" class="flex items-center gap-2 text-white px-7 py-4 rounded-md font-bold text-lg transition hover:opacity-90 f2b-blue" style="box-shadow:0 10px 25px rgba(47,107,255,.35);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+                <span>Launch Field<span class="text-amber-300">2</span>Bill</span>
+            </a>
+            <a href="index.html#contact" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-7 py-4 rounded-md font-bold text-lg hover:bg-white/20 transition">Request a System Audit</a>
+        </div>
     </section>
 
     <footer class="py-12 bg-white text-center border-t">
         <div class="text-lg font-bold brand-font text-blue-900 mb-1">Industrial Ledger Partners</div>
-        <div class="text-slate-600 mb-4">Long Vu | 832.856.9995</div>
+        <div class="text-slate-600 mb-4">Long Vu | <a href="tel:8328569995" class="hover:text-blue-700">832.856.9995</a> | <a href="mailto:Long@industrialledger.com" class="hover:text-blue-700">Long@industrialledger.com</a></div>
+        <div class="text-xs text-slate-400 uppercase tracking-widest font-bold">The Houston IT Solutions, LLC Company</div>
     </footer>
 
 </body>
