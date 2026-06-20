@@ -1656,39 +1656,84 @@ class Component extends DCLogic {
     } catch (e) { /* no backend in preview — local state already updated */ }
   };
 
-  saveEmployee = () => {
+  applyEmployeeLocally = (name, role, certs, editEmp) => {
+    this.setState(s => {
+      const employees = [...s.employees];
+      const i = editEmp ? employees.findIndex(e => e.name === editEmp) : -1;
+      if (i >= 0) employees[i] = { ...employees[i], name, role: role || employees[i].role, certs: certs.map(c => ({ ...c })) };
+      else employees.push({ name, role: role || 'Crew', certs: certs.map(c => ({ ...c })) });
+      return { employees, form: { ...s.form, employeeName: '', employeeRole: '', editEmp: name } };
+    });
+  };
+
+  refreshEmployees = async () => {
+    try {
+      const res = await fetch('/api/employees');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState({ employees: rows.map(r => ({ name: r.name, role: r.role || 'Crew', certs: r.certs || [] })) });
+      }
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  saveEmployee = async () => {
     const f = this.state.form;
     const name = f.employeeName.trim();
     if (!name) return this.setMsg('employee', 'Enter an employee name');
-    this.setState(s => {
-      const employees = [...s.employees];
-      if (f.editEmp) {
-        const i = employees.findIndex(e => e.name === f.editEmp);
-        if (i >= 0) employees[i] = { ...employees[i], name, role: f.employeeRole || employees[i].role, certs: f.employeeCerts.map(c => ({ ...c })) };
-      } else {
-        employees.push({ name, role: f.employeeRole || 'Crew', certs: f.employeeCerts.map(c => ({ ...c })) });
-      }
-      return { employees, form: { ...s.form, employeeName: '', employeeRole: '', editEmp: name } };
-    });
+    const role = f.employeeRole || 'Crew';
+    const certs = f.employeeCerts.map(c => ({ ...c }));
+    this.applyEmployeeLocally(name, role, certs, f.editEmp);
     this.setMsg('employee', f.editEmp ? 'Employee updated ✓' : 'Employee added ✓');
+    try {
+      const res = await fetch('/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, role, certs }),
+      });
+      if (res.ok) this.refreshEmployees();
+    } catch (e) { /* local state already updated */ }
   };
 
-  saveJob = () => {
+  applyJobLocally = (name, budget, editJob) => {
+    this.setState(s => {
+      const jobs = [...s.jobs];
+      const i = editJob ? jobs.findIndex(j => j.name === editJob) : -1;
+      if (i >= 0) jobs[i] = { ...jobs[i], name, budget: budget || jobs[i].budget };
+      else jobs.push({ name, budget: budget || 0, actual: 0 });
+      return { jobs, form: { ...s.form, jobName: '', jobBudget: '', editJob: name } };
+    });
+  };
+
+  refreshJobs = async () => {
+    try {
+      const res = await fetch('/api/jobs');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState(s => ({ jobs: rows.map(r => {
+          const existing = s.jobs.find(j => j.name === r.name);
+          return { name: r.name, budget: Number(r.budget) || 0, actual: existing ? existing.actual : 0 };
+        }) }));
+      }
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  saveJob = async () => {
     const f = this.state.form;
     const name = f.jobName.trim();
     const budget = parseFloat(f.jobBudget) || 0;
     if (!name) return this.setMsg('job', 'Enter a job name');
-    this.setState(s => {
-      const jobs = [...s.jobs];
-      if (f.editJob) {
-        const i = jobs.findIndex(j => j.name === f.editJob);
-        if (i >= 0) jobs[i] = { ...jobs[i], name, budget: budget || jobs[i].budget };
-      } else {
-        jobs.push({ name, budget: budget || 0, actual: 0 });
-      }
-      return { jobs, form: { ...s.form, jobName: '', jobBudget: '', editJob: name } };
-    });
+    this.applyJobLocally(name, budget, f.editJob);
     this.setMsg('job', f.editJob ? 'Job updated ✓' : 'Job added ✓');
+    try {
+      const res = await fetch('/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, budget }),
+      });
+      if (res.ok) this.refreshJobs();
+    } catch (e) { /* local state already updated */ }
   };
 
   loadCrew = (name) => {
@@ -1860,7 +1905,9 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
-    this.refreshCrews(); // load saved crews from the database (silently skipped in local preview)
+    this.refreshCrews();     // load saved crews from the database (silently skipped in local preview)
+    this.refreshEmployees(); // load saved employees
+    this.refreshJobs();      // load saved jobs
     const load = () => {
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
