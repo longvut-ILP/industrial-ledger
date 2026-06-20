@@ -1778,18 +1778,62 @@ class Component extends DCLogic {
     if (!f.laborHours) return this.setMsg('ticket', 'Enter labor hours');
     const hrs = parseFloat(f.laborHours) || 0;
     const id = 'TCK-' + (9024 + this.state.tickets.length);
+    const rec = { id, job: f.ticketJob, hours: hrs, amount: Math.round(hrs * 150), status: 'pending', invoiced: false };
     this.setState(s => ({
-      tickets: [...s.tickets, { id, job: f.ticketJob, hours: hrs, amount: Math.round(hrs * 150), status: 'pending', invoiced: false }],
+      tickets: [...s.tickets, rec],
       form: { ...s.form, laborHours: '' },
     }));
     this.setMsg('ticket', 'Ticket ' + id + ' synced to office ✓');
+    this.saveTicket(rec);
   };
 
-  approveTicket = (id) => this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'approved' } : t) }));
-  generateInvoice = (id) => this.setState(s => ({
-    tickets: s.tickets.map(t => t.id === id ? { ...t, invoiced: true, status: 'invoiced', qboNum: 'QBO-' + s.qboSeq } : t),
-    qboSeq: s.qboSeq + 1,
-  }));
+  saveTicket = async (rec) => {
+    try {
+      await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label: rec.id, job_name: rec.job, hours: rec.hours, amount: rec.amount, status: rec.status, invoiced: rec.invoiced }),
+      });
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  patchTicket = async (label, fields) => {
+    try {
+      await fetch('/api/tickets', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label, ...fields }),
+      });
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  refreshTickets = async () => {
+    try {
+      const res = await fetch('/api/tickets');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState({ tickets: rows.map(r => ({
+          id: r.label, job: r.job_name, hours: Number(r.hours) || 0,
+          amount: Number(r.amount) || 0, status: r.status,
+          invoiced: !!r.invoiced, qboNum: r.qbo_num || undefined,
+        })) });
+      }
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  approveTicket = (id) => {
+    this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'approved' } : t) }));
+    this.patchTicket(id, { status: 'approved' });
+  };
+  generateInvoice = (id) => {
+    const qboNum = 'QBO-' + this.state.qboSeq;
+    this.setState(s => ({
+      tickets: s.tickets.map(t => t.id === id ? { ...t, invoiced: true, status: 'invoiced', qboNum } : t),
+      qboSeq: s.qboSeq + 1,
+    }));
+    this.patchTicket(id, { status: 'invoiced', invoiced: true, qbo_num: qboNum });
+  };
   mapCustomer = (name) => this.setState(s => ({
     qboOverrides: { ...s.qboOverrides, [name]: { qbo: name + ' LLC', email: 'ap@' + name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com', mapped: true } },
   }));
@@ -1908,6 +1952,8 @@ class Component extends DCLogic {
     this.refreshCrews();     // load saved crews from the database (silently skipped in local preview)
     this.refreshEmployees(); // load saved employees
     this.refreshJobs();      // load saved jobs
+    this.refreshTickets();   // load saved field tickets
+    this.refreshInvoices();  // load saved rental invoices
     const load = () => {
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
@@ -2150,6 +2196,26 @@ class Component extends DCLogic {
     const rec = { num, from: f.invFrom, to: f.invClient, job: f.invJob, tagScope: f.invTag === '__all__' ? 'All tags' : f.invTag, method, methodLabel, date: this.todayISO(), periodLabel: label, periodStart: ps, periodEnd: pe, lines, subtotal, total: subtotal };
     this.setState(s => ({ invSeq: s.invSeq + 1, rentalInvoices: [rec, ...s.rentalInvoices], viewInvoice: rec }));
     this.setMsg('rentalInv', num + ' generated · ' + this.fmt2(subtotal));
+    this.saveRentalInvoice(rec);
+  };
+
+  saveRentalInvoice = async (rec) => {
+    try {
+      await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rec),
+      });
+    } catch (e) { /* no backend in preview */ }
+  };
+
+  refreshInvoices = async () => {
+    try {
+      const res = await fetch('/api/invoices');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) this.setState({ rentalInvoices: rows });
+    } catch (e) { /* no backend in preview */ }
   };
 
   fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
