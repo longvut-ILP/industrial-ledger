@@ -24,9 +24,9 @@
   ::-webkit-scrollbar-thumb:hover{background:#b4bac6;background-clip:content-box;}
   @media print {
     body * { visibility: hidden !important; }
-    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet * { visibility: visible !important; }
-    #f2b-inv-sheet, #f2b-tag-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
-    #f2b-inv-toolbar, #f2b-tag-toolbar { display: none !important; }
+    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet *, #f2b-print-sheet, #f2b-print-sheet * { visibility: visible !important; }
+    #f2b-inv-sheet, #f2b-tag-sheet, #f2b-print-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
+    #f2b-inv-toolbar, #f2b-tag-toolbar, #f2b-print-toolbar { display: none !important; }
     @page { margin: 14mm; }
   }
   /* ===================== MOBILE / RESPONSIVE ===================== */
@@ -118,6 +118,168 @@
   </div>
 </sc-if>
 
+<!-- ===================== PLATFORM DEV CONSOLE ===================== -->
+<sc-if value="{{ showDev }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;overflow:auto;background:#eceef2;font-family:'IBM Plex Sans',sans-serif;">
+
+    <sc-if value="{{ hasDevMsg }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;top:18px;right:18px;z-index:30;background:#0c1322;color:#fff;border-radius:10px;padding:11px 16px;font:600 13px 'IBM Plex Sans';box-shadow:0 8px 24px rgba(12,19,34,.28);display:flex;align-items:center;gap:8px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ devMsgColor }};"></span>{{ devMsg }}</div></sc-if>
+
+    <header style="height:64px;background:#0c1322;display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:10;">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(47,107,255,.4);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+        </div>
+        <div>
+          <div style="font:700 16px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">Field<span style="color:#f6a93b;">2</span>Bill</div>
+          <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:1.4px;text-transform:uppercase;color:#5f7bd6;margin-top:1px;">Platform console</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="text-align:right;">
+          <div style="font:600 12.5px 'IBM Plex Sans';color:#e7eaf0;">Platform admin</div>
+          <div style="font:400 11px 'IBM Plex Mono';color:#6b7488;">long.vu.t@gmail.com</div>
+        </div>
+        <button onClick="{{ exitDev }}" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid #1e293f;border-radius:9px;background:#101a2c;color:#cdd3df;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#161f33;">Sign out</button>
+      </div>
+    </header>
+
+    <div style="max-width:1180px;margin:0 auto;padding:28px 24px 64px;">
+      <div style="margin-bottom:22px;">
+        <h1 style="font:600 24px 'Space Grotesk';color:#0c1322;letter-spacing:-.4px;margin-bottom:4px;">Client workspaces</h1>
+        <p style="font:400 13.5px 'IBM Plex Sans';color:#6b7488;max-width:640px;">Provision a new tenant and its first user, then set each client's logo and brand colour — no database access required. Tenant users sign in from the normal login with the credentials you set here.</p>
+      </div>
+
+      <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- CREATE WORKSPACE -->
+        <div style="flex:1;min-width:330px;max-width:400px;background:#fff;border:1px solid #e9ebf0;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+          <div style="font:600 15px 'Space Grotesk';color:#0c1322;margin-bottom:2px;">New client workspace</div>
+          <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-bottom:18px;">Creates the tenant plus its first user account.</div>
+
+          <label style="display:block;font:600 11px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Company / client name</label>
+          <input value="{{ devName }}" onChange="{{ onDevName }}" placeholder="e.g. Summit Scaffolding" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;margin-bottom:16px;" style-focus="border-color:#2f6bff;background:#fff;">
+
+          <label style="display:block;font:600 11px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:8px;">Business details <span style="text-transform:none;color:#b3b9c5;">· optional</span></label>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+            <input value="{{ devEmail }}" onChange="{{ onDevEmail }}" type="email" placeholder="Billing email" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <input value="{{ devPhone }}" onChange="{{ onDevPhone }}" placeholder="Phone" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <input value="{{ devAddr1 }}" onChange="{{ onDevAddr1 }}" placeholder="Address line 1" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <input value="{{ devAddr2 }}" onChange="{{ onDevAddr2 }}" placeholder="City, State ZIP" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          </div>
+
+          <label style="display:block;font:600 11px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:8px;">Brand colour</label>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px;">
+            <sc-for list="{{ devSwatches }}" as="sw" hint-placeholder-count="6"><button onClick="{{ sw.onPick }}" style="{{ sw.style }}"></button></sc-for>
+          </div>
+
+          <label style="display:block;font:600 11px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:8px;">Logo <span style="text-transform:none;color:#b3b9c5;">· optional</span></label>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <sc-if value="{{ hasDevLogo }}" hint-placeholder-val="{{ false }}"><div style="width:46px;height:46px;border-radius:11px;overflow:hidden;background:#f3f4f7;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid #eceef2;">{{ devLogoEl }}</div></sc-if>
+            <sc-if value="{{ noDevLogo }}" hint-placeholder-val="{{ true }}"><div style="width:46px;height:46px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:{{ devAccent }};color:#fff;font:700 14px 'Space Grotesk';">★</div></sc-if>
+            <label style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#3a4456;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;">Upload<input type="file" accept="image/*" onChange="{{ onDevLogo }}" style="display:none;"></label>
+            <sc-if value="{{ hasDevLogo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onDevRemoveLogo }}" style="padding:8px 12px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#8a92a4;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="color:#e5484d;border-color:#f0c5c6;">Remove</button></sc-if>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="flex:1;height:1px;background:#eceef2;"></div><span style="font:600 10px 'IBM Plex Mono';letter-spacing:.8px;text-transform:uppercase;color:#aab1bf;">First user</span><div style="flex:1;height:1px;background:#eceef2;"></div></div>
+
+          <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:18px;">
+            <input value="{{ devUName }}" onChange="{{ onDevUName }}" placeholder="Full name" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <input value="{{ devUEmail }}" onChange="{{ onDevUEmail }}" type="email" placeholder="email@company.com" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <input value="{{ devUPass }}" onChange="{{ onDevUPass }}" type="password" placeholder="Set a password" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            <select value="{{ devURole }}" onChange="{{ onDevURole }}" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;"><sc-for list="{{ roleOptions }}" as="r" hint-placeholder-count="5"><option value="{{ r }}">{{ r }}</option></sc-for></select>
+          </div>
+
+          <button onClick="{{ createTenant }}" style="width:100%;height:44px;border:none;border-radius:10px;background:#2f6bff;color:#fff;font:600 14px 'IBM Plex Sans';cursor:pointer;box-shadow:0 3px 10px rgba(47,107,255,.3);" style-hover="background:#2356d6;">Create workspace</button>
+        </div>
+
+        <!-- WORKSPACE LIST -->
+        <div style="flex:1.4;min-width:340px;display:flex;flex-direction:column;gap:16px;">
+          <sc-if value="{{ noTenants }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff;border:1px dashed #d8dce4;border-radius:16px;padding:46px 28px;text-align:center;">
+              <div style="width:48px;height:48px;border-radius:13px;background:#eef3ff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></div>
+              <div style="font:600 15px 'Space Grotesk';color:#0c1322;margin-bottom:5px;">No workspaces yet</div>
+              <div style="font:400 13px 'IBM Plex Sans';color:#8a92a4;max-width:320px;margin:0 auto;">Create your first client workspace on the left. It will appear here, where you can manage its branding and users.</div>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ tenantCards }}" as="t" hint-placeholder-count="0">
+            <div style="background:#fff;border:1px solid #e9ebf0;border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+              <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px;">
+                <sc-if value="{{ t.hasLogo }}" hint-placeholder-val="{{ false }}"><div style="width:44px;height:44px;border-radius:11px;overflow:hidden;background:#f3f4f7;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid #eceef2;">{{ t.logoEl }}</div></sc-if>
+                <sc-if value="{{ t.noLogo }}" hint-placeholder-val="{{ true }}"><div style="width:44px;height:44px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font:700 15px 'Space Grotesk';color:#fff;background:{{ t.accent }};">{{ t.initials }}</div></sc-if>
+                <div style="flex:1;min-width:0;">
+                  <div style="font:600 15px 'Space Grotesk';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.name }}</div>
+                  <div style="font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ t.userLabel }}</div>
+                </div>
+                <button onClick="{{ t.onOpen }}" style="padding:7px 13px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;">Open</button>
+                <button onClick="{{ t.onEdit }}" title="Edit details" style="width:32px;height:32px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b7488;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="color:#2f6bff;border-color:#2f6bff;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
+                <button onClick="{{ t.onDelete }}" title="Delete workspace" style="width:32px;height:32px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#9aa1b0;font:600 14px 'IBM Plex Sans';cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="color:#e5484d;border-color:#f0c5c6;">✕</button>
+              </div>
+
+              <sc-if value="{{ t.showDetailLine }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:3px;padding:0 2px 14px;">
+                  <sc-if value="{{ t.detailLine }}" hint-placeholder-val="{{ false }}"><div style="font:400 12.5px 'IBM Plex Sans';color:#5b6477;">{{ t.detailLine }}</div></sc-if>
+                  <sc-if value="{{ t.addrLine }}" hint-placeholder-val="{{ false }}"><div style="font:400 12px 'IBM Plex Mono';color:#9aa1b0;">{{ t.addrLine }}</div></sc-if>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ t.editing }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:15px 16px;background:#f8f9fb;border:1px solid #eceef2;border-radius:11px;margin-bottom:16px;">
+                  <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:10px;">Edit workspace details</div>
+                  <div style="display:flex;flex-direction:column;gap:9px;">
+                    <input value="{{ t.edName }}" onChange="{{ t.onEdName }}" placeholder="Workspace name" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;">
+                    <input value="{{ t.edEmail }}" onChange="{{ t.onEdEmail }}" type="email" placeholder="Billing email" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;">
+                    <input value="{{ t.edPhone }}" onChange="{{ t.onEdPhone }}" placeholder="Phone" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;">
+                    <input value="{{ t.edAddr1 }}" onChange="{{ t.onEdAddr1 }}" placeholder="Address line 1" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;">
+                    <input value="{{ t.edAddr2 }}" onChange="{{ t.onEdAddr2 }}" placeholder="City, State ZIP" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;">
+                  </div>
+                  <div style="display:flex;gap:8px;margin-top:12px;">
+                    <button onClick="{{ t.onSaveEdit }}" style="padding:8px 16px;border:none;border-radius:8px;background:#2f6bff;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;">Save</button>
+                    <button onClick="{{ t.onCancelEdit }}" style="padding:8px 14px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b7488;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Cancel</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;padding:14px 16px;background:#f8f9fb;border-radius:11px;margin-bottom:16px;">
+                <div>
+                  <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:9px;">Brand colour</div>
+                  <div style="display:flex;gap:8px;"><sc-for list="{{ t.swatches }}" as="sw" hint-placeholder-count="6"><button onClick="{{ sw.onPick }}" style="{{ sw.style }}"></button></sc-for></div>
+                </div>
+                <div>
+                  <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:9px;">Logo</div>
+                  <div style="display:flex;gap:8px;">
+                    <label style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;">Replace<input type="file" accept="image/*" onChange="{{ t.onLogo }}" style="display:none;"></label>
+                    <sc-if value="{{ t.hasLogo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ t.onRemoveLogo }}" style="padding:7px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#8a92a4;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="color:#e5484d;border-color:#f0c5c6;">Remove</button></sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Users</div>
+              <sc-for list="{{ t.users }}" as="u" hint-placeholder-count="1">
+                <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #f2f3f6;">
+                  <div style="width:30px;height:30px;border-radius:8px;background:#eef3ff;color:#2356d6;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk';flex-shrink:0;">{{ u.initials }}</div>
+                  <div style="flex:1;min-width:0;"><div style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ u.name }}</div><div style="font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ u.email }}</div></div>
+                  <span style="font:600 11px 'IBM Plex Sans';color:#5b6477;background:#f1f2f5;border-radius:20px;padding:3px 10px;flex-shrink:0;">{{ u.role }}</span>
+                  <button onClick="{{ u.onRemove }}" title="Remove user" style="width:28px;height:28px;flex-shrink:0;border:none;border-radius:7px;background:transparent;color:#b3b9c5;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#fdecec;color:#e5484d;">✕</button>
+                </div>
+              </sc-for>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px;">
+                <input value="{{ t.draftName }}" onChange="{{ t.onDraftName }}" placeholder="Full name" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <input value="{{ t.draftEmail }}" onChange="{{ t.onDraftEmail }}" type="email" placeholder="email@company.com" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <input value="{{ t.draftPass }}" onChange="{{ t.onDraftPass }}" type="password" placeholder="Password" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <select value="{{ t.draftRole }}" onChange="{{ t.onDraftRole }}" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;"><sc-for list="{{ roleOptions }}" as="r" hint-placeholder-count="5"><option value="{{ r }}">{{ r }}</option></sc-for></select>
+              </div>
+              <button onClick="{{ t.onAddUser }}" style="margin-top:9px;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#2f6bff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;">+ Add user</button>
+            </div>
+          </sc-for>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
 <div data-m="shell" style="display:flex;height:100vh;width:100%;overflow:hidden;background:#eceef2;font-family:'IBM Plex Sans',sans-serif;">
 
@@ -127,10 +289,9 @@
   <!-- ================= SIDEBAR ================= -->
   <aside data-m="sidebar" data-open="{{ navOpenStr }}" style="width:262px;flex-shrink:0;background:#0c1322;display:flex;flex-direction:column;border-right:1px solid #161f33;">
     <div style="padding:20px 18px 18px;display:flex;align-items:center;gap:11px;">
-      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(47,107,255,.4);">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
-      </div>
-      <div style="font:700 18px/1 'Space Grotesk',sans-serif;color:#fff;letter-spacing:-.3px;">Field<span style="color:#f6a93b;">2</span>Bill</div>
+      <sc-if value="{{ hasBrandLogo }}" hint-placeholder-val="{{ false }}"><div style="width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;">{{ brandLogoEl }}</div></sc-if>
+      <sc-if value="{{ noBrandLogo }}" hint-placeholder-val="{{ true }}"><div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg, {{ brandAccent }}, {{ brandAccentDark }});display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 13px 'Space Grotesk';color:#fff;box-shadow:0 4px 12px rgba(12,19,34,.4);">{{ brandInitials }}</div></sc-if>
+      <div style="font:700 18px/1 'Space Grotesk',sans-serif;color:#fff;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ brandName }}</div>
     </div>
 
     <div style="padding:0 14px 6px;">
@@ -173,7 +334,7 @@
         <span style="margin-left:auto;font:500 10.5px 'IBM Plex Mono';color:#4d566c;">3 in queue</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;">
-        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(140deg,#f6a93b,#e07d2e);display:flex;align-items:center;justify-content:center;font:600 12px 'Space Grotesk';color:#3a1f00;flex-shrink:0;">{{ userInitials }}</div>
+        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(140deg, {{ brandAccent }}, {{ brandAccentDark }});display:flex;align-items:center;justify-content:center;font:600 12px 'Space Grotesk';color:#fff;flex-shrink:0;">{{ userInitials }}</div>
         <div style="flex:1;min-width:0;">
           <div style="font:600 12.5px 'IBM Plex Sans';color:#e7eaf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userName }}</div>
           <div style="font:400 11px 'IBM Plex Mono';color:#5b6477;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userTitle }}</div>
@@ -317,6 +478,58 @@
       <sc-if value="{{ showAdmin }}" hint-placeholder-val="{{ true }}">
         <div style="animation:f2bFade .4s ease;max-width:1240px;display:flex;flex-direction:column;gap:18px;">
 
+          <!-- Company profile (current tenant) -->
+          <sc-if value="{{ showCompanyProfile }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+            <div style="display:flex;align-items:center;gap:13px;margin-bottom:20px;">
+              <sc-if value="{{ cpHasLogo }}" hint-placeholder-val="{{ false }}"><div style="width:46px;height:46px;border-radius:12px;overflow:hidden;background:#f3f4f7;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid #eceef2;">{{ cpLogoEl }}</div></sc-if>
+              <sc-if value="{{ cpNoLogo }}" hint-placeholder-val="{{ true }}"><div style="width:46px;height:46px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font:700 16px 'Space Grotesk';color:#fff;background:{{ cpAccent }};">{{ cpInitials }}</div></sc-if>
+              <div style="flex:1;min-width:0;">
+                <div style="font:600 15px 'Space Grotesk';color:#0c1322;">Company profile</div>
+                <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Your workspace branding and billing details. Used across the app — edits save automatically.</div>
+              </div>
+              <span style="display:flex;align-items:center;gap:6px;font:600 11px 'IBM Plex Sans';color:#0f9d6b;background:#e8f6ef;border-radius:20px;padding:5px 11px;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:#0f9d6b;"></span>Auto-saved</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+              <div style="grid-column:span 2;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Company name</label>
+                <input value="{{ cpName }}" onChange="{{ onCpName }}" placeholder="Company name" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div>
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Billing email</label>
+                <input value="{{ cpEmail }}" onChange="{{ onCpEmail }}" type="email" placeholder="billing@company.com" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div>
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Phone</label>
+                <input value="{{ cpPhone }}" onChange="{{ onCpPhone }}" placeholder="(000) 000-0000" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div>
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Address line 1</label>
+                <input value="{{ cpAddr1 }}" onChange="{{ onCpAddr1 }}" placeholder="Street address" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div>
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">City, State ZIP</label>
+                <input value="{{ cpAddr2 }}" onChange="{{ onCpAddr2 }}" placeholder="City, State ZIP" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;padding-top:16px;border-top:1px solid #f1f2f5;">
+              <div>
+                <div style="font:600 10.5px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:9px;">Brand colour</div>
+                <div style="display:flex;gap:8px;"><sc-for list="{{ cpSwatches }}" as="sw" hint-placeholder-count="6"><button onClick="{{ sw.onPick }}" style="{{ sw.style }}"></button></sc-for></div>
+              </div>
+              <div>
+                <div style="font:600 10.5px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:9px;">Logo</div>
+                <div style="display:flex;gap:8px;">
+                  <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#3a4456;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;">Upload<input type="file" accept="image/*" onChange="{{ onCpLogo }}" style="display:none;"></label>
+                  <sc-if value="{{ cpHasLogo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onCpRemoveLogo }}" style="padding:8px 12px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#8a92a4;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="color:#e5484d;border-color:#f0c5c6;">Remove</button></sc-if>
+                </div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
           <!-- QuickBooks integration -->
           <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
@@ -338,6 +551,10 @@
               <span style="margin-left:auto;font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;">Last sync · just now</span>
             </div>
             <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:10px;">Customer mapping</div>
+            <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+              <button onClick="{{ customersCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+              <button onClick="{{ customersPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+            </div>
             <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
               <table style="width:100%;border-collapse:collapse;min-width:600px;">
                 <thead><tr>
@@ -388,6 +605,10 @@
 
             <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:16px;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#6b3fd6;margin-right:9px;vertical-align:-2px;"></span>Crew roster</div>
+              <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+                <button onClick="{{ crewsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ crewsPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+              </div>
               <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
                 <table style="width:100%;border-collapse:collapse;">
                   <thead><tr>
@@ -430,23 +651,33 @@
                   <input value="{{ form.equipType }}" onChange="{{ onEquipType }}" placeholder="Heavy" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#6b3fd6;background:#fff;box-shadow:0 0 0 3px rgba(107,63,214,.12);">
                 </div>
               </div>
+              <div style="margin-bottom:18px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Rental rate <span style="font-weight:400;color:#9aa1b0;">($/hr · billed on field tickets)</span></label>
+                <input value="{{ form.equipRate }}" onChange="{{ onEquipRate }}" type="number" min="0" step="1" placeholder="0" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#6b3fd6;background:#fff;box-shadow:0 0 0 3px rgba(107,63,214,.12);">
+              </div>
               <button onClick="{{ saveEquipment }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 18px;border:none;border-radius:9px;background:#6b3fd6;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#5a32bb;">Save equipment</button>
               <div style="text-align:center;min-height:18px;margin-top:10px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.equip }}</div>
             </div>
 
             <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:16px;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#6b3fd6;margin-right:9px;vertical-align:-2px;"></span>Equipment roster</div>
+              <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+                <button onClick="{{ equipmentCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ equipmentPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+              </div>
               <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
                 <table style="width:100%;border-collapse:collapse;">
                   <thead><tr>
                     <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Equipment</th>
                     <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Type</th>
+                    <th style="text-align:right;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Rate</th>
                     <th style="text-align:right;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;"></th>
                   </tr></thead>
                   <tbody>
                     <sc-for list="{{ equipRosterRows }}" as="r" hint-placeholder-count="3"><tr>
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:600 13px 'IBM Plex Sans';color:#0c1322;vertical-align:top;">{{ r.name }}</td>
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:400 12.5px 'IBM Plex Sans';color:#5b6477;vertical-align:top;">{{ r.type }}</td>
+                      <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:500 12.5px 'IBM Plex Mono';color:#0c1322;text-align:right;vertical-align:top;">{{ r.rate }}</td>
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;vertical-align:top;"><button onClick="{{ r.onEdit }}" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b3fd6;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3eefc;border-color:#6b3fd6;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit</button></td>
                     </tr></sc-for>
                   </tbody>
@@ -475,6 +706,10 @@
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Role</label>
                   <input value="{{ form.employeeRole }}" onChange="{{ onEmpRole }}" placeholder="Operator" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;box-shadow:0 0 0 3px rgba(47,107,255,.12);">
                 </div>
+              </div>
+              <div style="margin-bottom:18px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Hourly rate <span style="font-weight:400;color:#9aa1b0;">($/hr · used to price field tickets)</span></label>
+                <input value="{{ form.employeeRate }}" onChange="{{ onEmpRate }}" type="number" min="0" step="1" placeholder="0" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;box-shadow:0 0 0 3px rgba(47,107,255,.12);">
               </div>
               <div style="margin-bottom:18px;">
                 <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Certifications</label>
@@ -516,10 +751,15 @@
                   <div style="font:600 14px 'Space Grotesk';color:#0c1322;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#2f6bff;margin-right:9px;vertical-align:-2px;"></span>Employee roster</div>
                   <span style="font:500 11.5px 'IBM Plex Mono';color:#0f9d6b;">{{ availCount }} available</span>
                 </div>
+                <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+                  <button onClick="{{ employeesCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                  <button onClick="{{ employeesPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+                </div>
                 <div style="border:1px solid #eceef2;border-radius:11px;overflow-y:auto;max-height:360px;">
                   <table style="width:100%;border-collapse:collapse;">
                     <thead><tr>
                       <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;position:sticky;top:0;z-index:1;">Employee</th>
+                      <th style="text-align:right;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;position:sticky;top:0;z-index:1;">Rate</th>
                       <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;position:sticky;top:0;z-index:1;">Crew</th>
                       <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;position:sticky;top:0;z-index:1;">Status</th>
                     </tr></thead>
@@ -531,6 +771,7 @@
                             <div><div style="font:600 13px 'IBM Plex Sans';color:#0c1322;">{{ r.name }}</div><div style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;">{{ r.role }}</div></div>
                           </div>
                         </td>
+                        <td style="padding:11px 16px;border-bottom:1px solid #f1f2f5;text-align:right;font:500 12px 'IBM Plex Mono';color:#0c1322;white-space:nowrap;">{{ r.rate }}</td>
                         <td style="padding:11px 16px;border-bottom:1px solid #f1f2f5;"><span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ r.crewBg }};color:{{ r.crewFg }};">{{ r.crewLabel }}</span></td>
                         <td style="padding:11px 16px;border-bottom:1px solid #f1f2f5;">
                           <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};">{{ r.status }}</span>
@@ -702,6 +943,10 @@
             <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:3px;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#4338ca;margin-right:9px;vertical-align:-2px;"></span>Purchase order history</div>
               <div style="font:400 12.5px 'IBM Plex Sans';color:#8a92a4;margin-bottom:16px;">Linked to the inventory catalog · edit to adjust stock.</div>
+              <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+                <button onClick="{{ posCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ posPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+              </div>
               <div style="border:1px solid #eceef2;border-radius:11px;overflow-x:auto;">
                 <table style="width:100%;border-collapse:collapse;min-width:440px;">
                   <thead><tr>
@@ -777,18 +1022,43 @@
                 <sc-for list="{{ jobOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
               </select>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-              <div>
-                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Total labor hours</label>
-                <input value="{{ form.laborHours }}" onChange="{{ onLaborHours }}" type="number" placeholder="0" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;box-shadow:0 0 0 3px rgba(47,107,255,.12);">
+            <div style="margin-bottom:14px;">
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Crew on site <span style="font-weight:400;color:#9aa1b0;">— dispatched today</span></label>
+              <select value="{{ form.ticketCrew }}" onChange="{{ onTicketCrew }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
+                <option value="">Select crew…</option>
+                <sc-for list="{{ crewOptions }}" as="o" hint-placeholder-count="2"><option value="{{ o }}">{{ o }}</option></sc-for>
+              </select>
+            </div>
+            <sc-if value="{{ showTicketCrew }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-bottom:14px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Who worked &amp; hours <span style="font-weight:400;color:#9aa1b0;">— tap to include / exclude</span></label>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ ticketMembers }}" as="m" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid #eceef2;border-radius:10px;background:{{ m.rowBg }};">
+                      <button onClick="{{ m.onToggle }}" style="{{ m.checkStyle }}">{{ m.check }}</button>
+                      <div style="flex:1;min-width:0;"><div style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;">{{ m.name }}</div><div style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;">{{ m.role }}</div></div>
+                      <input value="{{ m.hours }}" onChange="{{ m.onHours }}" type="number" min="0" placeholder="hrs" style="width:78px;padding:8px 10px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;text-align:right;" style-focus="border-color:#2f6bff;">
+                    </div>
+                  </sc-for>
+                </div>
               </div>
-              <div>
-                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Equipment used</label>
-                <select value="{{ form.ticketEquip }}" onChange="{{ onTicketEquip }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
-                  <option value="None">None</option>
-                  <sc-for list="{{ equipOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
-                </select>
+            </sc-if>
+            <div style="margin-bottom:14px;">
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Equipment used <span style="font-weight:400;color:#9aa1b0;">— optional</span></label>
+              <select value="{{ form.ticketEquip }}" onChange="{{ onTicketEquip }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
+                <option value="None">None</option>
+                <sc-for list="{{ equipOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+              </select>
+            </div>
+            <sc-if value="{{ showTicketEquip }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-bottom:14px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Equipment hours <span style="font-weight:400;color:#9aa1b0;">— defaults to total crew hours</span></label>
+                <input value="{{ form.tEquipHours }}" onChange="{{ onTEquipHours }}" type="number" min="0" placeholder="hrs on site" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;box-shadow:0 0 0 3px rgba(47,107,255,.12);">
               </div>
+            </sc-if>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#f3f6fb;border-radius:11px;margin-bottom:18px;">
+              <span style="font:600 12px 'IBM Plex Sans';color:#404a5c;">Logged on this ticket</span>
+              <span style="font:600 13.5px 'IBM Plex Mono';color:#0c1322;">{{ ticketCrewSummary }}</span>
             </div>
             <button onClick="{{ submitTicket }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border:none;border-radius:9px;background:#18a974;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0f9162;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
@@ -805,6 +1075,7 @@
                 <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.job }}</div></div>
                 <div style="font:500 12px 'IBM Plex Mono';color:#6b7488;">{{ t.hours }}h</div>
                 <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};">{{ t.badgeLabel }}</span>
+                <button onClick="{{ t.onView }}" style="font:600 11.5px 'IBM Plex Sans';color:#2f6bff;background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0;" style-hover="text-decoration:underline;">Details</button>
               </div>
             </sc-for>
           </div>
@@ -842,6 +1113,10 @@
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Field tickets · review &amp; send to QuickBooks</div>
               <div style="font:400 11.5px 'IBM Plex Sans';color:#9aa1b0;">Ops approves → Billing sends to QuickBooks</div>
             </div>
+            <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+              <button onClick="{{ ticketsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+              <button onClick="{{ ticketsPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+            </div>
             <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
               <table style="width:100%;border-collapse:collapse;min-width:560px;">
                 <thead><tr>
@@ -857,7 +1132,8 @@
                     <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:400 13px 'IBM Plex Sans';color:#3a4456;">{{ r.job }}</td>
                     <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:600 13px 'IBM Plex Mono';color:#0c1322;">{{ r.amount }}</td>
                     <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;"><span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};">{{ r.badgeLabel }}</span></td>
-                    <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;">
+                    <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;white-space:nowrap;">
+                      <button onClick="{{ r.onView }}" style="display:inline-flex;align-items:center;gap:5px;padding:7px 11px;margin-right:7px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>View</button>
                       <sc-if value="{{ r.showApprove }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onApprove }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:none;border-radius:8px;background:#2f6bff;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve</button></sc-if>
                       <sc-if value="{{ r.awaitingReview }}" hint-placeholder-val="{{ true }}"><span style="font:400 12px 'IBM Plex Sans';color:#aab1bf;">Awaiting review</span></sc-if>
                       <sc-if value="{{ r.showSend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onInvoice }}" style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:none;border-radius:8px;background:#2ca01c;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#238016;"><span style="display:inline-flex;width:15px;height:15px;border-radius:50%;background:#fff;color:#2ca01c;align-items:center;justify-content:center;font:700 10px 'Space Grotesk';">$</span>Send to QuickBooks</button></sc-if>
@@ -886,6 +1162,10 @@
 
           <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
             <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:16px;">Job costing dashboard</div>
+            <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
+              <button onClick="{{ reportsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+              <button onClick="{{ reportsPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+            </div>
             <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
               <table style="width:100%;border-collapse:collapse;min-width:580px;">
                 <thead><tr>
@@ -1012,7 +1292,7 @@
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Bill from</label>
-                  <select value="{{ form.invFrom }}" onChange="{{ onInvFrom }}" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <select value="{{ invFromVal }}" onChange="{{ onInvFrom }}" style="width:100%;padding:10px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
                     <sc-for list="{{ companyOptions }}" as="o" hint-placeholder-count="2"><option value="{{ o }}">{{ o }}</option></sc-for>
                   </select>
                 </div>
@@ -1114,6 +1394,7 @@
                   <option value="tag">Group by tag</option>
                   <option value="job">Group by job site</option>
                 </select>
+                <button onClick="{{ rentalsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #0e8a72;border-radius:8px;background:#e2f6f1;color:#0e8a72;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0e8a72;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
                 <button onClick="{{ onPrintAll }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #2f6bff;border-radius:8px;background:#eef3ff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2f6bff;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Print all</button>
               </div>
             </div>
@@ -1209,6 +1490,8 @@
                   <option value="">All categories</option>
                   <sc-for list="{{ categoryOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o }}">{{ o }}</option></sc-for>
                 </select>
+                <button onClick="{{ materialsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid #e6e8ee;border-radius:9px;background:#fff;color:#0e8a72;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ materialsPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid #e6e8ee;border-radius:9px;background:#fff;color:#2f6bff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
               </div>
             </div>
             <div style="border:1px solid #eceef2;border-radius:11px;overflow-x:auto;max-height:460px;overflow-y:auto;">
@@ -1264,12 +1547,11 @@
         <div style="background:#0c1322;padding:34px 44px;display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
             <div style="display:flex;align-items:center;gap:11px;">
-              <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
-              </div>
+              <sc-if value="{{ viHasLogo }}" hint-placeholder-val="{{ false }}"><div style="width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ viLogoEl }}</div></sc-if>
+              <sc-if value="{{ viNoLogo }}" hint-placeholder-val="{{ true }}"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(140deg, {{ viAccent }}, {{ viAccentDark }});display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 14px 'Space Grotesk';color:#fff;">{{ viInitials }}</div></sc-if>
               <div style="font:700 21px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">{{ viFrom }}</div>
             </div>
-            <div style="margin-top:14px;font:400 12px/1.6 'IBM Plex Sans';color:#9aa3ba;">{{ viFromLine1 }}<br>{{ viFromLine2 }}<br>{{ viFromEmail }} · {{ viFromPhone }}</div>
+            <div style="margin-top:14px;font:400 12px/1.6 'IBM Plex Sans';color:#9aa3ba;">{{ viFromLine1 }}<br>{{ viFromLine2 }}<br>{{ viFromContact }}</div>
           </div>
           <div style="text-align:right;">
             <div style="font:600 30px 'Space Grotesk';color:#fff;letter-spacing:2px;">INVOICE</div>
@@ -1357,9 +1639,8 @@
         <div style="background:#0c1322;padding:30px 44px;display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
             <div style="display:flex;align-items:center;gap:11px;">
-              <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
-              </div>
+              <sc-if value="{{ repHasLogo }}" hint-placeholder-val="{{ false }}"><div style="width:36px;height:36px;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ repLogoEl }}</div></sc-if>
+              <sc-if value="{{ repNoLogo }}" hint-placeholder-val="{{ true }}"><div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg, {{ repAccent }}, {{ repAccentDark }});display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 13px 'Space Grotesk';color:#fff;">{{ repInitials }}</div></sc-if>
               <div style="font:700 19px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">{{ repFrom }}</div>
             </div>
             <div style="margin-top:12px;font:400 12px/1.6 'IBM Plex Sans';color:#9aa3ba;">{{ repFromLine1 }}<br>{{ repFromLine2 }} · {{ repFromPhone }}</div>
@@ -1412,6 +1693,90 @@
 
         <div style="padding:28px 44px 40px;margin-top:14px;">
           <div style="border-top:1px solid #eceef2;padding-top:16px;font:400 11.5px/1.6 'IBM Plex Sans';color:#9aa1b0;">Lists equipment currently on hire for {{ repScope }}, grouped by tag. Accrual is calculated at the cubic daily rate up to the date shown. Not an invoice.</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== TICKET REVIEW DETAIL MODAL ===== -->
+  <sc-if value="{{ showTicketDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1004;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;">
+      <div style="width:100%;max-width:500px;background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.4);overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px;border-bottom:1px solid #eceef2;">
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font:600 16px 'Space Grotesk';color:#0c1322;">{{ vtId }}</div>
+              <span style="font:600 11px 'IBM Plex Sans';padding:3px 10px;border-radius:20px;background:{{ vtBadgeBg }};color:{{ vtBadgeFg }};">{{ vtBadgeLabel }}</span>
+            </div>
+            <div style="font:400 12.5px 'IBM Plex Sans';color:#6b7488;margin-top:5px;">{{ vtJob }}</div>
+          </div>
+          <button onClick="{{ closeTicketDetail }}" style="width:30px;height:30px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#8a92a4;font:600 17px/1 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">×</button>
+        </div>
+
+        <div style="padding:18px 22px;">
+          <div style="display:flex;gap:24px;margin-bottom:18px;flex-wrap:wrap;">
+            <div><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Crew</div><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;">{{ vtCrew }}</div></div>
+            <div><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Submitted by</div><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;">{{ vtBy }}</div></div>
+            <div><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Date</div><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;">{{ vtDate }}</div></div>
+          </div>
+
+          <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:8px;">Crew &amp; equipment</div>
+          <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;margin-bottom:16px;">
+            <sc-for list="{{ vtLines }}" as="ln" hint-placeholder-count="2">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f3f4f6;">
+                <div style="min-width:0;"><div style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;">{{ ln.label }}</div><div style="font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ ln.detail }}</div></div>
+                <div style="font:600 13px 'IBM Plex Mono';color:#0c1322;flex-shrink:0;">{{ ln.amount }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ vtShowMoney }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:#0c1322;">
+              <span style="font:600 12px 'IBM Plex Sans';color:#cdd3df;">Ticket total</span>
+              <span style="font:600 17px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">{{ vtTotal }}</span>
+            </div></sc-if>
+          </div>
+
+          <sc-if value="{{ vtInvoiced }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:7px;font:600 12.5px 'IBM Plex Sans';color:#2ca01c;background:#eaf7e6;border-radius:9px;padding:10px 13px;margin-bottom:16px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2ca01c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sent to QuickBooks · {{ vtQbo }}</div></sc-if>
+
+          <div style="display:flex;gap:9px;">
+            <sc-if value="{{ vtShowApprove }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vtApprove }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve ticket</button></sc-if>
+            <sc-if value="{{ vtShowSend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vtInvoice }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:9px;background:#2ca01c;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#238016;"><span style="display:inline-flex;width:15px;height:15px;border-radius:50%;background:#fff;color:#2ca01c;align-items:center;justify-content:center;font:700 10px 'Space Grotesk';">$</span>Send to QuickBooks</button></sc-if>
+            <button onClick="{{ closeTicketDetail }}" style="padding:11px 18px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#6b7488;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== EXPORT / PRINT SHEET OVERLAY ===== -->
+  <sc-if value="{{ showPrintDoc }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1003;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;">
+      <div id="f2b-print-toolbar" style="width:100%;max-width:1000px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 16px;">
+        <button onClick="{{ closePrint }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back
+        </button>
+        <button onClick="{{ doPrintDoc }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;box-shadow:0 2px 8px rgba(47,107,255,.35);" style-hover="background:#2356d6;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Download / Print PDF
+        </button>
+      </div>
+
+      <div id="f2b-print-sheet" style="width:100%;max-width:1000px;background:#fff;margin:0 16px;box-shadow:0 24px 60px rgba(0,0,0,.4);">
+        <div style="background:#0c1322;padding:26px 40px;display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;">
+          <div>
+            <div style="font:700 19px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">{{ pdOrg }}</div>
+            <div style="margin-top:7px;font:600 11px 'IBM Plex Mono';letter-spacing:1.2px;text-transform:uppercase;color:#7d88a0;">{{ pdTitle }}</div>
+          </div>
+          <div style="text-align:right;font:400 12px/1.7 'IBM Plex Sans';color:#9aa3ba;">{{ pdStamp }}<br>{{ pdCount }}</div>
+        </div>
+        <div style="padding:18px 40px 40px;overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr>
+              <sc-for list="{{ pdHeaders }}" as="h" hint-placeholder-count="5"><th style="text-align:left;padding:10px 12px;font:600 10px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;border-bottom:2px solid #0c1322;white-space:nowrap;">{{ h }}</th></sc-for>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ pdRows }}" as="row" hint-placeholder-count="6"><tr>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="5"><td style="padding:9px 12px;border-bottom:1px solid #f1f2f5;font:400 12px 'IBM Plex Sans';color:#2b3344;vertical-align:top;">{{ c.v }}</td></sc-for>
+              </tr></sc-for>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1538,6 +1903,16 @@ class Component extends DCLogic {
     loginPass: '',
     loginWs: 'Scaffold Monkey',
     loginError: '',
+    devMode: false,
+    tenants: {},
+    tenantId: '',
+    tenantUserName: '',
+    dev: { name: '', accent: '#2f6bff', logo: '', email: '', phone: '', addr1: '', addr2: '', uName: '', uEmail: '', uPass: '', uRole: 'Owner / Admin' },
+    uDraft: {},
+    editId: '',
+    editDraft: {},
+    devMsg: '',
+    devMsgType: 'ok',
     qboConnected: true,
     qboSeq: 1862,
     qboOverrides: {},
@@ -1548,51 +1923,51 @@ class Component extends DCLogic {
       { name: 'Site C — Electrical Installation', budget: 42000, actual: 46200 },
     ],
     employees: [
-      { name: "John Doe", role: "Foreman", certs: [{ type: "OSHA 10", expires: "2026-08-01" }, { type: "Equipment Operator", expires: "2026-09-10" }] },
-      { name: "Jane Smith", role: "Operator", certs: [{ type: "OSHA 30", expires: "2026-11-15" }] },
-      { name: "Mike Johnson", role: "Laborer", certs: [{ type: "First Aid / CPR", expires: "2027-06-30" }] },
-      { name: "Sarah Chen", role: "Technician", certs: [{ type: "Equipment Operator", expires: "2026-02-14" }, { type: "Electrical Cert", expires: "2026-05-05" }] },
-      { name: "Robert Lee", role: "Electrician", certs: [{ type: "Confined Space", expires: "2027-01-22" }] },
-      { name: "Maria Garcia", role: "Welder", certs: [{ type: "Hydrovac Certified", expires: "2026-08-01" }] },
-      { name: "David Kim", role: "Carpenter", certs: [{ type: "Electrical Cert", expires: "2026-11-15" }, { type: "OSHA 30", expires: "2027-03-20" }] },
-      { name: "Emily Davis", role: "Rigger", certs: [{ type: "Hazmat", expires: "2027-06-30" }] },
-      { name: "James Wilson", role: "Scaffolder", certs: [{ type: "OSHA 10", expires: "2026-02-14" }] },
-      { name: "Linda Martinez", role: "Safety Officer", certs: [{ type: "OSHA 30", expires: "2027-01-22" }, { type: "Confined Space", expires: "2026-07-19" }] },
-      { name: "Carlos Ramirez", role: "Foreman", certs: [{ type: "First Aid / CPR", expires: "2026-08-01" }] },
-      { name: "Angela White", role: "Operator", certs: [{ type: "Equipment Operator", expires: "2026-11-15" }] },
-      { name: "Brian Taylor", role: "Laborer", certs: [{ type: "Confined Space", expires: "2027-06-30" }, { type: "Hazmat", expires: "2025-12-01" }] },
-      { name: "Nicole Brown", role: "Technician", certs: [{ type: "Hydrovac Certified", expires: "2026-02-14" }] },
-      { name: "Kevin Nguyen", role: "Electrician", certs: [{ type: "Electrical Cert", expires: "2027-01-22" }] },
-      { name: "Rachel Adams", role: "Welder", certs: [{ type: "Hazmat", expires: "2026-08-01" }, { type: "First Aid / CPR", expires: "2026-09-10" }] },
-      { name: "Thomas Moore", role: "Carpenter", certs: [{ type: "OSHA 10", expires: "2026-11-15" }] },
-      { name: "Olivia Clark", role: "Rigger", certs: [{ type: "OSHA 30", expires: "2027-06-30" }] },
-      { name: "Daniel Scott", role: "Scaffolder", certs: [{ type: "First Aid / CPR", expires: "2026-02-14" }, { type: "Hydrovac Certified", expires: "2026-05-05" }] },
-      { name: "Sophia Lewis", role: "Safety Officer", certs: [{ type: "Equipment Operator", expires: "2027-01-22" }] },
-      { name: "Marcus Hall", role: "Foreman", certs: [{ type: "Confined Space", expires: "2026-08-01" }] },
-      { name: "Grace Young", role: "Operator", certs: [{ type: "Hydrovac Certified", expires: "2026-11-15" }, { type: "OSHA 10", expires: "2027-03-20" }] },
-      { name: "Peter Walker", role: "Laborer", certs: [{ type: "Electrical Cert", expires: "2027-06-30" }] },
-      { name: "Hannah King", role: "Technician", certs: [{ type: "Hazmat", expires: "2026-02-14" }] },
-      { name: "Jason Wright", role: "Electrician", certs: [{ type: "OSHA 10", expires: "2027-01-22" }, { type: "Equipment Operator", expires: "2026-07-19" }] },
-      { name: "Megan Green", role: "Welder", certs: [{ type: "OSHA 30", expires: "2026-08-01" }] },
-      { name: "Eric Baker", role: "Carpenter", certs: [{ type: "First Aid / CPR", expires: "2026-11-15" }] },
-      { name: "Laura Hill", role: "Rigger", certs: [{ type: "Equipment Operator", expires: "2027-06-30" }, { type: "Electrical Cert", expires: "2025-12-01" }] },
-      { name: "Steven Reed", role: "Scaffolder", certs: [{ type: "Confined Space", expires: "2026-02-14" }] },
-      { name: "Amber Cook", role: "Safety Officer", certs: [{ type: "Hydrovac Certified", expires: "2027-01-22" }] },
-      { name: "Tyler Ward", role: "Foreman", certs: [{ type: "Electrical Cert", expires: "2026-08-01" }, { type: "OSHA 30", expires: "2026-09-10" }] },
-      { name: "Diana Price", role: "Operator", certs: [{ type: "Hazmat", expires: "2026-11-15" }] },
-      { name: "Aaron Cruz", role: "Laborer", certs: [{ type: "OSHA 10", expires: "2027-06-30" }] },
-      { name: "Chloe Bell", role: "Technician", certs: [{ type: "OSHA 30", expires: "2026-02-14" }, { type: "Confined Space", expires: "2026-05-05" }] },
-      { name: "Victor Diaz", role: "Electrician", certs: [{ type: "First Aid / CPR", expires: "2027-01-22" }] },
-      { name: "Paula Foster", role: "Welder", certs: [{ type: "Equipment Operator", expires: "2026-08-01" }] },
-      { name: "Nathan Ross", role: "Carpenter", certs: [{ type: "Confined Space", expires: "2026-11-15" }, { type: "Hazmat", expires: "2027-03-20" }] },
-      { name: "Julia Ortiz", role: "Rigger", certs: [{ type: "Hydrovac Certified", expires: "2027-06-30" }] },
-      { name: "Gregory Hayes", role: "Scaffolder", certs: [{ type: "Electrical Cert", expires: "2026-02-14" }] },
-      { name: "Monica Stone", role: "Safety Officer", certs: [{ type: "Hazmat", expires: "2027-01-22" }, { type: "First Aid / CPR", expires: "2026-07-19" }] },
+      { name: "John Doe", role: "Foreman", rate: 95, certs: [{ type: "OSHA 10", expires: "2026-08-01" }, { type: "Equipment Operator", expires: "2026-09-10" }] },
+      { name: "Jane Smith", role: "Operator", rate: 78, certs: [{ type: "OSHA 30", expires: "2026-11-15" }] },
+      { name: "Mike Johnson", role: "Laborer", rate: 55, certs: [{ type: "First Aid / CPR", expires: "2027-06-30" }] },
+      { name: "Sarah Chen", role: "Technician", rate: 82, certs: [{ type: "Equipment Operator", expires: "2026-02-14" }, { type: "Electrical Cert", expires: "2026-05-05" }] },
+      { name: "Robert Lee", role: "Electrician", rate: 88, certs: [{ type: "Confined Space", expires: "2027-01-22" }] },
+      { name: "Maria Garcia", role: "Welder", rate: 80, certs: [{ type: "Hydrovac Certified", expires: "2026-08-01" }] },
+      { name: "David Kim", role: "Carpenter", rate: 72, certs: [{ type: "Electrical Cert", expires: "2026-11-15" }, { type: "OSHA 30", expires: "2027-03-20" }] },
+      { name: "Emily Davis", role: "Rigger", rate: 76, certs: [{ type: "Hazmat", expires: "2027-06-30" }] },
+      { name: "James Wilson", role: "Scaffolder", rate: 68, certs: [{ type: "OSHA 10", expires: "2026-02-14" }] },
+      { name: "Linda Martinez", role: "Safety Officer", rate: 85, certs: [{ type: "OSHA 30", expires: "2027-01-22" }, { type: "Confined Space", expires: "2026-07-19" }] },
+      { name: "Carlos Ramirez", role: "Foreman", rate: 95, certs: [{ type: "First Aid / CPR", expires: "2026-08-01" }] },
+      { name: "Angela White", role: "Operator", rate: 78, certs: [{ type: "Equipment Operator", expires: "2026-11-15" }] },
+      { name: "Brian Taylor", role: "Laborer", rate: 55, certs: [{ type: "Confined Space", expires: "2027-06-30" }, { type: "Hazmat", expires: "2025-12-01" }] },
+      { name: "Nicole Brown", role: "Technician", rate: 82, certs: [{ type: "Hydrovac Certified", expires: "2026-02-14" }] },
+      { name: "Kevin Nguyen", role: "Electrician", rate: 88, certs: [{ type: "Electrical Cert", expires: "2027-01-22" }] },
+      { name: "Rachel Adams", role: "Welder", rate: 80, certs: [{ type: "Hazmat", expires: "2026-08-01" }, { type: "First Aid / CPR", expires: "2026-09-10" }] },
+      { name: "Thomas Moore", role: "Carpenter", rate: 72, certs: [{ type: "OSHA 10", expires: "2026-11-15" }] },
+      { name: "Olivia Clark", role: "Rigger", rate: 76, certs: [{ type: "OSHA 30", expires: "2027-06-30" }] },
+      { name: "Daniel Scott", role: "Scaffolder", rate: 68, certs: [{ type: "First Aid / CPR", expires: "2026-02-14" }, { type: "Hydrovac Certified", expires: "2026-05-05" }] },
+      { name: "Sophia Lewis", role: "Safety Officer", rate: 85, certs: [{ type: "Equipment Operator", expires: "2027-01-22" }] },
+      { name: "Marcus Hall", role: "Foreman", rate: 95, certs: [{ type: "Confined Space", expires: "2026-08-01" }] },
+      { name: "Grace Young", role: "Operator", rate: 78, certs: [{ type: "Hydrovac Certified", expires: "2026-11-15" }, { type: "OSHA 10", expires: "2027-03-20" }] },
+      { name: "Peter Walker", role: "Laborer", rate: 55, certs: [{ type: "Electrical Cert", expires: "2027-06-30" }] },
+      { name: "Hannah King", role: "Technician", rate: 82, certs: [{ type: "Hazmat", expires: "2026-02-14" }] },
+      { name: "Jason Wright", role: "Electrician", rate: 88, certs: [{ type: "OSHA 10", expires: "2027-01-22" }, { type: "Equipment Operator", expires: "2026-07-19" }] },
+      { name: "Megan Green", role: "Welder", rate: 80, certs: [{ type: "OSHA 30", expires: "2026-08-01" }] },
+      { name: "Eric Baker", role: "Carpenter", rate: 72, certs: [{ type: "First Aid / CPR", expires: "2026-11-15" }] },
+      { name: "Laura Hill", role: "Rigger", rate: 76, certs: [{ type: "Equipment Operator", expires: "2027-06-30" }, { type: "Electrical Cert", expires: "2025-12-01" }] },
+      { name: "Steven Reed", role: "Scaffolder", rate: 68, certs: [{ type: "Confined Space", expires: "2026-02-14" }] },
+      { name: "Amber Cook", role: "Safety Officer", rate: 85, certs: [{ type: "Hydrovac Certified", expires: "2027-01-22" }] },
+      { name: "Tyler Ward", role: "Foreman", rate: 95, certs: [{ type: "Electrical Cert", expires: "2026-08-01" }, { type: "OSHA 30", expires: "2026-09-10" }] },
+      { name: "Diana Price", role: "Operator", rate: 78, certs: [{ type: "Hazmat", expires: "2026-11-15" }] },
+      { name: "Aaron Cruz", role: "Laborer", rate: 55, certs: [{ type: "OSHA 10", expires: "2027-06-30" }] },
+      { name: "Chloe Bell", role: "Technician", rate: 82, certs: [{ type: "OSHA 30", expires: "2026-02-14" }, { type: "Confined Space", expires: "2026-05-05" }] },
+      { name: "Victor Diaz", role: "Electrician", rate: 88, certs: [{ type: "First Aid / CPR", expires: "2027-01-22" }] },
+      { name: "Paula Foster", role: "Welder", rate: 80, certs: [{ type: "Equipment Operator", expires: "2026-08-01" }] },
+      { name: "Nathan Ross", role: "Carpenter", rate: 72, certs: [{ type: "Confined Space", expires: "2026-11-15" }, { type: "Hazmat", expires: "2027-03-20" }] },
+      { name: "Julia Ortiz", role: "Rigger", rate: 76, certs: [{ type: "Hydrovac Certified", expires: "2027-06-30" }] },
+      { name: "Gregory Hayes", role: "Scaffolder", rate: 68, certs: [{ type: "Electrical Cert", expires: "2026-02-14" }] },
+      { name: "Monica Stone", role: "Safety Officer", rate: 85, certs: [{ type: "Hazmat", expires: "2027-01-22" }, { type: "First Aid / CPR", expires: "2026-07-19" }] },
     ],
     equipment: [
-      { name: 'Excavator (Unit #402)', type: 'Heavy' },
-      { name: 'Hydrovac Truck (Unit #811)', type: 'Vac' },
-      { name: 'Skid Steer (Unit #203)', type: 'Compact' },
+      { name: 'Excavator (Unit #402)', type: 'Heavy', rate: 145 },
+      { name: 'Hydrovac Truck (Unit #811)', type: 'Vac', rate: 185 },
+      { name: 'Skid Steer (Unit #203)', type: 'Compact', rate: 95 },
     ],
     crews: [{ name: 'Alpha Crew', members: ['John Doe', 'Jane Smith'], equipment: ['Excavator (Unit #402)'] }],
     materials: [],
@@ -1606,6 +1981,8 @@ class Component extends DCLogic {
     purchaseOrders: [],
     viewInvoice: null,
     viewReport: null,
+    viewTicket: null,
+    printDoc: null,
     editItem: null,
     editItemEvents: [],
     editEvDate: '',
@@ -1617,17 +1994,17 @@ class Component extends DCLogic {
     tagSeq: 1005,
     invSeq: 4810,
     tickets: [
-      { id: 'TCK-9021', job: 'Site A — Pipeline Maintenance', hours: 48, amount: 7200, status: 'approved', invoiced: false },
-      { id: 'TCK-9022', job: 'Site B — Hydrovac Excavation', hours: 32, amount: 5100, status: 'approved', invoiced: false },
-      { id: 'TCK-9023', job: 'Site C — Electrical Installation', hours: 16, amount: 2400, status: 'pending', invoiced: false },
+      { id: 'TCK-9021', job: 'Site A — Pipeline Maintenance', crew: 'Alpha Crew', laborLines: [{ name: 'John Doe', role: 'Foreman', rate: 95, hours: 10, amount: 950 }, { name: 'Jane Smith', role: 'Operator', rate: 78, hours: 10, amount: 780 }], laborAmount: 1730, equip: 'None', equipHours: 0, equipRate: 0, equipAmount: 0, hours: 20, amount: 1730, by: 'Jane Smith', date: '2026-06-18', status: 'approved', invoiced: false },
+      { id: 'TCK-9022', job: 'Site B — Hydrovac Excavation', crew: 'Alpha Crew', laborLines: [{ name: 'John Doe', role: 'Foreman', rate: 95, hours: 8, amount: 760 }, { name: 'Jane Smith', role: 'Operator', rate: 78, hours: 8, amount: 624 }], laborAmount: 1384, equip: 'Hydrovac Truck (Unit #811)', equipHours: 6, equipRate: 185, equipAmount: 1110, hours: 16, amount: 2494, by: 'John Doe', date: '2026-06-19', status: 'approved', invoiced: false },
+      { id: 'TCK-9023', job: 'Site C — Electrical Installation', crew: 'Alpha Crew', laborLines: [{ name: 'John Doe', role: 'Foreman', rate: 95, hours: 6, amount: 570 }, { name: 'Jane Smith', role: 'Operator', rate: 78, hours: 6, amount: 468 }], laborAmount: 1038, equip: 'Skid Steer (Unit #203)', equipHours: 8, equipRate: 95, equipAmount: 760, hours: 12, amount: 1798, by: 'John Doe', date: '2026-06-20', status: 'pending', invoiced: false },
     ],
     form: {
       crewName: '', crewMembers: ['John Doe', 'Jane Smith'], crewEquip: ['Excavator (Unit #402)'], editCrew: '',
       equipName: '', equipType: '', editEquip: '',
-      employeeName: '', employeeRole: '', editEmp: '', employeeCerts: [], newCertType: 'OSHA 10', newCertExp: '',
+      employeeName: '', employeeRole: '', employeeRate: '', editEmp: '', employeeCerts: [], newCertType: 'OSHA 10', newCertExp: '',
       jobName: '', jobBudget: '', editJob: '',
       dispatchJob: '', dispatchResource: '',
-      ticketJob: '', laborHours: '', ticketEquip: 'None',
+      ticketJob: '', ticketCrew: '', tMembers: [], ticketEquip: 'None', tEquipHours: '', equipRate: '',
       coJob: '', coTag: '__new__', coNewTag: '', coStart: new Date().toISOString().slice(0, 10), coItems: [], coLineMat: '', coLineQty: '', coLineCube: '', coMatSearch: '',
       invJob: '', invTag: '__all__', invMethod: 'cubic', invFrom: 'Scaffold Monkey', invClient: 'Targa Resources',
       invMode: 'month', invMonth: new Date().toISOString().slice(0, 7), invStart: '', invEnd: '',
@@ -1669,6 +2046,100 @@ class Component extends DCLogic {
   };
   WS_INITIALS = { 'Scaffold Monkey': 'SM', 'Apex Access Systems': 'AA' };
 
+  // ---------------- Platform dev console · tenant provisioning ----------------
+  DEV_EMAIL = 'long.vu.t@gmail.com';
+  DEV_PASS = 'Longvu@12';
+  THEME_SWATCHES = ['#2f6bff', '#0e9f8e', '#6b3fd6', '#e0682e', '#c2334d', '#0c8a4a'];
+
+  loadTenants = () => {
+    try { const raw = localStorage.getItem('f2b_tenants'); if (raw) this.setState({ tenants: JSON.parse(raw) || {} }); } catch (e) {}
+  };
+  saveTenants = (tenants) => { try { localStorage.setItem('f2b_tenants', JSON.stringify(tenants)); } catch (e) {} };
+  setDev = (k, v) => this.setState(s => ({ dev: { ...s.dev, [k]: v } }));
+  setUDraft = (id, k, v) => this.setState(s => ({ uDraft: { ...s.uDraft, [id]: { ...(s.uDraft[id] || { name: '', email: '', pass: '', role: 'Dispatcher' }), [k]: v } } }));
+  devNotify = (text, type = 'ok') => { this.setState({ devMsg: text, devMsgType: type }); clearTimeout(this._devT); this._devT = setTimeout(() => this.setState({ devMsg: '' }), 3600); };
+  readLogo = (file, cb) => {
+    if (!file) return;
+    if (!/^image\//.test(file.type)) return this.devNotify('Logo must be an image file', 'err');
+    const r = new FileReader(); r.onload = () => cb(r.result); r.readAsDataURL(file);
+  };
+  validEmail = (e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
+  emailTaken = (email, tenants) => Object.values(tenants).some(t => (t.users || []).some(u => u.email.toLowerCase() === email));
+
+  createTenant = () => {
+    const d = this.state.dev;
+    const name = (d.name || '').trim();
+    if (!name) return this.devNotify('Enter a company / client name', 'err');
+    const uName = (d.uName || '').trim(), uEmail = (d.uEmail || '').trim().toLowerCase(), uPass = (d.uPass || '').trim();
+    if (!uName || !uEmail || !uPass) return this.devNotify('Fill in the first user’s name, email and password', 'err');
+    if (!this.validEmail(uEmail)) return this.devNotify('Enter a valid email address', 'err');
+    const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || ('client-' + Date.now());
+    const tenants = { ...this.state.tenants };
+    if (tenants[id]) return this.devNotify('A workspace with that name already exists', 'err');
+    if (this.emailTaken(uEmail, tenants)) return this.devNotify('That email is already registered to another workspace', 'err');
+    tenants[id] = { id, name, accent: d.accent || '#2f6bff', logo: d.logo || '', email: (d.email || '').trim(), phone: (d.phone || '').trim(), addr1: (d.addr1 || '').trim(), addr2: (d.addr2 || '').trim(), createdAt: Date.now(), users: [{ name: uName, email: uEmail, password: uPass, role: d.uRole || 'Owner / Admin' }] };
+    this.saveTenants(tenants);
+    this.setState({ tenants, dev: { name: '', accent: '#2f6bff', logo: '', email: '', phone: '', addr1: '', addr2: '', uName: '', uEmail: '', uPass: '', uRole: 'Owner / Admin' } });
+    this.devNotify('Created “' + name + '” · owner ' + uEmail);
+  };
+  updateTenant = (id, patch) => {
+    const tenants = { ...this.state.tenants };
+    if (!tenants[id]) return;
+    tenants[id] = { ...tenants[id], ...patch };
+    this.saveTenants(tenants); this.setState({ tenants });
+  };
+  setTenantAccent = (id, accent) => { this.updateTenant(id, { accent }); this.devNotify('Theme updated'); };
+  setTenantLogo = (id, file) => this.readLogo(file, (dataUrl) => { this.updateTenant(id, { logo: dataUrl }); this.devNotify('Logo updated'); });
+  removeTenantLogo = (id) => this.updateTenant(id, { logo: '' });
+  deleteTenant = (id) => {
+    const tenants = { ...this.state.tenants };
+    const nm = tenants[id] ? tenants[id].name : '';
+    delete tenants[id]; this.saveTenants(tenants); this.setState({ tenants });
+    this.devNotify('Removed ' + nm);
+  };
+  addUserToTenant = (id) => {
+    const draft = this.state.uDraft[id] || {};
+    const name = (draft.name || '').trim(), email = (draft.email || '').trim().toLowerCase(), pass = (draft.pass || '').trim();
+    if (!name || !email || !pass) return this.devNotify('Fill in the new user’s name, email and password', 'err');
+    if (!this.validEmail(email)) return this.devNotify('Enter a valid email address', 'err');
+    const tenants = { ...this.state.tenants };
+    if (this.emailTaken(email, tenants)) return this.devNotify('That email is already registered', 'err');
+    tenants[id] = { ...tenants[id], users: [...(tenants[id].users || []), { name, email, password: pass, role: draft.role || 'Dispatcher' }] };
+    this.saveTenants(tenants);
+    const uDraft = { ...this.state.uDraft }; delete uDraft[id];
+    this.setState({ tenants, uDraft });
+    this.devNotify('Added ' + email);
+  };
+  removeUserFromTenant = (id, email) => {
+    const tenants = { ...this.state.tenants };
+    if (!tenants[id]) return;
+    tenants[id] = { ...tenants[id], users: (tenants[id].users || []).filter(u => u.email !== email) };
+    this.saveTenants(tenants); this.setState({ tenants });
+  };
+  openTenantAsOwner = (id) => {
+    const t = this.state.tenants[id]; if (!t || !(t.users || []).length) return;
+    const u = t.users[0];
+    this.setState({ authed: true, devMode: false, tenantId: id, role: u.role || 'Owner / Admin', company: t.name, tenantUserName: u.name, active: 'dashboard' });
+  };
+  startEditTenant = (id) => {
+    const t = this.state.tenants[id]; if (!t) return;
+    this.setState({ editId: id, editDraft: { name: t.name || '', email: t.email || '', phone: t.phone || '', addr1: t.addr1 || '', addr2: t.addr2 || '' } });
+  };
+  setEditDraft = (k, v) => this.setState(s => ({ editDraft: { ...s.editDraft, [k]: v } }));
+  cancelEdit = () => this.setState({ editId: '', editDraft: {} });
+  saveEditTenant = () => {
+    const id = this.state.editId, d = this.state.editDraft;
+    const name = (d.name || '').trim();
+    if (!name) return this.devNotify('Workspace name cannot be empty', 'err');
+    this.updateTenant(id, { name, email: (d.email || '').trim(), phone: (d.phone || '').trim(), addr1: (d.addr1 || '').trim(), addr2: (d.addr2 || '').trim() });
+    this.setState({ editId: '', editDraft: {} });
+    this.devNotify('Saved ' + name);
+  };
+  // In-app company profile editing (current tenant) — writes straight through to the registry
+  setTenantField = (k, v) => { if (this.state.tenantId) this.updateTenant(this.state.tenantId, { [k]: v }); };
+
+  exitDev = () => this.setState({ devMode: false, loginPass: '' });
+
   setLoginStyle = (st) => this.setState({ loginStyle: st });
   onLoginEmail = (e) => this.setState({ loginEmail: e.target.value, loginError: '' });
   onLoginPass = (e) => this.setState({ loginPass: e.target.value, loginError: '' });
@@ -1678,6 +2149,22 @@ class Component extends DCLogic {
     const pass = this.state.loginPass.trim();
     if (!email || !pass)
       return this.setState({ loginError: 'Enter your work email and password to continue.' });
+    // Platform dev / admin login → tenant management console
+    if (email.toLowerCase() === this.DEV_EMAIL && pass === this.DEV_PASS) {
+      return this.setState({ devMode: true, loginEmail: '', loginPass: '', loginError: '', loginBusy: false });
+    }
+    // Registered tenant user → scoped workspace with its own branding
+    const tenants = this.state.tenants || {};
+    for (const tid in tenants) {
+      const t = tenants[tid];
+      const u = (t.users || []).find(x => x.email.toLowerCase() === email.toLowerCase() && x.password === pass);
+      if (u) {
+        return this.setState({ authed: true, devMode: false, tenantId: tid, role: u.role || 'Owner / Admin', company: t.name, tenantUserName: u.name, loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' });
+      }
+    }
+    // Email belongs to a known workspace but password was wrong → fail clearly
+    if (Object.values(tenants).some(t => (t.users || []).some(x => x.email.toLowerCase() === email.toLowerCase())))
+      return this.setState({ loginError: 'Invalid email or password.', loginBusy: false });
     this.setState({ loginError: '', loginBusy: true });
     try {
       const res = await fetch('/api/login', {
@@ -1709,7 +2196,7 @@ class Component extends DCLogic {
   demoSignIn = (role) => this.setState({ authed: true, role, active: 'dashboard', loginError: '' });
   signOut = () => {
     try { sessionStorage.removeItem('f2b_session'); } catch (e) {}
-    this.setState({ authed: false, authToken: '', company: '', loginPass: '', wsOpen: false });
+    this.setState({ authed: false, authToken: '', company: '', loginPass: '', wsOpen: false, tenantId: '', tenantUserName: '', devMode: false });
   };
 
   // ---- Multi-tenancy plumbing -------------------------------------------
@@ -1813,14 +2300,14 @@ class Component extends DCLogic {
   };
 
   // ---- Equipment master data (per company) ------------------------------
-  applyEquipmentLocally = (name, type, prevName) => {
+  applyEquipmentLocally = (name, type, rate, prevName) => {
     this.setState(s => {
       const equipment = [...s.equipment];
       const target = prevName || name;
       const i = equipment.findIndex(e => e.name === target);
-      if (i >= 0) equipment[i] = { ...equipment[i], name, type: type || equipment[i].type };
-      else equipment.push({ name, type: type || 'General' });
-      return { equipment, form: { ...s.form, equipName: '', equipType: '', editEquip: name } };
+      if (i >= 0) equipment[i] = { ...equipment[i], name, type: type || equipment[i].type, rate };
+      else equipment.push({ name, type: type || 'General', rate });
+      return { equipment, form: { ...s.form, equipName: '', equipType: '', equipRate: '', editEquip: name } };
     });
   };
   refreshEquipment = async () => {
@@ -1829,7 +2316,7 @@ class Component extends DCLogic {
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
-        this.setState({ equipment: rows.map(r => ({ name: r.name, type: r.type || 'General' })) });
+        this.setState({ equipment: rows.map(r => ({ name: r.name, type: r.type || 'General', rate: r.rate != null ? Number(r.rate) : 0 })) });
       }
     } catch (e) { /* no backend in preview — keep local state */ }
   };
@@ -1838,30 +2325,31 @@ class Component extends DCLogic {
     const name = f.equipName.trim();
     if (!name) return this.setMsg('equip', 'Enter an equipment name');
     const type = (f.equipType || '').trim() || 'General';
+    const rate = parseFloat(f.equipRate) || 0;
     const prevName = f.editEquip || '';
-    this.applyEquipmentLocally(name, type, prevName);
+    this.applyEquipmentLocally(name, type, rate, prevName);
     this.setMsg('equip', prevName ? 'Equipment updated ✓' : 'Equipment added ✓');
     try {
       const res = await this.authFetch('/api/equipment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, type, prevName }),
+        body: JSON.stringify({ name, type, rate, prevName }),
       });
       if (res.ok) this.refreshEquipment();
     } catch (e) { /* local state already updated */ }
   };
   loadEquip = (val) => {
     const e = this.state.equipment.find(x => x.name === val);
-    this.setState(s => ({ form: { ...s.form, editEquip: val, equipName: val && e ? e.name : '', equipType: val && e ? (e.type || '') : '' } }));
+    this.setState(s => ({ form: { ...s.form, editEquip: val, equipName: val && e ? e.name : '', equipType: val && e ? (e.type || '') : '', equipRate: val && e && e.rate != null ? String(e.rate) : '' } }));
   };
 
-  applyEmployeeLocally = (name, role, certs, editEmp) => {
+  applyEmployeeLocally = (name, role, rate, certs, editEmp) => {
     this.setState(s => {
       const employees = [...s.employees];
       const i = editEmp ? employees.findIndex(e => e.name === editEmp) : -1;
-      if (i >= 0) employees[i] = { ...employees[i], name, role: role || employees[i].role, certs: certs.map(c => ({ ...c })) };
-      else employees.push({ name, role: role || 'Crew', certs: certs.map(c => ({ ...c })) });
-      return { employees, form: { ...s.form, employeeName: '', employeeRole: '', editEmp: name } };
+      if (i >= 0) employees[i] = { ...employees[i], name, role: role || employees[i].role, rate, certs: certs.map(c => ({ ...c })) };
+      else employees.push({ name, role: role || 'Crew', rate, certs: certs.map(c => ({ ...c })) });
+      return { employees, form: { ...s.form, employeeName: '', employeeRole: '', employeeRate: '', editEmp: name } };
     });
   };
 
@@ -1871,7 +2359,7 @@ class Component extends DCLogic {
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
-        this.setState({ employees: rows.map(r => ({ name: r.name, role: r.role || 'Crew', certs: r.certs || [] })) });
+        this.setState({ employees: rows.map(r => ({ name: r.name, role: r.role || 'Crew', rate: r.rate != null ? Number(r.rate) : 0, certs: r.certs || [] })) });
       }
     } catch (e) { /* no backend in preview */ }
   };
@@ -1881,14 +2369,15 @@ class Component extends DCLogic {
     const name = f.employeeName.trim();
     if (!name) return this.setMsg('employee', 'Enter an employee name');
     const role = f.employeeRole || 'Crew';
+    const rate = parseFloat(f.employeeRate) || 0;
     const certs = f.employeeCerts.map(c => ({ ...c }));
-    this.applyEmployeeLocally(name, role, certs, f.editEmp);
+    this.applyEmployeeLocally(name, role, rate, certs, f.editEmp);
     this.setMsg('employee', f.editEmp ? 'Employee updated ✓' : 'Employee added ✓');
     try {
       const res = await this.authFetch('/api/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, role, certs }),
+        body: JSON.stringify({ name, role, rate, certs }),
       });
       if (res.ok) this.refreshEmployees();
     } catch (e) { /* local state already updated */ }
@@ -1944,7 +2433,7 @@ class Component extends DCLogic {
 
   loadEmp = (val) => {
     const e = this.state.employees.find(x => x.name === val);
-    this.setState(s => ({ form: { ...s.form, editEmp: val, employeeName: val && e ? e.name : '', employeeRole: val && e ? e.role : '', employeeCerts: val && e ? (e.certs || []).map(c => ({ ...c })) : [] } }));
+    this.setState(s => ({ form: { ...s.form, editEmp: val, employeeName: val && e ? e.name : '', employeeRole: val && e ? e.role : '', employeeRate: val && e && e.rate != null ? String(e.rate) : '', employeeCerts: val && e ? (e.certs || []).map(c => ({ ...c })) : [] } }));
   };
 
   addCert = () => {
@@ -1974,24 +2463,45 @@ class Component extends DCLogic {
   submitTicket = () => {
     const f = this.state.form;
     if (!f.ticketJob) return this.setMsg('ticket', 'Select a job site');
-    if (!f.laborHours) return this.setMsg('ticket', 'Enter labor hours');
-    const hrs = parseFloat(f.laborHours) || 0;
+    if (!f.ticketCrew) return this.setMsg('ticket', 'Select the crew on site');
+    const laborLines = (f.tMembers || []).filter(m => m.worked && (parseFloat(m.hours) || 0) > 0).map(m => { const hrs = parseFloat(m.hours) || 0; const rate = m.rate || 0; return { name: m.name, role: m.role, rate, hours: hrs, amount: Math.round(hrs * rate) }; });
+    if (!laborLines.length) return this.setMsg('ticket', 'Enter hours for at least one crew member');
+    const laborAmount = laborLines.reduce((a, l) => a + l.amount, 0);
+    const totalHours = laborLines.reduce((a, l) => a + l.hours, 0);
+    const equip = f.ticketEquip && f.ticketEquip !== 'None' ? f.ticketEquip : 'None';
+    const eqRec = equip !== 'None' ? this.state.equipment.find(x => x.name === equip) : null;
+    const equipRate = eqRec ? (eqRec.rate || 0) : 0;
+    const equipHours = equip !== 'None' ? (parseFloat(f.tEquipHours) || totalHours) : 0;
+    const equipAmount = Math.round(equipHours * equipRate);
+    const amount = laborAmount + equipAmount;
     const id = 'TCK-' + (9024 + this.state.tickets.length);
-    const rec = { id, job: f.ticketJob, hours: hrs, amount: Math.round(hrs * 150), status: 'pending', invoiced: false };
+    const by = this.state.tenantUserName || (this.IDENTITIES[this.state.role] || {}).name || 'Field crew';
+    const rec = { id, job: f.ticketJob, crew: f.ticketCrew, laborLines, laborAmount, equip, equipHours, equipRate, equipAmount, hours: totalHours, amount, by, date: this.todayISO(), status: 'pending', invoiced: false };
     this.setState(s => ({
       tickets: [...s.tickets, rec],
-      form: { ...s.form, laborHours: '' },
+      form: { ...s.form, ticketCrew: '', tMembers: [], ticketEquip: 'None', tEquipHours: '' },
     }));
-    this.setMsg('ticket', 'Ticket ' + id + ' synced to office ✓');
+    this.setMsg('ticket', 'Ticket ' + id + ' synced ✓');
     this.saveTicket(rec);
   };
+
+  selectTicketCrew = (name) => {
+    const crew = this.state.crews.find(c => c.name === name);
+    const members = crew ? crew.members.map(mn => { const e = this.state.employees.find(x => x.name === mn); return { name: mn, role: e ? e.role : '', rate: e ? (e.rate || 0) : 0, worked: true, hours: '' }; }) : [];
+    this.setState(s => ({ form: { ...s.form, ticketCrew: name, tMembers: members } }));
+  };
+  toggleTicketMember = (idx) => this.setState(s => ({ form: { ...s.form, tMembers: s.form.tMembers.map((m, i) => i === idx ? { ...m, worked: !m.worked } : m) } }));
+  setTicketMemberHours = (idx, val) => this.setState(s => ({ form: { ...s.form, tMembers: s.form.tMembers.map((m, i) => i === idx ? { ...m, hours: val } : m) } }));
+  selectTicketEquip = (v) => this.setState(s => ({ form: { ...s.form, ticketEquip: v } }));
+  openTicketDetail = (id) => this.setState({ viewTicket: id });
+  closeTicketDetail = () => this.setState({ viewTicket: null });
 
   saveTicket = async (rec) => {
     try {
       await this.authFetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ label: rec.id, job_name: rec.job, hours: rec.hours, amount: rec.amount, status: rec.status, invoiced: rec.invoiced }),
+        body: JSON.stringify({ label: rec.id, job_name: rec.job, crew: rec.crew, hours: rec.hours, amount: rec.amount, status: rec.status, invoiced: rec.invoiced, labor_lines: rec.laborLines, labor_amount: rec.laborAmount, equip: rec.equip, equip_hours: rec.equipHours, equip_rate: rec.equipRate, equip_amount: rec.equipAmount, submitted_by: rec.by, ticket_date: rec.date }),
       });
     } catch (e) { /* no backend in preview */ }
   };
@@ -2012,11 +2522,13 @@ class Component extends DCLogic {
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
-        this.setState({ tickets: rows.map(r => ({
-          id: r.label, job: r.job_name, hours: Number(r.hours) || 0,
-          amount: Number(r.amount) || 0, status: r.status,
+        this.setState({ tickets: rows.map(r => { const laborLines = Array.isArray(r.labor_lines) ? r.labor_lines : []; const la = Number(r.labor_amount) || laborLines.reduce((a, l) => a + (Number(l.amount) || 0), 0); const eh = Number(r.equip_hours) || 0; const er = Number(r.equip_rate) || 0; const ea = Number(r.equip_amount) || 0; const hours = Number(r.hours) || laborLines.reduce((a, l) => a + (Number(l.hours) || 0), 0); return {
+          id: r.label, job: r.job_name, crew: r.crew || '', laborLines, laborAmount: la,
+          equip: r.equip || 'None', equipHours: eh, equipRate: er, equipAmount: ea,
+          amount: Number(r.amount) || (la + ea), hours, status: r.status,
+          by: r.submitted_by || '', date: r.ticket_date || '',
           invoiced: !!r.invoiced, qboNum: r.qbo_num || undefined,
-        })) });
+        }; }) });
       }
     } catch (e) { /* no backend in preview */ }
   };
@@ -2118,9 +2630,81 @@ class Component extends DCLogic {
   invMonths(f) { if (f.invMode === 'month') return 1; const p = this.invPeriod(f); if (!p.ps || !p.pe) return 0; return Math.round((this.dayDiff(p.ps, p.pe) / 30.4375) * 100) / 100; }
   round2(n) { return Math.round(n * 100) / 100; }
 
+  issuerFor(name) {
+    const s = this.state;
+    const ct = s.tenants[s.tenantId];
+    if (ct) return { name: ct.name, line1: ct.addr1 || '', line2: ct.addr2 || '', email: ct.email || '', phone: ct.phone || '', accent: ct.accent || '#2f6bff', logo: ct.logo || '' };
+    return Object.assign({ name: name, logo: '' }, this.ISSUERS[name] || {});
+  }
   openInvoice = (rec) => this.setState({ viewInvoice: rec });
   closeInvoice = () => this.setState({ viewInvoice: null });
   printInvoice = () => { window.print(); };
+
+  // ---- Exports: CSV (opens in Excel) + printable / PDF sheet ----
+  csvCell(v) { const t = (v == null ? '' : String(v)); return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; }
+  downloadCsv = (key) => {
+    const d = this.dataset(key); if (!d) return;
+    const lines = [d.headers.map(h => this.csvCell(h)).join(',')];
+    d.rows.forEach(r => lines.push(r.map(c => this.csvCell(c)).join(',')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = d.file + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+  openPrint = (key) => { const d = this.dataset(key); if (d) this.setState({ printDoc: d }); };
+  closePrint = () => this.setState({ printDoc: null });
+  doPrintDoc = () => { window.print(); };
+
+  dataset(key) {
+    const s = this.state;
+    const ct = s.tenants[s.tenantId];
+    const org = ct ? ct.name : 'Field2Bill';
+    const stampISO = this.todayISO();
+    const D = (title, file, headers, rows) => ({ key, title, file: file + '-' + stampISO, org, stamp: this.fmtDate(stampISO), headers, rows, count: rows.length });
+    const money = (n) => Number(n || 0).toFixed(2);
+    switch (key) {
+      case 'materials': {
+        const rows = s.materials.map(m => [m.code, m.name, m.category, m.qty, m.qty - this.onRentByCode(m.code), m.unitCubic, money(m.unitCost), m.po || '', m.purchaseDate ? this.fmtDate(m.purchaseDate) : '']);
+        return D('Material Catalog', 'material-catalog', ['Code', 'Material', 'Category', 'On hand', 'Available', 'Unit ft\u00b3', 'Unit cost', 'PO / Lot', 'Purchased'], rows);
+      }
+      case 'crews': {
+        const rows = s.crews.map(c => [c.name, (c.members || []).join('; '), (c.equipment || []).join('; '), (c.members || []).length]);
+        return D('Crew Roster', 'crew-roster', ['Crew', 'Members', 'Equipment', 'Headcount'], rows);
+      }
+      case 'equipment': {
+        const rows = s.equipment.map(e => [e.name, e.type || '', money(e.rate)]);
+        return D('Equipment Roster', 'equipment-roster', ['Equipment', 'Type', 'Rental rate /hr'], rows);
+      }
+      case 'employees': {
+        const rows = s.employees.map(e => [e.name, e.role, money(e.rate), this.empStatus(e.certs), (e.certs || []).length, (e.certs || []).map(c => c.type + (c.expires ? ' (exp ' + this.fmtDate(c.expires) + ')' : '')).join('; ')]);
+        return D('Employee Roster', 'employee-roster', ['Name', 'Role', 'Rate /hr', 'Cert status', 'Certs', 'Certifications'], rows);
+      }
+      case 'tickets': {
+        const rows = s.tickets.map(t => [t.id, t.job, t.laborHours != null ? t.laborHours : t.hours, money(t.laborRate), money(t.laborAmount != null ? t.laborAmount : t.amount), (t.equip && t.equip !== 'None') ? t.equip : '', t.equipHours || 0, money(t.equipRate), money(t.equipAmount), money(t.amount), t.status, t.invoiced ? 'Yes' : 'No', t.by || '', t.date ? this.fmtDate(t.date) : '']);
+        return D('Field Tickets', 'field-tickets', ['Ticket', 'Job site', 'Labor hrs', 'Labor rate', 'Labor $', 'Equipment', 'Equip hrs', 'Equip rate', 'Equip $', 'Total', 'Status', 'Invoiced', 'Submitted by', 'Date'], rows);
+      }
+      case 'pos': {
+        const rows = s.purchaseOrders.map(p => [p.po, this.fmtDate(p.date), p.supplier, p.lines.length, money(p.totalOverride != null ? p.totalOverride : p.lines.reduce((a, ln) => a + ln.qty * ln.unitCost, 0))]);
+        return D('Purchase Orders', 'purchase-orders', ['PO #', 'Date', 'Supplier', 'Lines', 'Total'], rows);
+      }
+      case 'rentals': {
+        const rate = this.props.rentalRate ?? 0.008;
+        const rows = s.rentals.filter(r => !r.invoiced).map(r => [r.job, r.tag, r.code, r.name, this.rentQty(r), r.cubic, this.fmtDate(this.rentStart(r)), money(this.rentAccrue(r, stampISO, rate))]);
+        return D('Active Rentals', 'active-rentals', ['Job site', 'Tag', 'Code', 'Item', 'Qty', 'Unit ft\u00b3', 'On hire since', 'Accrued'], rows);
+      }
+      case 'reports': {
+        const rows = s.jobs.map(j => { const v = j.budget ? Math.round(((j.budget - j.actual) / j.budget) * 100) : 0; return [j.name, j.budget, j.actual, j.budget - j.actual, (v >= 0 ? '+' : '') + v + '%']; });
+        return D('Job Costing', 'job-costing', ['Job site', 'Budget', 'Actual', 'Variance $', 'Variance %'], rows);
+      }
+      case 'customers': {
+        const rows = Object.keys(this.CLIENTS).map(name => { const m = s.qboOverrides[name] || this.QBO_CUSTOMERS[name] || {}; return [name, m.mapped ? m.qbo : '', m.mapped ? m.email : '', m.mapped ? 'Linked' : 'Needs mapping']; });
+        return D('QuickBooks Customers', 'qbo-customers', ['Client', 'QuickBooks customer', 'Invoice email', 'Status'], rows);
+      }
+    }
+    return null;
+  }
   openReport = (type, job, tag) => this.setState({ viewReport: { type, job: job || '', tag: tag || '' } });
   closeReport = () => this.setState({ viewReport: null });
   startEditTag = (job, tag) => this.setState({ editTagOpen: true, editTagJob: job, editTagOld: tag, editTagName: tag, editTagSchedule: this.tagSchedule(job, tag).map(e => ({ ...e })), editTagSchedDate: this.todayISO(), editTagSchedCubic: '' });
@@ -2152,6 +2736,7 @@ class Component extends DCLogic {
     // Data is loaded by refreshAll() only once we have a token — an
     // unauthenticated request now returns 401 and would load nothing.
     this.restoreSession();
+    this.loadTenants();
     const load = () => {
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
@@ -2365,7 +2950,9 @@ class Component extends DCLogic {
 
   genRentalInvoice = () => {
     const f = this.state.form;
-    if (!f.invFrom) return this.setMsg('rentalInv', 'Select the issuing company');
+    const _ct = this.state.tenants[this.state.tenantId];
+    const curTenantName = _ct ? _ct.name : '';
+    if (!curTenantName && !f.invFrom) return this.setMsg('rentalInv', 'Select the issuing company');
     if (!f.invClient) return this.setMsg('rentalInv', 'Select a client to bill');
     if (!f.invJob) return this.setMsg('rentalInv', 'Select a job site');
     const { ps, pe, label } = this.invPeriod(f);
@@ -2391,7 +2978,7 @@ class Component extends DCLogic {
     const subtotal = lines.reduce((a, l) => a + l.subtotal, 0);
     const num = 'RINV-' + this.state.invSeq;
     const methodLabel = method === 'cost' ? this.round2(pct * 100) + '% of material cost / month' : 'Cubic ft × day @ $' + rate + '/ft³';
-    const rec = { num, from: f.invFrom, to: f.invClient, job: f.invJob, tagScope: f.invTag === '__all__' ? 'All tags' : f.invTag, method, methodLabel, date: this.todayISO(), periodLabel: label, periodStart: ps, periodEnd: pe, lines, subtotal, total: subtotal };
+    const rec = { num, from: curTenantName || f.invFrom, to: f.invClient, job: f.invJob, tagScope: f.invTag === '__all__' ? 'All tags' : f.invTag, method, methodLabel, date: this.todayISO(), periodLabel: label, periodStart: ps, periodEnd: pe, lines, subtotal, total: subtotal };
     this.setState(s => ({ invSeq: s.invSeq + 1, rentalInvoices: [rec, ...s.rentalInvoices], viewInvoice: rec }));
     this.setMsg('rentalInv', num + ' generated · ' + this.fmt2(subtotal));
     this.saveRentalInvoice(rec);
@@ -2417,6 +3004,7 @@ class Component extends DCLogic {
   };
 
   fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  fmtK(n) { return n >= 1000 ? '$' + (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : '$' + Math.round(n); }
   fmt2(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   initials(n) { return n.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase(); }
 
@@ -2483,12 +3071,22 @@ class Component extends DCLogic {
 
     const a = s.active;
 
-    // KPIs
+    // KPIs — derived live from current operations
+    const openTickets = s.tickets.filter(t => !t.invoiced).length;
+    const pendingTickets = s.tickets.filter(t => t.status === 'pending').length;
+    const invoicedTickets = s.tickets.filter(t => t.invoiced);
+    const revenueMTD = invoicedTickets.reduce((a, t) => a + t.amount, 0);
+    const kBudget = s.jobs.reduce((a, j) => a + j.budget, 0);
+    const kActual = s.jobs.reduce((a, j) => a + j.actual, 0);
+    const marginPct = kBudget ? Math.round((1 - kActual / kBudget) * 1000) / 10 : 0;
+    const jobsOver = s.jobs.filter(j => j.actual > j.budget).length;
+    const crewHeadcount = s.crews.reduce((a, c) => a + c.members.length, 0);
+    const ramp = (v) => { const out = []; for (let i = 0; i < 7; i++) out.push(v * (0.7 + 0.045 * i)); out.push(v); return out; };
     const kpiSrc = [
-      { label: 'Revenue · MTD', value: '$148.2k', delta: '▲ 12.4% vs last mo', up: true, data: [82, 96, 88, 104, 120, 112, 134, 148] },
-      { label: 'Open tickets', value: '14', delta: '▲ 3 today', up: true, data: [6, 8, 7, 9, 11, 10, 12, 14] },
-      { label: 'Active crews', value: '6', delta: 'On site now', up: true, data: [4, 5, 5, 6, 5, 6, 6, 6] },
-      { label: 'Avg margin', value: '23.8%', delta: '▼ 1.2% vs last mo', up: false, data: [28, 27, 26, 25, 24, 25, 24, 23.8] },
+      { label: 'Revenue · invoiced', value: this.fmtK(revenueMTD), delta: invoicedTickets.length + ' ticket' + (invoicedTickets.length === 1 ? '' : 's') + ' synced to QBO', up: true, data: ramp(revenueMTD || 1) },
+      { label: 'Open tickets', value: String(openTickets), delta: pendingTickets > 0 ? pendingTickets + ' pending approval' : 'all caught up', up: pendingTickets === 0, data: ramp(openTickets || 1) },
+      { label: 'Active crews', value: String(s.crews.length), delta: crewHeadcount + ' people assigned', up: true, data: ramp(s.crews.length || 1) },
+      { label: 'Avg margin', value: marginPct + '%', delta: jobsOver > 0 ? jobsOver + ' job' + (jobsOver === 1 ? '' : 's') + ' over budget' : 'all jobs on track', up: jobsOver === 0, data: ramp(Math.max(marginPct, 1)) },
     ];
     const kpis = kpiSrc.map(k => ({ ...k, deltaColor: k.up ? '#0f9d6b' : '#e5484d', sparkEl: this.sparkEl(k.data, accent) }));
 
@@ -2519,12 +3117,14 @@ class Component extends DCLogic {
       return { name: j.name, actual: this.fmt(j.actual), budget: this.fmt(j.budget), pct, color: st.c, label: st.l };
     });
 
-    const activity = [
-      { who: 'Jane Smith', what: 'submitted ticket TCK-9022', when: '8 min ago', color: '#2f6bff' },
-      { who: 'System', what: 'invoice INV-3471 synced to accounting', when: '24 min ago', color: '#18a974' },
-      { who: 'Alpha Crew', what: 'dispatched to Site A', when: '1 hr ago', color: '#7c5cff' },
-      { who: 'Mike Johnson', what: '— certification expired, blocked from dispatch', when: '2 hr ago', color: '#e5484d' },
-    ];
+    // Recent activity — derived live from the current ticket set
+    const whenLabels = ['just now', '8 min ago', '24 min ago', '1 hr ago'];
+    const activity = [...s.tickets].reverse().slice(0, 4).map((t, i) => {
+      const short = t.job.split('—')[0].trim();
+      if (t.invoiced) return { who: 'System', what: 'invoice ' + (t.qboNum || t.id) + ' synced to QuickBooks', when: whenLabels[i], color: '#18a974' };
+      if (t.status === 'approved') return { who: short, what: 'ticket ' + t.id + ' approved · ready to bill', when: whenLabels[i], color: '#2f6bff' };
+      return { who: short, what: 'submitted ticket ' + t.id, when: whenLabels[i], color: '#7c5cff' };
+    });
     const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
     // Admin view models
@@ -2555,7 +3155,7 @@ class Component extends DCLogic {
       const fg = st === 'Valid' ? '#0f9d6b' : st === 'Expired' ? '#e5484d' : '#8a92a4';
       const inCrews = s.crews.filter(c => c.members.includes(e.name)).map(c => c.name);
       const avail = inCrews.length === 0;
-      return { name: e.name, role: e.role, status: st, certCount: (e.certs || []).length, initials: this.initials(e.name), badgeBg: bg, badgeFg: fg, crewLabel: avail ? 'Available' : inCrews.join(', '), crewBg: avail ? '#e8f6ef' : '#eef3ff', crewFg: avail ? '#0f9d6b' : '#2356d6' };
+      return { name: e.name, role: e.role, rate: e.rate ? this.fmt(e.rate) + ' /hr' : '—', status: st, certCount: (e.certs || []).length, initials: this.initials(e.name), badgeBg: bg, badgeFg: fg, crewLabel: avail ? 'Available' : inCrews.join(', '), crewBg: avail ? '#e8f6ef' : '#eef3ff', crewFg: avail ? '#0f9d6b' : '#2356d6' };
     });
     const availCount = s.employees.filter(e => !s.crews.some(c => c.members.includes(e.name))).length;
 
@@ -2564,7 +3164,7 @@ class Component extends DCLogic {
     const editEmpOptions = s.employees.map(e => e.name);
     const equipOptions = s.equipment.map(eq => eq.name);
     const editEquipOptions = s.equipment.map(eq => eq.name);
-    const equipRosterRows = s.equipment.map(eq => ({ name: eq.name, type: eq.type || '—', onEdit: () => this.loadEquip(eq.name) }));
+    const equipRosterRows = s.equipment.map(eq => ({ name: eq.name, type: eq.type || '—', rate: eq.rate ? this.fmt(eq.rate) + ' /hr' : '—', onEdit: () => this.loadEquip(eq.name) }));
     const resourceOptions = [
       ...s.crews.map(c => ({ value: c.name, label: 'Crew · ' + c.name, disabled: false })),
       ...s.employees.map(e => { const exp = this.empStatus(e.certs) === 'Expired'; return { value: e.name, label: 'Individual · ' + e.name + (exp ? ' (cert expired)' : ''), disabled: exp }; }),
@@ -2584,7 +3184,7 @@ class Component extends DCLogic {
       };
       return m[status] || m.pending;
     };
-    const recentTickets = [...s.tickets].slice(-3).reverse().map(t => { const b = badgeFor(t.status); return { id: t.id, job: t.job, hours: t.hours, badgeBg: b.bg, badgeFg: b.fg, badgeLabel: b.label }; });
+    const recentTickets = [...s.tickets].slice(-3).reverse().map(t => { const b = badgeFor(t.status); return { id: t.id, job: t.job, hours: t.hours, amount: this.fmt(t.amount), badgeBg: b.bg, badgeFg: b.fg, badgeLabel: b.label, onView: () => this.openTicketDetail(t.id) }; });
     const canApprove = s.role === 'Owner / Admin' || s.role === 'Operations Lead';
     const canBill = s.role === 'Owner / Admin' || s.role === 'Billing / Accounting';
     const billingRows = s.tickets.map(t => {
@@ -2597,8 +3197,37 @@ class Component extends DCLogic {
         showSend: isApproved && canBill, awaitingBill: isApproved && !canBill,
         invoiced: t.invoiced, qboNum: t.qboNum || '',
         onApprove: () => this.approveTicket(t.id), onInvoice: () => this.generateInvoice(t.id),
+        onView: () => this.openTicketDetail(t.id),
       };
     });
+    const canSeeMoney = canApprove || canBill;
+    const vtRec = s.viewTicket ? s.tickets.find(t => t.id === s.viewTicket) : null;
+    let vt = null;
+    if (vtRec) {
+      const bb = badgeFor(vtRec.status);
+      const hasEq = vtRec.equip && vtRec.equip !== 'None';
+      const lines = (vtRec.laborLines || []).map(l => ({ label: l.name + (l.role ? ' · ' + l.role : ''), detail: (l.hours || 0) + ' hrs' + (canSeeMoney ? ' × ' + this.fmt(l.rate || 0) + '/hr' : ''), amount: canSeeMoney ? this.fmt(l.amount || 0) : '' }));
+      if (hasEq) lines.push({ label: 'Equipment — ' + vtRec.equip, detail: (vtRec.equipHours || 0) + ' hrs' + (canSeeMoney ? ' × ' + this.fmt(vtRec.equipRate || 0) + '/hr' : ''), amount: canSeeMoney ? this.fmt(vtRec.equipAmount || 0) : '' });
+      vt = {
+        id: vtRec.id, job: vtRec.job, crew: vtRec.crew || '—', by: vtRec.by || '—', dateFmt: vtRec.date ? this.fmtDate(vtRec.date) : '—',
+        badgeBg: bb.bg, badgeFg: bb.fg, badgeLabel: bb.label, lines, total: this.fmt(vtRec.amount || 0), showMoney: canSeeMoney,
+        invoiced: vtRec.invoiced, qboNum: vtRec.qboNum || '',
+        showApprove: vtRec.status === 'pending' && canApprove,
+        showSend: vtRec.status === 'approved' && !vtRec.invoiced && canBill,
+        onApprove: () => this.approveTicket(vtRec.id), onInvoice: () => this.generateInvoice(vtRec.id),
+      };
+    }
+    const crewOptions = s.crews.map(c => c.name);
+    const ticketMembers = (f.tMembers || []).map((m, i) => ({
+      name: m.name, role: m.role, hours: m.hours, worked: m.worked,
+      check: m.worked ? '✓' : '',
+      checkStyle: 'width:22px;height:22px;flex-shrink:0;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font:700 12px sans-serif;color:#fff;border:1.5px solid ' + (m.worked ? '#2f6bff' : '#cdd3df') + ';background:' + (m.worked ? '#2f6bff' : '#fff') + ';',
+      rowBg: m.worked ? '#f7faff' : '#fafbfc',
+      onToggle: () => this.toggleTicketMember(i), onHours: e => this.setTicketMemberHours(i, e.target.value),
+    }));
+    const tWorked = (f.tMembers || []).filter(m => m.worked && (parseFloat(m.hours) || 0) > 0);
+    const tTotHours = tWorked.reduce((a, m) => a + (parseFloat(m.hours) || 0), 0);
+    const ticketCrewSummary = tWorked.length + (tWorked.length === 1 ? ' person · ' : ' people · ') + tTotHours + ' hrs';
     const qboCustomerRows = Object.keys(this.CLIENTS).map(name => {
       const m = s.qboOverrides[name] || this.QBO_CUSTOMERS[name] || { qbo: '', email: '', mapped: false };
       return {
@@ -2786,20 +3415,72 @@ class Component extends DCLogic {
     const invoiceLines = invActive.map(x => ({ name: 'Tag ' + x.tag, detail: x.basis, amount: this.fmt2(x.amount) }));
     const invTotalNum = invActive.reduce((acc, x) => acc + x.amount, 0);
     const periodLabel = period.label || '—';
-    const companyOptions = Object.keys(this.ISSUERS);
+    const companyOptions = s.tenants[s.tenantId] ? [s.tenants[s.tenantId].name] : Object.keys(this.ISSUERS);
     const clientOptions = Object.keys(this.CLIENTS);
 
     const rentalInvoiceRows = s.rentalInvoices.map(iv => ({ num: iv.num, client: iv.to, period: iv.periodLabel, date: this.fmtDate(iv.date), total: this.fmt2(iv.total), onView: () => this.openInvoice(iv) }));
 
     // Printable invoice view-model
     const vi = s.viewInvoice;
-    const iss = vi ? (this.ISSUERS[vi.from] || {}) : {};
+    const iss = vi ? this.issuerFor(vi.from) : {};
     const cli = vi ? (this.CLIENTS[vi.to] || {}) : {};
     const viInvGroups = vi ? vi.lines.map(l => ({ tag: l.tag, items: (l.items || 0) + ((l.items || 0) === 1 ? ' item' : ' items'), rows: l.rows.map(r => ({ basis: r.basis, amount: this.fmt2(r.amount) })), subtotal: this.fmt2(l.subtotal) })) : [];
 
     const perms = this.ROLE_PERMS[s.role] || [];
     const can = (k) => perms.includes(k);
     const ident = this.IDENTITIES[s.role] || {};
+
+    // ----- Per-tenant branding + dev console view-models -----
+    const shade = (hex, p) => { const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; r = Math.round(r * (1 - p)); g = Math.round(g * (1 - p)); b = Math.round(b * (1 - p)); return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); };
+    const imgEl = (src) => src ? React.createElement('img', { src, alt: '', style: { width: '100%', height: '100%', objectFit: 'contain' } }) : null;
+    const curTenant = s.tenants[s.tenantId] || null;
+    const brandAccent = curTenant ? curTenant.accent : '#2f6bff';
+    const brandAccentDark = shade(brandAccent, 0.3);
+    const brandLogo = curTenant ? (curTenant.logo || '') : '';
+    const brandName = curTenant ? curTenant.name : 'Field2Bill';
+    const brandInitials = curTenant ? this.initials(curTenant.name) : 'F2';
+    const userNameV = s.tenantUserName || ident.name;
+    const userInitialsV = s.tenantUserName ? this.initials(s.tenantUserName) : ident.initials;
+    const userTitleV = curTenant ? s.role : ident.title;
+
+    const ROLE_LIST = Object.keys(this.ROLE_PERMS);
+    const swStyle = (c, active) => 'width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;padding:0;background:' + c + ';' + (active ? 'box-shadow:0 0 0 2px #fff,0 0 0 4px ' + c + ';' : '');
+    const devSwatches = this.THEME_SWATCHES.map(c => ({ onPick: () => this.setDev('accent', c), style: swStyle(c, c === s.dev.accent) }));
+    const tenantCards = Object.keys(s.tenants).map(id => {
+      const t = s.tenants[id];
+      const d = s.uDraft[id] || { name: '', email: '', pass: '', role: 'Dispatcher' };
+      let createdFmt = '—';
+      try { createdFmt = this.fmtDate(new Date(t.createdAt).toISOString().slice(0, 10)); } catch (e) {}
+      return {
+        id, name: t.name, accent: t.accent, logo: t.logo || '', logoEl: imgEl(t.logo), hasLogo: !!t.logo, noLogo: !t.logo, initials: this.initials(t.name),
+        userLabel: (t.users || []).length + ((t.users || []).length === 1 ? ' user' : ' users') + ' · added ' + createdFmt,
+        email: t.email || '', phone: t.phone || '', addr1: t.addr1 || '', addr2: t.addr2 || '',
+        detailLine: [t.email, t.phone].filter(Boolean).join('  ·  '),
+        addrLine: [t.addr1, t.addr2].filter(Boolean).join(', '),
+        hasDetails: !!(t.email || t.phone || t.addr1 || t.addr2),
+        showDetailLine: s.editId !== id && !!(t.email || t.phone || t.addr1 || t.addr2),
+        editing: s.editId === id,
+        edName: s.editDraft.name, edEmail: s.editDraft.email, edPhone: s.editDraft.phone, edAddr1: s.editDraft.addr1, edAddr2: s.editDraft.addr2,
+        onEdit: () => this.startEditTenant(id), onCancelEdit: this.cancelEdit, onSaveEdit: this.saveEditTenant,
+        onEdName: e => this.setEditDraft('name', e.target.value),
+        onEdEmail: e => this.setEditDraft('email', e.target.value),
+        onEdPhone: e => this.setEditDraft('phone', e.target.value),
+        onEdAddr1: e => this.setEditDraft('addr1', e.target.value),
+        onEdAddr2: e => this.setEditDraft('addr2', e.target.value),
+        users: (t.users || []).map(u => ({ name: u.name, email: u.email, role: u.role, initials: this.initials(u.name), onRemove: () => this.removeUserFromTenant(id, u.email) })),
+        swatches: this.THEME_SWATCHES.map(c => ({ onPick: () => this.setTenantAccent(id, c), style: swStyle(c, c === t.accent) })),
+        onOpen: () => this.openTenantAsOwner(id),
+        onLogo: (e) => { const fl = e.target.files && e.target.files[0]; this.setTenantLogo(id, fl); e.target.value = ''; },
+        onRemoveLogo: () => this.removeTenantLogo(id),
+        onDelete: () => this.deleteTenant(id),
+        draftName: d.name, draftEmail: d.email, draftPass: d.pass, draftRole: d.role,
+        onDraftName: (e) => this.setUDraft(id, 'name', e.target.value),
+        onDraftEmail: (e) => this.setUDraft(id, 'email', e.target.value),
+        onDraftPass: (e) => this.setUDraft(id, 'pass', e.target.value),
+        onDraftRole: (e) => this.setUDraft(id, 'role', e.target.value),
+        onAddUser: () => this.addUserToTenant(id),
+      };
+    });
     const loginRoles = Object.keys(this.ROLE_PERMS).map((r) => ({
       role: r, name: this.IDENTITIES[r].name, initials: this.IDENTITIES[r].initials,
       scope: this.ROLE_SCOPE[r], onClick: () => this.demoSignIn(r),
@@ -2808,15 +3489,59 @@ class Component extends DCLogic {
       name: w, initials: this.WS_INITIALS[w] || w.slice(0, 2).toUpperCase(),
       current: w === s.workspace, onClick: () => this.setWorkspace(w),
     }));
+
+    // In-app company profile (tenant owner editing their own workspace from Admin)
+    const cpOn = !!curTenant && can('admin');
+    const cp = cpOn ? {
+      name: curTenant.name || '', email: curTenant.email || '', phone: curTenant.phone || '', addr1: curTenant.addr1 || '', addr2: curTenant.addr2 || '',
+      logoEl: imgEl(curTenant.logo), hasLogo: !!curTenant.logo, noLogo: !curTenant.logo, accent: curTenant.accent, initials: brandInitials,
+      swatches: this.THEME_SWATCHES.map(c => ({ onPick: () => this.setTenantAccent(s.tenantId, c), style: swStyle(c, c === curTenant.accent) })),
+      onName: e => this.setTenantField('name', e.target.value),
+      onEmail: e => this.setTenantField('email', e.target.value),
+      onPhone: e => this.setTenantField('phone', e.target.value),
+      onAddr1: e => this.setTenantField('addr1', e.target.value),
+      onAddr2: e => this.setTenantField('addr2', e.target.value),
+      onLogo: e => { const fl = e.target.files && e.target.files[0]; this.setTenantLogo(s.tenantId, fl); e.target.value = ''; },
+      onRemoveLogo: () => this.removeTenantLogo(s.tenantId),
+    } : {};
+
+    const _xpKeys = ['materials', 'crews', 'equipment', 'employees', 'tickets', 'pos', 'rentals', 'reports', 'customers'];
+    const xp = {};
+    _xpKeys.forEach(k => { xp[k + 'Csv'] = () => this.downloadCsv(k); xp[k + 'Print'] = () => this.openPrint(k); });
+    const pd = s.printDoc;
+    const pdRows = pd ? pd.rows.map((r) => ({ cells: r.map(c => ({ v: (c === '' || c == null) ? '\u2014' : c })) })) : [];
     return {
-      authed: s.authed, showLogin: !s.authed,
+      authed: s.authed, showLogin: !s.authed && !s.devMode,
+      ...xp,
+      showPrintDoc: !!pd, closePrint: this.closePrint, doPrintDoc: this.doPrintDoc,
+      pdTitle: pd ? pd.title : '', pdOrg: pd ? pd.org : '', pdStamp: pd ? pd.stamp : '', pdCount: pd ? (pd.count + (pd.count === 1 ? ' row' : ' rows')) : '',
+      pdHeaders: pd ? pd.headers : [], pdRows,
+      showDev: s.devMode && !s.authed,
+      brandAccent, brandAccentDark, brandLogo, brandLogoEl: imgEl(brandLogo), hasBrandLogo: !!brandLogo, noBrandLogo: !brandLogo, brandName, brandInitials,
+      tenantCards, hasTenants: tenantCards.length > 0, noTenants: tenantCards.length === 0, roleOptions: ROLE_LIST,
+      devName: s.dev.name, devLogo: s.dev.logo, devLogoEl: imgEl(s.dev.logo), hasDevLogo: !!s.dev.logo, noDevLogo: !s.dev.logo, devSwatches, devAccent: s.dev.accent,
+      devEmail: s.dev.email, devPhone: s.dev.phone, devAddr1: s.dev.addr1, devAddr2: s.dev.addr2,
+      onDevEmail: e => this.setDev('email', e.target.value),
+      onDevPhone: e => this.setDev('phone', e.target.value),
+      onDevAddr1: e => this.setDev('addr1', e.target.value),
+      onDevAddr2: e => this.setDev('addr2', e.target.value),
+      devUName: s.dev.uName, devUEmail: s.dev.uEmail, devUPass: s.dev.uPass, devURole: s.dev.uRole,
+      onDevName: e => this.setDev('name', e.target.value),
+      onDevLogo: e => { const fl = e.target.files && e.target.files[0]; this.readLogo(fl, (u) => this.setDev('logo', u)); e.target.value = ''; },
+      onDevRemoveLogo: () => this.setDev('logo', ''),
+      onDevUName: e => this.setDev('uName', e.target.value),
+      onDevUEmail: e => this.setDev('uEmail', e.target.value),
+      onDevUPass: e => this.setDev('uPass', e.target.value),
+      onDevURole: e => this.setDev('uRole', e.target.value),
+      createTenant: this.createTenant, exitDev: this.exitDev,
+      devMsg: s.devMsg, hasDevMsg: !!s.devMsg, devMsgColor: s.devMsgType === 'err' ? '#e5484d' : '#18a974',
       navOpenStr: s.navOpen ? 'true' : 'false', toggleNav: this.toggleNav, closeNav: this.closeNav,
       isSplit: true,
       loginEmail: s.loginEmail, loginPass: s.loginPass, loginWs: s.loginWs, loginError: s.loginError, hasLoginError: !!s.loginError,
       onLoginEmail: this.onLoginEmail, onLoginPass: this.onLoginPass, onLoginWs: this.onLoginWs, signIn: this.signIn,
       loginRoles, workspaceOptions: Object.keys(this.ISSUERS),
       workspaceName: s.workspace, workspaceInitials: this.WS_INITIALS[s.workspace] || '', wsOpen: s.wsOpen, toggleWs: this.toggleWs, workspaceList,
-      userName: ident.name, userInitials: ident.initials, userTitle: ident.title, roleLabel: s.role, signOut: this.signOut,
+      userName: userNameV, userInitials: userInitialsV, userTitle: userTitleV, roleLabel: s.role, signOut: this.signOut,
       canDash: can('dashboard'), canDisp: can('dispatch'), canField: can('fieldops'), canInv: can('inventory'),
       canBill: can('billing'), canRep: can('reports'), canAdmin: can('admin'),
       secOps: can('dispatch') || can('fieldops') || can('inventory'),
@@ -2855,7 +3580,8 @@ class Component extends DCLogic {
       accruePerDay: this.fmt2(accruePerDayNum),
       showReportOverlay: !!vr, closeReport: this.closeReport, printInvoice: this.printInvoice,
       repTitle: rep ? rep.title : '', repScope: rep ? rep.scope : '', repSub: rep ? rep.sub : '', repAsOf: this.fmtDate(asOf),
-      repFrom: f.invFrom, repFromLine1: (this.ISSUERS[f.invFrom] || {}).line1 || '', repFromLine2: (this.ISSUERS[f.invFrom] || {}).line2 || '', repFromPhone: (this.ISSUERS[f.invFrom] || {}).phone || '',
+      repFrom: curTenant ? curTenant.name : f.invFrom, repFromLine1: this.issuerFor(f.invFrom).line1 || '', repFromLine2: this.issuerFor(f.invFrom).line2 || '', repFromPhone: this.issuerFor(f.invFrom).phone || '',
+      repAccent: this.issuerFor(f.invFrom).accent || '#2f6bff', repAccentDark: shade(this.issuerFor(f.invFrom).accent || '#2f6bff', 0.3), repLogoEl: imgEl(this.issuerFor(f.invFrom).logo), repHasLogo: !!this.issuerFor(f.invFrom).logo, repNoLogo: !this.issuerFor(f.invFrom).logo, repInitials: this.initials(curTenant ? curTenant.name : f.invFrom),
       repSections: rep ? rep.sections : [], repGrand: rep ? rep.grand : '', repShowGrand: rep ? rep.showGrand : false,
       coTagOptions, showNewTag: f.coTag === '__new__', coItemsRows, hasCoItems: f.coItems.length > 0,
       addCoItem: this.addCoItem,
@@ -2882,7 +3608,8 @@ class Component extends DCLogic {
       closeInvoice: this.closeInvoice, printInvoice: this.printInvoice,
       showInvoiceOverlay: !!vi,
       viNum: vi ? vi.num : '', viDate: vi ? this.fmtDate(vi.date) : '', viPeriod: vi ? vi.periodLabel : '', viJob: vi ? vi.job : '',
-      viFrom: vi ? vi.from : '', viFromLine1: iss.line1 || '', viFromLine2: iss.line2 || '', viFromEmail: iss.email || '', viFromPhone: iss.phone || '', viAccent: iss.accent || '#2f6bff',
+      viFrom: vi ? vi.from : '', viFromLine1: iss.line1 || '', viFromLine2: iss.line2 || '', viFromEmail: iss.email || '', viFromPhone: iss.phone || '', viFromContact: [iss.email, iss.phone].filter(Boolean).join(' · '), viAccent: iss.accent || '#2f6bff', viAccentDark: shade(iss.accent || '#2f6bff', 0.3), viLogoEl: imgEl(iss.logo), viHasLogo: !!iss.logo, viNoLogo: !iss.logo, viInitials: this.initials(vi ? vi.from : ''),
+      invFromVal: curTenant ? curTenant.name : f.invFrom,
       viTo: vi ? vi.to : '', viToLine1: cli.line1 || '', viToLine2: cli.line2 || '', viToAttn: cli.attn || '',
       viInvGroups, viScope: vi ? vi.tagScope : '', viSubtotal: vi ? this.fmt2(vi.subtotal) : '', viTotal: vi ? this.fmt2(vi.total) : '', viRateLabel: '$' + rate + ' / ft³ / day',
       poMaterialOptions, poLineRows, hasPoLines: f.poLines.length > 0, poFormTotal: this.fmt2(poFormTotalNum),
@@ -2916,7 +3643,11 @@ class Component extends DCLogic {
       readyAmt, readyCount, invoicedCount, pipeStages, jobCost, activity,
       form: f, msgs: s.msgs,
       employeeChips, equipChips, crewRows, empRows,
-      canApprove, canBill, qboConnected: s.qboConnected, qboCompany: this.QBO_COMPANY, qboCustomerRows,
+      canApprove, canBill, qboConnected: s.qboConnected, qboCompany: curTenant ? curTenant.name : this.QBO_COMPANY, qboCustomerRows,
+      showCompanyProfile: cpOn,
+      cpName: cp.name, cpEmail: cp.email, cpPhone: cp.phone, cpAddr1: cp.addr1, cpAddr2: cp.addr2,
+      cpLogoEl: cp.logoEl, cpHasLogo: cp.hasLogo, cpNoLogo: cp.noLogo, cpAccent: cp.accent, cpInitials: cp.initials, cpSwatches: cp.swatches,
+      onCpName: cp.onName, onCpEmail: cp.onEmail, onCpPhone: cp.onPhone, onCpAddr1: cp.onAddr1, onCpAddr2: cp.onAddr2, onCpLogo: cp.onLogo, onCpRemoveLogo: cp.onRemoveLogo,
       certTypeOptions: CERT_TYPES, employeeCerts: employeeCertsView, hasCerts: f.employeeCerts.length > 0, availCount,
       addCert: this.addCert, onNewCertType: e => this.setField('newCertType', e.target.value), onNewCertExp: e => this.setField('newCertExp', e.target.value),
       jobOptions, editJobOptions, editEmpOptions, equipOptions, resourceOptions, onSite, recentTickets, billingRows,
@@ -2926,9 +3657,11 @@ class Component extends DCLogic {
       onCrewName: e => this.setField('crewName', e.target.value),
       onEquipName: e => this.setField('equipName', e.target.value),
       onEquipType: e => this.setField('equipType', e.target.value),
+      onEquipRate: e => this.setField('equipRate', e.target.value),
       onEditEquip: e => this.loadEquip(e.target.value),
       onEmpName: e => this.setField('employeeName', e.target.value),
       onEmpRole: e => this.setField('employeeRole', e.target.value),
+      onEmpRate: e => this.setField('employeeRate', e.target.value),
       onEditEmp: e => this.loadEmp(e.target.value),
       onJobName: e => this.setField('jobName', e.target.value),
       onJobBudget: e => this.setField('jobBudget', e.target.value),
@@ -2936,8 +3669,18 @@ class Component extends DCLogic {
       onDispatchJob: e => this.setField('dispatchJob', e.target.value),
       onDispatchRes: e => this.setField('dispatchResource', e.target.value),
       onTicketJob: e => this.setField('ticketJob', e.target.value),
-      onLaborHours: e => this.setField('laborHours', e.target.value),
-      onTicketEquip: e => this.setField('ticketEquip', e.target.value),
+      onTicketCrew: e => this.selectTicketCrew(e.target.value),
+      onTicketEquip: e => this.selectTicketEquip(e.target.value),
+      onTEquipHours: e => this.setField('tEquipHours', e.target.value),
+      crewOptions, showTicketCrew: !!f.ticketCrew, ticketMembers, ticketCrewSummary,
+      showTicketEquip: !!(f.ticketEquip && f.ticketEquip !== 'None'),
+      showTicketDetail: !!vt, closeTicketDetail: this.closeTicketDetail,
+      vtId: vt ? vt.id : '', vtJob: vt ? vt.job : '', vtCrew: vt ? vt.crew : '', vtBy: vt ? vt.by : '', vtDate: vt ? vt.dateFmt : '',
+      vtBadgeBg: vt ? vt.badgeBg : '#f1f2f5', vtBadgeFg: vt ? vt.badgeFg : '#8a92a4', vtBadgeLabel: vt ? vt.badgeLabel : '',
+      vtLines: vt ? vt.lines : [], vtTotal: vt ? vt.total : '', vtShowMoney: vt ? vt.showMoney : false,
+      vtInvoiced: vt ? vt.invoiced : false, vtNotInvoiced: vt ? !vt.invoiced : false, vtQbo: vt ? vt.qboNum : '',
+      vtShowApprove: vt ? vt.showApprove : false, vtShowSend: vt ? vt.showSend : false,
+      vtApprove: vt ? vt.onApprove : (() => {}), vtInvoice: vt ? vt.onInvoice : (() => {}),
     };
   }
 }
