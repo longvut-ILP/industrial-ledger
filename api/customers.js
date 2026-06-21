@@ -1,11 +1,16 @@
 import { sql } from '@vercel/postgres';
+import { requireCompany } from './_auth.js';
 
-// /api/customers — list (GET), create (POST)
+// /api/customers — list (GET), create (POST), scoped to the company.
 export default async function handler(req, res) {
   try {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
     if (req.method === 'GET') {
       const { rows } = await sql`
-        SELECT id, name, qbo_id, contact, email, phone FROM customers ORDER BY id`;
+        SELECT id, name, qbo_id, contact, email, phone FROM customers
+        WHERE company = ${company} ORDER BY id`;
       return res.status(200).json(rows);
     }
 
@@ -15,8 +20,8 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'name is required' });
       }
       const { rows } = await sql`
-        INSERT INTO customers (name, qbo_id, contact, email, phone)
-        VALUES (${name.trim()}, ${qbo_id}, ${contact}, ${email}, ${phone})
+        INSERT INTO customers (company, name, qbo_id, contact, email, phone)
+        VALUES (${company}, ${name.trim()}, ${qbo_id}, ${contact}, ${email}, ${phone})
         RETURNING id, name, qbo_id, contact, email, phone`;
       return res.status(200).json(rows[0]);
     }

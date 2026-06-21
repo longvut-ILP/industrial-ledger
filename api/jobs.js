@@ -1,11 +1,16 @@
 import { sql } from '@vercel/postgres';
+import { requireCompany } from './_auth.js';
 
-// /api/jobs — list (GET), create/update by name (POST)
+// /api/jobs — list (GET), create/update by name (POST), scoped to the company.
 export default async function handler(req, res) {
   try {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
     if (req.method === 'GET') {
       const { rows } = await sql`
-        SELECT id, name, customer_id, site_address, status, budget FROM jobs ORDER BY id`;
+        SELECT id, name, customer_id, site_address, status, budget FROM jobs
+        WHERE company = ${company} ORDER BY id`;
       return res.status(200).json(rows);
     }
 
@@ -15,9 +20,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'name is required' });
       }
       const { rows } = await sql`
-        INSERT INTO jobs (name, customer_id, site_address, status, budget)
-        VALUES (${name.trim()}, ${customer_id}, ${site_address}, ${status}, ${budget})
-        ON CONFLICT (name) DO UPDATE
+        INSERT INTO jobs (company, name, customer_id, site_address, status, budget)
+        VALUES (${company}, ${name.trim()}, ${customer_id}, ${site_address}, ${status}, ${budget})
+        ON CONFLICT (company, name) DO UPDATE
           SET customer_id = EXCLUDED.customer_id,
               site_address = EXCLUDED.site_address,
               status = EXCLUDED.status,

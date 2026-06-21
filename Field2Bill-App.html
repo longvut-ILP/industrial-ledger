@@ -29,6 +29,38 @@
     #f2b-inv-toolbar, #f2b-tag-toolbar { display: none !important; }
     @page { margin: 14mm; }
   }
+  /* ===================== MOBILE / RESPONSIVE ===================== */
+  [data-m="hamburger"] { display: none; }
+  [data-m="nav-backdrop"] { display: none; }
+  @media (max-width: 860px) {
+    /* Sidebar becomes a slide-in drawer */
+    [data-m="sidebar"] {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 300;
+      width: 252px; max-width: 84vw;
+      transform: translateX(-100%); transition: transform .26s ease;
+      box-shadow: 0 0 44px rgba(0,0,0,.45);
+    }
+    [data-m="sidebar"][data-open="true"] { transform: none; }
+    [data-m="nav-backdrop"][data-open="true"] {
+      display: block; position: fixed; inset: 0; z-index: 250;
+      background: rgba(8,12,22,.5);
+    }
+    [data-m="hamburger"] { display: flex !important; }
+    [data-m="header"] { padding: 0 14px !important; height: 60px !important; gap: 10px !important; }
+    [data-m="header-search"] { display: none !important; }
+    [data-m="header-actions"] { gap: 8px !important; }
+    [data-m="main"] { padding: 16px 14px 36px !important; }
+    /* Collapse multi-column grids to a single column */
+    [data-m="main"] [style*="grid-template-columns:repeat(auto-fit"] { grid-template-columns: 1fr !important; }
+    [data-m="main"] [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+    [data-m="main"] [style*="grid-template-columns:1fr 150px"] { grid-template-columns: 1fr !important; }
+    [data-m="main"] [style*="grid-column:span 2"] { grid-column: auto !important; }
+    /* Wide tables scroll horizontally instead of overflowing the card */
+    [data-m="main"] div:has(> table) { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+    /* Login: hide the brand panel, give the form room */
+    [data-m="login-brand"] { display: none !important; }
+    [data-m="login-form"] { padding: 36px 22px !important; }
+  }
 </style>
 </helmet>
 
@@ -37,8 +69,8 @@
 
     <!-- ===================== LOGIN · SPLIT ===================== -->
     <sc-if value="{{ isSplit }}" hint-placeholder-val="{{ true }}">
-      <div style="display:flex;min-height:100vh;">
-        <div style="flex:1;min-width:0;background:radial-gradient(130% 130% at 0% 0%,#16264f 0%,#0c1322 58%);color:#fff;padding:56px 58px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;">
+      <div data-m="login-split" style="display:flex;min-height:100vh;">
+        <div data-m="login-brand" style="flex:1;min-width:0;background:radial-gradient(130% 130% at 0% 0%,#16264f 0%,#0c1322 58%);color:#fff;padding:56px 58px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;">
           <div style="display:flex;align-items:center;gap:11px;">
             <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(47,107,255,.45);">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
@@ -56,7 +88,7 @@
             <div style="display:flex;align-items:center;gap:9px;"><span style="width:8px;height:8px;border-radius:50%;background:#f6a93b;"></span><span style="font:500 12.5px 'IBM Plex Sans';color:#8a93a8;">Live field sync</span></div>
           </div>
         </div>
-        <div style="flex:1;min-width:0;background:#fbfbfc;display:flex;align-items:center;justify-content:center;padding:48px 40px;">
+        <div data-m="login-form" style="flex:1;min-width:0;background:#fbfbfc;display:flex;align-items:center;justify-content:center;padding:48px 40px;">
           <div style="width:100%;max-width:344px;">
             <div style="margin-bottom:26px;">
               <h2 style="font:600 25px 'Space Grotesk';color:#0c1322;letter-spacing:-.4px;margin-bottom:5px;">Sign in</h2>
@@ -87,10 +119,13 @@
 </sc-if>
 
 <sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;height:100vh;width:100%;overflow:hidden;background:#eceef2;font-family:'IBM Plex Sans',sans-serif;">
+<div data-m="shell" style="display:flex;height:100vh;width:100%;overflow:hidden;background:#eceef2;font-family:'IBM Plex Sans',sans-serif;">
+
+  <!-- Mobile drawer backdrop -->
+  <div data-m="nav-backdrop" data-open="{{ navOpenStr }}" onClick="{{ closeNav }}"></div>
 
   <!-- ================= SIDEBAR ================= -->
-  <aside style="width:262px;flex-shrink:0;background:#0c1322;display:flex;flex-direction:column;border-right:1px solid #161f33;">
+  <aside data-m="sidebar" data-open="{{ navOpenStr }}" style="width:262px;flex-shrink:0;background:#0c1322;display:flex;flex-direction:column;border-right:1px solid #161f33;">
     <div style="padding:20px 18px 18px;display:flex;align-items:center;gap:11px;">
       <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg,#3b76ff,#1f4fd0);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(47,107,255,.4);">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
@@ -154,13 +189,18 @@
   <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
 
     <!-- Topbar -->
-    <header style="height:66px;flex-shrink:0;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border-bottom:1px solid #e2e5ec;display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:16px;z-index:5;">
-      <div style="min-width:0;">
-        <div style="font:600 19px 'Space Grotesk';color:#0c1322;letter-spacing:-.3px;">{{ pageTitle }}</div>
-        <div style="font:400 12.5px 'IBM Plex Sans';color:#6b7488;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ pageDesc }}</div>
+    <header data-m="header" style="height:66px;flex-shrink:0;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border-bottom:1px solid #e2e5ec;display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:16px;z-index:5;">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+        <button data-m="hamburger" onClick="{{ toggleNav }}" aria-label="Open menu" style="width:40px;height:40px;flex-shrink:0;border:1px solid #e6e8ee;border-radius:10px;background:#fff;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#f3f4f7;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0c1322" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <div style="min-width:0;">
+          <div style="font:600 19px 'Space Grotesk';color:#0c1322;letter-spacing:-.3px;">{{ pageTitle }}</div>
+          <div style="font:400 12.5px 'IBM Plex Sans';color:#6b7488;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ pageDesc }}</div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
-        <div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:10px;background:#f3f4f7;border:1px solid #e6e8ee;min-width:220px;">
+      <div data-m="header-actions" style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <div data-m="header-search" style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:10px;background:#f3f4f7;border:1px solid #e6e8ee;min-width:220px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <span style="font:400 13px 'IBM Plex Sans';color:#9aa1b0;">Search jobs, tickets, crews…</span>
         </div>
@@ -176,7 +216,7 @@
     </header>
 
     <!-- Scroll area -->
-    <main style="flex:1;overflow-y:auto;padding:28px 30px 40px;">
+    <main data-m="main" style="flex:1;overflow-y:auto;padding:28px 30px 40px;">
 
       <!-- ===== DASHBOARD ===== -->
       <sc-if value="{{ showDashboard }}" hint-placeholder-val="{{ true }}">
@@ -362,6 +402,52 @@
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:400 12.5px 'IBM Plex Sans';color:#5b6477;vertical-align:top;">{{ r.members }}</td>
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:400 12.5px 'IBM Plex Sans';color:#5b6477;vertical-align:top;">{{ r.equipment }}</td>
                       <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;vertical-align:top;"><button onClick="{{ r.onEdit }}" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit</button></td>
+                    </tr></sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Equipment -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;">
+            <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+              <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:18px;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#6b3fd6;margin-right:9px;vertical-align:-2px;"></span>Add / edit equipment</div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Select equipment</label>
+                <select value="{{ form.editEquip }}" onChange="{{ onEditEquip }}" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#6b3fd6;background:#fff;">
+                  <option value="">+ Add new equipment</option>
+                  <sc-for list="{{ editEquipOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+                </select>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Name</label>
+                  <input value="{{ form.equipName }}" onChange="{{ onEquipName }}" placeholder="Excavator (Unit #402)" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#6b3fd6;background:#fff;box-shadow:0 0 0 3px rgba(107,63,214,.12);">
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Type</label>
+                  <input value="{{ form.equipType }}" onChange="{{ onEquipType }}" placeholder="Heavy" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#6b3fd6;background:#fff;box-shadow:0 0 0 3px rgba(107,63,214,.12);">
+                </div>
+              </div>
+              <button onClick="{{ saveEquipment }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 18px;border:none;border-radius:9px;background:#6b3fd6;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#5a32bb;">Save equipment</button>
+              <div style="text-align:center;min-height:18px;margin-top:10px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.equip }}</div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+              <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:16px;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#6b3fd6;margin-right:9px;vertical-align:-2px;"></span>Equipment roster</div>
+              <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
+                <table style="width:100%;border-collapse:collapse;">
+                  <thead><tr>
+                    <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Equipment</th>
+                    <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Type</th>
+                    <th style="text-align:right;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;"></th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{ equipRosterRows }}" as="r" hint-placeholder-count="3"><tr>
+                      <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:600 13px 'IBM Plex Sans';color:#0c1322;vertical-align:top;">{{ r.name }}</td>
+                      <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;font:400 12.5px 'IBM Plex Sans';color:#5b6477;vertical-align:top;">{{ r.type }}</td>
+                      <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;vertical-align:top;"><button onClick="{{ r.onEdit }}" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b3fd6;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3eefc;border-color:#6b3fd6;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit</button></td>
                     </tr></sc-for>
                   </tbody>
                 </table>
@@ -1442,6 +1528,8 @@ class Component extends DCLogic {
   state = {
     active: 'dashboard',
     authed: false,
+    authToken: '',
+    navOpen: false,
     loginStyle: 'split',
     role: 'Owner / Admin',
     workspace: 'Scaffold Monkey',
@@ -1535,6 +1623,7 @@ class Component extends DCLogic {
     ],
     form: {
       crewName: '', crewMembers: ['John Doe', 'Jane Smith'], crewEquip: ['Excavator (Unit #402)'], editCrew: '',
+      equipName: '', equipType: '', editEquip: '',
       employeeName: '', employeeRole: '', editEmp: '', employeeCerts: [], newCertType: 'OSHA 10', newCertExp: '',
       jobName: '', jobBudget: '', editJob: '',
       dispatchJob: '', dispatchResource: '',
@@ -1550,8 +1639,10 @@ class Component extends DCLogic {
     msgs: {},
   };
 
-  setActive = (id) => this.setState({ active: id });
-  goNewTicket = () => this.setState({ active: 'fieldops' });
+  setActive = (id) => this.setState({ active: id, navOpen: false });
+  goNewTicket = () => this.setState({ active: 'fieldops', navOpen: false });
+  toggleNav = () => this.setState(s => ({ navOpen: !s.navOpen }));
+  closeNav = () => this.setState({ navOpen: false });
   setField = (k, v) => this.setState(s => ({ form: { ...s.form, [k]: v } }));
 
   // ---------------- Auth · workspaces · roles ----------------
@@ -1597,7 +1688,13 @@ class Component extends DCLogic {
       if (res.ok) {
         const data = await res.json();
         const u = data.user || {};
-        return this.setState({ authed: true, role: u.role || 'Owner / Admin', company: u.company || '', loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' });
+        const token = data.token || '';
+        this.persistSession({ token, company: u.company || '', role: u.role || 'Owner / Admin' });
+        this.setState(
+          { authed: true, authToken: token, role: u.role || 'Owner / Admin', company: u.company || '', loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' },
+          this.refreshAll
+        );
+        return;
       }
       if (res.status === 401) {
         return this.setState({ loginError: 'Invalid email or password.', loginBusy: false });
@@ -1610,7 +1707,44 @@ class Component extends DCLogic {
     }
   };
   demoSignIn = (role) => this.setState({ authed: true, role, active: 'dashboard', loginError: '' });
-  signOut = () => this.setState({ authed: false, loginPass: '', wsOpen: false });
+  signOut = () => {
+    try { sessionStorage.removeItem('f2b_session'); } catch (e) {}
+    this.setState({ authed: false, authToken: '', company: '', loginPass: '', wsOpen: false });
+  };
+
+  // ---- Multi-tenancy plumbing -------------------------------------------
+  // Every data request carries the signed token so the API returns only the
+  // logged-in company's rows. Keep the session in sessionStorage so a page
+  // refresh stays signed in (and stays scoped to the same company).
+  persistSession = ({ token, company, role }) => {
+    try { sessionStorage.setItem('f2b_session', JSON.stringify({ token, company, role })); } catch (e) {}
+  };
+  restoreSession = () => {
+    try {
+      const raw = sessionStorage.getItem('f2b_session');
+      if (!raw) return false;
+      const s = JSON.parse(raw);
+      if (!s || !s.token) return false;
+      this.setState(
+        { authed: true, authToken: s.token, company: s.company || '', role: s.role || 'Owner / Admin', active: 'dashboard' },
+        this.refreshAll
+      );
+      return true;
+    } catch (e) { return false; }
+  };
+  authFetch = (path, opts = {}) => {
+    const headers = { ...(opts.headers || {}) };
+    if (this.state.authToken) headers['Authorization'] = 'Bearer ' + this.state.authToken;
+    return fetch(path, { ...opts, headers });
+  };
+  refreshAll = () => {
+    this.refreshCrews();
+    this.refreshEmployees();
+    this.refreshEquipment();
+    this.refreshJobs();
+    this.refreshTickets();
+    this.refreshInvoices();
+  };
   toggleWs = () => this.setState(s => ({ wsOpen: !s.wsOpen }));
   setWorkspace = (ws) => this.setState({ workspace: ws, wsOpen: false });
 
@@ -1644,7 +1778,7 @@ class Component extends DCLogic {
   // Pull crews from the database (no-ops silently if the API isn't there yet)
   refreshCrews = async () => {
     try {
-      const res = await fetch('/api/crews');
+      const res = await this.authFetch('/api/crews');
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
@@ -1669,13 +1803,56 @@ class Component extends DCLogic {
 
     // persist to the database, then re-sync from the server
     try {
-      const res = await fetch('/api/crews', {
+      const res = await this.authFetch('/api/crews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rec),
       });
       if (res.ok) this.refreshCrews();
     } catch (e) { /* no backend in preview — local state already updated */ }
+  };
+
+  // ---- Equipment master data (per company) ------------------------------
+  applyEquipmentLocally = (name, type, prevName) => {
+    this.setState(s => {
+      const equipment = [...s.equipment];
+      const target = prevName || name;
+      const i = equipment.findIndex(e => e.name === target);
+      if (i >= 0) equipment[i] = { ...equipment[i], name, type: type || equipment[i].type };
+      else equipment.push({ name, type: type || 'General' });
+      return { equipment, form: { ...s.form, equipName: '', equipType: '', editEquip: name } };
+    });
+  };
+  refreshEquipment = async () => {
+    try {
+      const res = await this.authFetch('/api/equipment');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState({ equipment: rows.map(r => ({ name: r.name, type: r.type || 'General' })) });
+      }
+    } catch (e) { /* no backend in preview — keep local state */ }
+  };
+  saveEquipment = async () => {
+    const f = this.state.form;
+    const name = f.equipName.trim();
+    if (!name) return this.setMsg('equip', 'Enter an equipment name');
+    const type = (f.equipType || '').trim() || 'General';
+    const prevName = f.editEquip || '';
+    this.applyEquipmentLocally(name, type, prevName);
+    this.setMsg('equip', prevName ? 'Equipment updated ✓' : 'Equipment added ✓');
+    try {
+      const res = await this.authFetch('/api/equipment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, type, prevName }),
+      });
+      if (res.ok) this.refreshEquipment();
+    } catch (e) { /* local state already updated */ }
+  };
+  loadEquip = (val) => {
+    const e = this.state.equipment.find(x => x.name === val);
+    this.setState(s => ({ form: { ...s.form, editEquip: val, equipName: val && e ? e.name : '', equipType: val && e ? (e.type || '') : '' } }));
   };
 
   applyEmployeeLocally = (name, role, certs, editEmp) => {
@@ -1690,7 +1867,7 @@ class Component extends DCLogic {
 
   refreshEmployees = async () => {
     try {
-      const res = await fetch('/api/employees');
+      const res = await this.authFetch('/api/employees');
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
@@ -1708,7 +1885,7 @@ class Component extends DCLogic {
     this.applyEmployeeLocally(name, role, certs, f.editEmp);
     this.setMsg('employee', f.editEmp ? 'Employee updated ✓' : 'Employee added ✓');
     try {
-      const res = await fetch('/api/employees', {
+      const res = await this.authFetch('/api/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, role, certs }),
@@ -1729,7 +1906,7 @@ class Component extends DCLogic {
 
   refreshJobs = async () => {
     try {
-      const res = await fetch('/api/jobs');
+      const res = await this.authFetch('/api/jobs');
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
@@ -1749,7 +1926,7 @@ class Component extends DCLogic {
     this.applyJobLocally(name, budget, f.editJob);
     this.setMsg('job', f.editJob ? 'Job updated ✓' : 'Job added ✓');
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await this.authFetch('/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, budget }),
@@ -1811,7 +1988,7 @@ class Component extends DCLogic {
 
   saveTicket = async (rec) => {
     try {
-      await fetch('/api/tickets', {
+      await this.authFetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label: rec.id, job_name: rec.job, hours: rec.hours, amount: rec.amount, status: rec.status, invoiced: rec.invoiced }),
@@ -1821,7 +1998,7 @@ class Component extends DCLogic {
 
   patchTicket = async (label, fields) => {
     try {
-      await fetch('/api/tickets', {
+      await this.authFetch('/api/tickets', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label, ...fields }),
@@ -1831,7 +2008,7 @@ class Component extends DCLogic {
 
   refreshTickets = async () => {
     try {
-      const res = await fetch('/api/tickets');
+      const res = await this.authFetch('/api/tickets');
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
@@ -1971,11 +2148,10 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
-    this.refreshCrews();     // load saved crews from the database (silently skipped in local preview)
-    this.refreshEmployees(); // load saved employees
-    this.refreshJobs();      // load saved jobs
-    this.refreshTickets();   // load saved field tickets
-    this.refreshInvoices();  // load saved rental invoices
+    // Re-establish a prior session (and its company scope) on refresh.
+    // Data is loaded by refreshAll() only once we have a token — an
+    // unauthenticated request now returns 401 and would load nothing.
+    this.restoreSession();
     const load = () => {
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
@@ -2223,7 +2399,7 @@ class Component extends DCLogic {
 
   saveRentalInvoice = async (rec) => {
     try {
-      await fetch('/api/invoices', {
+      await this.authFetch('/api/invoices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rec),
@@ -2233,7 +2409,7 @@ class Component extends DCLogic {
 
   refreshInvoices = async () => {
     try {
-      const res = await fetch('/api/invoices');
+      const res = await this.authFetch('/api/invoices');
       if (!res.ok) return;
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) this.setState({ rentalInvoices: rows });
@@ -2387,6 +2563,8 @@ class Component extends DCLogic {
     const editJobOptions = jobOptions;
     const editEmpOptions = s.employees.map(e => e.name);
     const equipOptions = s.equipment.map(eq => eq.name);
+    const editEquipOptions = s.equipment.map(eq => eq.name);
+    const equipRosterRows = s.equipment.map(eq => ({ name: eq.name, type: eq.type || '—', onEdit: () => this.loadEquip(eq.name) }));
     const resourceOptions = [
       ...s.crews.map(c => ({ value: c.name, label: 'Crew · ' + c.name, disabled: false })),
       ...s.employees.map(e => { const exp = this.empStatus(e.certs) === 'Expired'; return { value: e.name, label: 'Individual · ' + e.name + (exp ? ' (cert expired)' : ''), disabled: exp }; }),
@@ -2632,6 +2810,7 @@ class Component extends DCLogic {
     }));
     return {
       authed: s.authed, showLogin: !s.authed,
+      navOpenStr: s.navOpen ? 'true' : 'false', toggleNav: this.toggleNav, closeNav: this.closeNav,
       isSplit: true,
       loginEmail: s.loginEmail, loginPass: s.loginPass, loginWs: s.loginWs, loginError: s.loginError, hasLoginError: !!s.loginError,
       onLoginEmail: this.onLoginEmail, onLoginPass: this.onLoginPass, onLoginWs: this.onLoginWs, signIn: this.signIn,
@@ -2742,8 +2921,12 @@ class Component extends DCLogic {
       addCert: this.addCert, onNewCertType: e => this.setField('newCertType', e.target.value), onNewCertExp: e => this.setField('newCertExp', e.target.value),
       jobOptions, editJobOptions, editEmpOptions, equipOptions, resourceOptions, onSite, recentTickets, billingRows,
       reportKpis, reportRows,
-      saveCrew: this.saveCrew, saveEmployee: this.saveEmployee, saveJob: this.saveJob, assign: this.assign, submitTicket: this.submitTicket,
+      saveCrew: this.saveCrew, saveEmployee: this.saveEmployee, saveEquipment: this.saveEquipment, saveJob: this.saveJob, assign: this.assign, submitTicket: this.submitTicket,
+      editEquipOptions, equipRosterRows,
       onCrewName: e => this.setField('crewName', e.target.value),
+      onEquipName: e => this.setField('equipName', e.target.value),
+      onEquipType: e => this.setField('equipType', e.target.value),
+      onEditEquip: e => this.loadEquip(e.target.value),
       onEmpName: e => this.setField('employeeName', e.target.value),
       onEmpRole: e => this.setField('employeeRole', e.target.value),
       onEditEmp: e => this.loadEmp(e.target.value),

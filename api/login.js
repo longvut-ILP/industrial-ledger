@@ -1,4 +1,5 @@
 import { sql } from '@vercel/postgres';
+import { makeToken } from './_auth.js';
 
 // /api/login — verify email + password against the bcrypt hash in the database.
 export default async function handler(req, res) {
@@ -21,7 +22,10 @@ export default async function handler(req, res) {
     if (!rows.length) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
-    return res.status(200).json({ ok: true, user: rows[0] });
+    const user = rows[0];
+    // Signed token the browser sends on every later request so the API
+    // knows (and can trust) which company's data to return.
+    return res.status(200).json({ ok: true, user, token: makeToken(user.company) });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

@@ -1,12 +1,18 @@
 import { sql } from '@vercel/postgres';
+import { requireCompany } from './_auth.js';
 
 // /api/tickets — list (GET), create/upsert (POST), update status/invoiced (PATCH)
+// All scoped to the signed-in user's company.
 export default async function handler(req, res) {
   try {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
     if (req.method === 'GET') {
       const { rows } = await sql`
         SELECT label, job_name, hours, amount, status, invoiced, qbo_num
-        FROM tickets WHERE label IS NOT NULL ORDER BY id`;
+        FROM tickets
+        WHERE company = ${company} AND label IS NOT NULL ORDER BY id`;
       return res.status(200).json(rows);
     }
 
@@ -16,9 +22,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'label and job_name are required' });
       }
       const { rows } = await sql`
-        INSERT INTO tickets (label, job_name, hours, amount, status, invoiced)
-        VALUES (${label}, ${job_name}, ${hours}, ${amount}, ${status}, ${invoiced})
-        ON CONFLICT (label) DO UPDATE
+        INSERT INTO tickets (company, label, job_name, hours, amount, status, invoiced)
+        VALUES (${company}, ${label}, ${job_name}, ${hours}, ${amount}, ${status}, ${invoiced})
+        ON CONFLICT (company, label) DO UPDATE
           SET hours = EXCLUDED.hours, amount = EXCLUDED.amount,
               status = EXCLUDED.status, invoiced = EXCLUDED.invoiced
         RETURNING label, job_name, hours, amount, status, invoiced, qbo_num`;
@@ -33,7 +39,7 @@ export default async function handler(req, res) {
           status   = COALESCE(${status}, status),
           invoiced = COALESCE(${invoiced}, invoiced),
           qbo_num  = COALESCE(${qbo_num}, qbo_num)
-        WHERE label = ${label}
+        WHERE company = ${company} AND label = ${label}
         RETURNING label, job_name, hours, amount, status, invoiced, qbo_num`;
       return res.status(200).json(rows[0] || null);
     }
