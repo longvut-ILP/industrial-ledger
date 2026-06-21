@@ -1582,10 +1582,32 @@ class Component extends DCLogic {
   onLoginEmail = (e) => this.setState({ loginEmail: e.target.value, loginError: '' });
   onLoginPass = (e) => this.setState({ loginPass: e.target.value, loginError: '' });
   onLoginWs = (e) => this.setState({ loginWs: e.target.value });
-  signIn = () => {
-    if (!this.state.loginEmail.trim() || !this.state.loginPass.trim())
+  signIn = async () => {
+    const email = this.state.loginEmail.trim();
+    const pass = this.state.loginPass.trim();
+    if (!email || !pass)
       return this.setState({ loginError: 'Enter your work email and password to continue.' });
-    this.setState({ authed: true, role: 'Owner / Admin', active: 'dashboard', loginError: '' });
+    this.setState({ loginError: '', loginBusy: true });
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const u = data.user || {};
+        return this.setState({ authed: true, role: u.role || 'Owner / Admin', company: u.company || '', loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' });
+      }
+      if (res.status === 401) {
+        return this.setState({ loginError: 'Invalid email or password.', loginBusy: false });
+      }
+      // API unreachable (e.g. local preview with no backend) — fall back to demo sign-in
+      this.setState({ authed: true, role: 'Owner / Admin', loginError: '', loginBusy: false, active: 'dashboard' });
+    } catch (e) {
+      // network error / no backend — demo fallback so the preview still works
+      this.setState({ authed: true, role: 'Owner / Admin', loginError: '', loginBusy: false, active: 'dashboard' });
+    }
   };
   demoSignIn = (role) => this.setState({ authed: true, role, active: 'dashboard', loginError: '' });
   signOut = () => this.setState({ authed: false, loginPass: '', wsOpen: false });
