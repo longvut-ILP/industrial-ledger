@@ -1925,8 +1925,8 @@ class Component extends DCLogic {
     editDraft: {},
     devMsg: '',
     devMsgType: 'ok',
-    qboConnected: true,
-    qboConfigured: true,
+    qboConnected: false,
+    qboConfigured: false,
     qboRealmName: '',
     qboSeq: 1862,
     qboOverrides: {},
@@ -2597,10 +2597,10 @@ class Component extends DCLogic {
     if (!this.state.authToken) return; // demo sign-in or offline preview \u2014 keep demo defaults
     try {
       const res = await this.authFetch('/api/qbo-status');
-      if (!res.ok) return;
+      if (!res.ok) { this.setState({ qboConnected: false }); return; }
       const st = await res.json();
       this.setState({ qboConfigured: !!st.configured, qboConnected: !!st.connected, qboRealmName: st.companyName || '' });
-    } catch (e) { /* offline preview */ }
+    } catch (e) { this.setState({ qboConnected: false }); /* offline preview */ }
   };
   connectQbo = () => {
     const token = this.state.authToken;

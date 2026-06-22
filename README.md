@@ -87,9 +87,9 @@ per company, so one tenant can never post into another's books.
 
    | Variable | Value |
    |---|---|
-   | `QBO_CLIENT_ID` | from Intuit |
-   | `QBO_CLIENT_SECRET` | from Intuit |
-   | `QBO_REDIRECT_URI` | `https://YOUR-DOMAIN/api/qbo-callback` |
+   | `QBO_CLIENT_ID` | from Intuit |   ABgTTRvHhBUztTDm11gPTvjR2l07oUivtZMpnYsZw5P1JX9ZbG
+   | `QBO_CLIENT_SECRET` | from Intuit | EAw7JOkmSQry4VGww4j0sjjKDax0FzTL7MNRlbNV
+   | `QBO_REDIRECT_URI` | `https://YOUR-DOMAIN/api/qbo-callback` |  https://www.industrialledger.com/api/qbo-callback
    | `QBO_ENV` | `sandbox` while testing, `production` when live |
 
    Redeploy after setting them.
