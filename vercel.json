@@ -1,4 +1,10 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/:resource(jobs|customers|crews|employees|equipment|invoices|materials|tickets|users)",
+      "destination": "/api/data?resource=:resource"
+    }
+  ]
 }

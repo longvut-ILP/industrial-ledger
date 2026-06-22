@@ -15,10 +15,12 @@ Marketing homepage + ROI page + the embedded **Field2Bill** product demo.
 > **Vercel Hobby (free) plan note:** Hobby caps a deployment at **12 Serverless
 > Functions**, and every file in `api/` counts as one. To stay under the cap, the
 > simple per-resource endpoints (crews, customers, employees, equipment, invoices,
-> jobs, materials, tickets, users) are all served by a single dynamic file,
-> `api/[resource].js`. The public URLs are unchanged — `/api/jobs`,
-> `/api/customers`, etc. still work exactly as before. Do not split them back into
-> one-file-per-resource unless you're on the Pro plan, or you'll exceed the limit.
+> jobs, materials, tickets, users) are all served by a single file,
+> `api/data.js`, with `vercel.json` rewrites mapping `/api/jobs`, `/api/customers`,
+> etc. to it. The public URLs are unchanged. (The file is named `data.js` rather
+> than a bracketed dynamic route so it uploads cleanly through GitHub's web UI.)
+> Do not split them back into one-file-per-resource unless you're on the Pro plan,
+> or you'll exceed the limit.
 
 > Add your own `photo-010.jpg` (Long's headshot) and `favicon.png` to this folder —
 > they're referenced by the pages and live on your domain.
@@ -87,9 +89,9 @@ per company, so one tenant can never post into another's books.
 
    | Variable | Value |
    |---|---|
-   | `QBO_CLIENT_ID` | from Intuit |   ABgTTRvHhBUztTDm11gPTvjR2l07oUivtZMpnYsZw5P1JX9ZbG
-   | `QBO_CLIENT_SECRET` | from Intuit | EAw7JOkmSQry4VGww4j0sjjKDax0FzTL7MNRlbNV
-   | `QBO_REDIRECT_URI` | `https://YOUR-DOMAIN/api/qbo-callback` |  https://www.industrialledger.com/api/qbo-callback
+   | `QBO_CLIENT_ID` | from Intuit |
+   | `QBO_CLIENT_SECRET` | from Intuit |
+   | `QBO_REDIRECT_URI` | `https://YOUR-DOMAIN/api/qbo-callback` |
    | `QBO_ENV` | `sandbox` while testing, `production` when live |
 
    Redeploy after setting them.
@@ -105,8 +107,9 @@ file. **Disconnect** clears it.
 > company you select during the connect step, not into the accountant login itself.
 
 ### API files
-- `api/[resource].js` — all tenant data CRUD (crews, customers, employees,
+- `api/data.js` — all tenant data CRUD (crews, customers, employees,
   equipment, invoices, jobs, materials, tickets) + admin `users`, in one function.
+  `vercel.json` rewrites map `/api/jobs`, `/api/customers`, … onto it.
 - `api/login.js` — issues the signed login token.
 - `api/_auth.js` — shared token signing/verification (underscore = not routed).
 - `api/_qbo.js` — Intuit OAuth + token refresh + authenticated API calls.

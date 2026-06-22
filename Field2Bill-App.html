@@ -2604,7 +2604,19 @@ class Component extends DCLogic {
   };
   connectQbo = () => {
     const token = this.state.authToken;
-    if (!token) { this.setMsg('bill', 'Sign in to connect QuickBooks.'); return; }
+    if (!token) {
+      window.alert(
+        'You\u2019re signed in to a local demo workspace, which cannot connect to QuickBooks.\n\n' +
+        'To connect QuickBooks you must sign in with a REAL account that lives in your database ' +
+        '(created with create-user.sql, or the admin users endpoint).\n\n' +
+        'Steps:\n' +
+        '1. Create the user in your database with create-user.sql.\n' +
+        '2. Sign out, then sign in on your live site with that email + password ' +
+        '(use a fresh/incognito window so no demo workspace is stored).\n' +
+        '3. Go to Admin \u2192 QuickBooks \u2192 Connect to QuickBooks again.'
+      );
+      return;
+    }
     const url = '/api/qbo-connect?token=' + encodeURIComponent(token);
     const w = window.open(url, 'qbo-connect', 'width=640,height=740');
     const onMsg = (e) => {
