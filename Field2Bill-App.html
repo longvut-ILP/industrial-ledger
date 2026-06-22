@@ -399,22 +399,45 @@
             </sc-for>
           </div>
 
-          <!-- Revenue + Pipeline -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;margin-bottom:18px;">
-            <div style="grid-column:span 2;min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
-                <div>
-                  <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Revenue invoiced</div>
-                  <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Last 8 months · field tickets converted to billing</div>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px;font:500 12px 'IBM Plex Sans';color:#0f9d6b;background:#e8f6ef;border-radius:8px;padding:5px 10px;">▲ 12.4% YoY</div>
+          <!-- Revenue invoiced (full width) -->
+          <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+              <div>
+                <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Revenue invoiced</div>
+                <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Last 8 months · field tickets converted to billing</div>
               </div>
-              {{ revenueChartEl }}
-              <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 2px;">
-                <sc-for list="{{ months }}" as="m" hint-placeholder-count="8"><span style="font:500 10.5px 'IBM Plex Mono';color:#aab1bf;">{{ m }}</span></sc-for>
+              <div style="display:flex;align-items:center;gap:6px;font:500 12px 'IBM Plex Sans';color:#0f9d6b;background:#e8f6ef;border-radius:8px;padding:5px 10px;">▲ 12.4% YoY</div>
+            </div>
+            {{ revenueChartEl }}
+            <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 2px;">
+              <sc-for list="{{ months }}" as="m" hint-placeholder-count="8"><span style="font:500 10.5px 'IBM Plex Mono';color:#aab1bf;">{{ m }}</span></sc-for>
+            </div>
+          </div>
+
+          <!-- Live job costing (full width) -->
+          <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <div>
+                <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Live job costing</div>
+                <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Actual vs budgeted, updating as tickets sync</div>
               </div>
             </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px 28px;">
+              <sc-for list="{{ jobCost }}" as="row" hint-placeholder-count="3">
+                <div style="margin-bottom:3px;">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;">
+                    <span style="font:500 13px 'IBM Plex Sans';color:#2b3344;">{{ row.name }}</span>
+                    <span style="font:500 12px 'IBM Plex Mono';color:#6b7488;">{{ row.actual }} <span style="color:#b3b9c5;">/ {{ row.budget }}</span></span>
+                  </div>
+                  <div style="height:9px;border-radius:6px;background:#eef0f3;overflow:hidden;"><div style="height:100%;width:{{ row.pct }}%;background:{{ row.color }};border-radius:6px;transition:width .6s ease;"></div></div>
+                  <div style="margin-top:5px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:{{ row.color }};">{{ row.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
 
+          <!-- Field → Bill pipeline + Recent activity -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;margin-bottom:18px;">
             <div style="min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;">
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:3px;">Field → Bill pipeline</div>
               <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-bottom:18px;">Every ticket, traced to an invoice</div>
@@ -433,28 +456,6 @@
                 </div>
               </sc-for>
             </div>
-          </div>
-
-          <!-- Job costing + Activity -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;">
-            <div style="grid-column:span 2;min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <div>
-                  <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Live job costing</div>
-                  <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Actual vs budgeted, updating as tickets sync</div>
-                </div>
-              </div>
-              <sc-for list="{{ jobCost }}" as="row" hint-placeholder-count="3">
-                <div style="margin-bottom:17px;">
-                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;">
-                    <span style="font:500 13px 'IBM Plex Sans';color:#2b3344;">{{ row.name }}</span>
-                    <span style="font:500 12px 'IBM Plex Mono';color:#6b7488;">{{ row.actual }} <span style="color:#b3b9c5;">/ {{ row.budget }}</span></span>
-                  </div>
-                  <div style="height:9px;border-radius:6px;background:#eef0f3;overflow:hidden;"><div style="height:100%;width:{{ row.pct }}%;background:{{ row.color }};border-radius:6px;transition:width .6s ease;"></div></div>
-                  <div style="margin-top:5px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:{{ row.color }};">{{ row.label }}</div>
-                </div>
-              </sc-for>
-            </div>
 
             <div style="min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
               <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:14px;">Recent activity</div>
@@ -468,6 +469,47 @@
                     </div>
                   </div>
                 </sc-for>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- Crew availability + Low stock alert -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;">
+            <div style="min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;">
+              <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Crew availability</div>
+              <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;margin-bottom:14px;">{{ crewAvailSummary }} to dispatch</div>
+              <div style="flex:1;min-height:0;max-height:282px;overflow-y:auto;">
+                <sc-for list="{{ crewAvailRows }}" as="p" hint-placeholder-count="6">
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #f2f3f6;">
+                    <div style="width:9px;height:9px;border-radius:50%;background:{{ p.dotColor }};flex-shrink:0;"></div>
+                    <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#2b3344;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.name }}</div><div style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;">{{ p.role }}</div></div>
+                    <span style="font:600 10.5px 'IBM Plex Sans';padding:3px 10px;border-radius:20px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};flex-shrink:0;">{{ p.badgeLabel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="min-width:0;background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+                <div>
+                  <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Low stock alert</div>
+                  <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Under 20% available</div>
+                </div>
+                <sc-if value="{{ hasLowStock }}" hint-placeholder-val="{{ false }}"><span style="font:600 12px 'IBM Plex Sans';color:#b3760a;background:#fdf1e1;border-radius:20px;padding:5px 12px;flex-shrink:0;">{{ lowStockCount }} low</span></sc-if>
+              </div>
+              <sc-if value="{{ hasLowStock }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ lowStock }}" as="m" hint-placeholder-count="3">
+                  <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;">
+                      <span style="font:500 13px 'IBM Plex Sans';color:#2b3344;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ m.name }}</span>
+                      <span style="font:600 12px 'IBM Plex Mono';color:{{ m.pctColor }};flex-shrink:0;">{{ m.avail }} / {{ m.qty }} · {{ m.pct }}%</span>
+                    </div>
+                    <div style="height:7px;border-radius:5px;background:#eef0f3;overflow:hidden;"><div style="height:100%;width:{{ m.barPct }}%;background:{{ m.barColor }};border-radius:5px;"></div></div>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ noLowStock }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#e8f6ef;border-radius:11px;font:500 12.5px 'IBM Plex Sans';color:#0f9d6b;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f9d6b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All materials above 20% available — stock levels healthy.</div>
               </sc-if>
             </div>
           </div>
@@ -583,12 +625,18 @@
                     <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;text-align:right;">
                       <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ c.badgeBg }};color:{{ c.badgeFg }};">{{ c.badgeLabel }}</span>
                       <sc-if value="{{ c.needsMap }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onMap }}" style="margin-left:8px;padding:5px 12px;border:1px solid #2ca01c;border-radius:8px;background:#fff;color:#2ca01c;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eaf7e6;">Map</button></sc-if>
+                      <sc-if value="{{ c.canUnlink }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onUnlink }}" title="Unlink from QuickBooks" style="margin-left:8px;padding:5px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#9aa1b0;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#fdecec;color:#d23b3f;border-color:#f3c0c2;">Unlink</button></sc-if>
                     </td>
                   </tr></sc-for>
                 </tbody>
               </table>
             </div>
-            <div style="font:400 11.5px 'IBM Plex Sans';color:#9aa1b0;margin-top:10px;">Mapping a client links it to its QuickBooks record — so you never re-enter contact details, and every invoice sends to the email already on file there.</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:14px;">
+              <input value="{{ form.newClient }}" onChange="{{ onNewClient }}" placeholder="Add a client / customer name…" style="flex:1;min-width:0;padding:9px 12px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Sans';color:#2b3344;outline:none;">
+              <button onClick="{{ addClient }}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add client</button>
+            </div>
+            <div style="min-height:15px;margin-top:8px;font:600 12px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.cust }}</div>
+            <div style="font:400 11.5px/1.6 'IBM Plex Sans';color:#9aa1b0;margin-top:8px;">Mapping links a client to its QuickBooks customer record — it doesn’t send anything on its own; it just tells Field2Bill which QuickBooks customer (and which email on file) to file invoices under when you later send a ticket. Add new clients above, or <b>Unlink</b> one that was mapped to the wrong customer.</div>
           </div>
 
           <!-- Crew builder -->
@@ -1163,6 +1211,7 @@
                       <sc-if value="{{ r.showSend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onInvoice }}" style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:none;border-radius:8px;background:#2ca01c;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#238016;"><span style="display:inline-flex;width:15px;height:15px;border-radius:50%;background:#fff;color:#2ca01c;align-items:center;justify-content:center;font:700 10px 'Space Grotesk';">$</span>Send to QuickBooks</button></sc-if>
                       <sc-if value="{{ r.awaitingBill }}" hint-placeholder-val="{{ false }}"><span style="font:400 12px 'IBM Plex Sans';color:#aab1bf;">Approved · awaiting billing</span></sc-if>
                       <sc-if value="{{ r.invoiced }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;font:600 12px 'IBM Plex Sans';color:#2ca01c;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2ca01c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>In QuickBooks · {{ r.qboNum }}</span></sc-if>
+                      <sc-if value="{{ r.showVoid }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onVoid }}" title="Delete this invoice from QuickBooks" style="margin-left:9px;display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid #f3c0c2;border-radius:8px;background:#fff;color:#d23b3f;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="background:#fdecec;border-color:#d23b3f;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Delete</button></sc-if>
                     </td>
                   </tr></sc-for>
                 </tbody>
@@ -1546,6 +1595,80 @@
             </div>
             <div style="margin-top:10px;font:400 11.5px 'IBM Plex Sans';color:#9aa1b0;">Showing {{ catalogShown }} of {{ catalogTotal }} materials</div>
           </div>
+
+          <!-- Inventory audit / write-offs -->
+          <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;">
+              <div>
+                <div style="font:600 14px 'Space Grotesk';color:#0c1322;"><span style="display:inline-block;width:7px;height:14px;border-radius:3px;background:#d23b3f;margin-right:9px;vertical-align:-2px;"></span>Inventory audit &amp; write-offs</div>
+                <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:3px;max-width:560px;">Record stock taken out — missing, damaged, or sold. The quantity comes straight off on-hand and available, and is logged below with the date.</div>
+              </div>
+              <div style="display:flex;gap:7px;flex-shrink:0;">
+                <button onClick="{{ auditsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ auditsPrint }}" title="Print / save as PDF" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>PDF</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:16px;border:1px solid #eceef2;border-radius:12px;background:#fafbfc;margin-bottom:6px;">
+              <div style="flex:2;min-width:220px;">
+                <label style="display:block;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Material</label>
+                <select value="{{ form.auditMat }}" onChange="{{ onAuditMat }}" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;">
+                  <option value="">Select material…</option>
+                  <sc-for list="{{ auditMatOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+                </select>
+              </div>
+              <div style="flex:1;min-width:84px;">
+                <label style="display:block;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Qty out</label>
+                <input value="{{ form.auditQty }}" onChange="{{ onAuditQty }}" type="number" min="1" step="1" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;">
+              </div>
+              <div style="flex:1;min-width:120px;">
+                <label style="display:block;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Reason</label>
+                <select value="{{ form.auditReason }}" onChange="{{ onAuditReason }}" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;">
+                  <option value="Missing">Missing</option>
+                  <option value="Damaged">Damaged</option>
+                  <option value="Sold">Sold</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div style="flex:1;min-width:140px;">
+                <label style="display:block;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Date</label>
+                <input value="{{ form.auditDate }}" onChange="{{ onAuditDate }}" type="date" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;">
+              </div>
+              <div style="flex:2;min-width:160px;">
+                <label style="display:block;font:600 10.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;margin-bottom:6px;">Note (optional)</label>
+                <input value="{{ form.auditNote }}" onChange="{{ onAuditNote }}" placeholder="e.g. damaged on Site B" style="width:100%;padding:9px 11px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;">
+              </div>
+              <button onClick="{{ recordAudit }}" style="flex-shrink:0;height:38px;padding:0 16px;display:inline-flex;align-items:center;gap:7px;border:none;border-radius:8px;background:#d23b3f;color:#fff;font:600 12.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#b32e32;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Record write-off</button>
+            </div>
+            <div style="min-height:15px;margin:8px 0 14px;font:600 12px 'IBM Plex Sans';color:#d23b3f;">{{ msgs.audit }}</div>
+
+            <sc-if value="{{ hasAudits }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid #eceef2;border-radius:11px;overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;min-width:660px;">
+                <thead><tr>
+                  <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Date</th>
+                  <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Material</th>
+                  <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Reason</th>
+                  <th style="text-align:right;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Qty out</th>
+                  <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">Note</th>
+                  <th style="text-align:left;padding:11px 16px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;">By</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="0"><tr>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;font:500 12px 'IBM Plex Mono';color:#6b7488;white-space:nowrap;">{{ a.date }}</td>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;"><div style="font:500 12.5px 'IBM Plex Sans';color:#0c1322;">{{ a.name }}</div><div style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ a.code }}</div></td>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;"><span style="font:600 10.5px 'IBM Plex Sans';padding:3px 10px;border-radius:20px;background:{{ a.reasonBg }};color:{{ a.reasonFg }};">{{ a.reason }}</span></td>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;text-align:right;font:600 12.5px 'IBM Plex Mono';color:#d23b3f;">−{{ a.qty }}</td>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;font:400 12px 'IBM Plex Sans';color:#6b7488;">{{ a.note }}</td>
+                    <td style="padding:12px 16px;border-bottom:1px solid #f1f2f5;font:400 12px 'IBM Plex Sans';color:#6b7488;">{{ a.by }}</td>
+                  </tr></sc-for>
+                </tbody>
+              </table>
+            </div>
+            </sc-if>
+            <sc-if value="{{ noAudits }}" hint-placeholder-val="{{ true }}">
+              <div style="border:1px dashed #d8dce4;border-radius:11px;padding:26px;text-align:center;font:400 12.5px 'IBM Plex Sans';color:#9aa1b0;">No write-offs recorded yet. Use the form above when stock goes missing, is damaged, or gets sold.</div>
+            </sc-if>
+          </div>
         </div>
       </sc-if>
 
@@ -1763,6 +1886,7 @@
           <div style="display:flex;gap:9px;">
             <sc-if value="{{ vtShowApprove }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vtApprove }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve ticket</button></sc-if>
             <sc-if value="{{ vtShowSend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vtInvoice }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:9px;background:#2ca01c;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#238016;"><span style="display:inline-flex;width:15px;height:15px;border-radius:50%;background:#fff;color:#2ca01c;align-items:center;justify-content:center;font:700 10px 'Space Grotesk';">$</span>Send to QuickBooks</button></sc-if>
+            <sc-if value="{{ vtShowVoid }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vtVoid }}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:1px solid #f3c0c2;border-radius:9px;background:#fff;color:#d23b3f;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#fdecec;border-color:#d23b3f;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Delete invoice</button></sc-if>
             <button onClick="{{ closeTicketDetail }}" style="padding:11px 18px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#6b7488;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Close</button>
           </div>
         </div>
@@ -1998,6 +2122,7 @@ class Component extends DCLogic {
     ],
     crews: [{ name: 'Alpha Crew', members: ['John Doe', 'Jane Smith'], equipment: ['Excavator (Unit #402)'] }],
     materials: [],
+    customers: [],
     rentals: [
       { id: 'R1', job: 'Site A — Pipeline Maintenance', tag: 'TAG-1001', code: '2601157', name: 'AR O-LEDGER LW 1.57 M ( 5\'2" )', qty: 120, cubic: 0.4, start: '2026-05-01', invoiced: false },
       { id: 'R2', job: 'Site A — Pipeline Maintenance', tag: 'TAG-1001', code: '2603300', name: 'STANDARD W/CRIMPED SPIGOT 9\' 9" AR', qty: 80, cubic: 0.8, start: '2026-05-01', invoiced: false },
@@ -2039,8 +2164,10 @@ class Component extends DCLogic {
       mtlEditId: '', mtlCode: '', mtlName: '', mtlCat: 'Accessories', mtlQty: '', mtlCubic: '', mtlCost: '', mtlDate: '', mtlPO: '',
       poNum: '', poDate: new Date().toISOString().slice(0, 10), poSupplier: '', poLines: [], editPoId: '', poTotal: '',
       poLineMat: '', poLineQty: '', poLineCost: '',
+      auditMat: '', auditQty: '', auditReason: 'Damaged', auditDate: new Date().toISOString().slice(0, 10), auditNote: '',
     },
     msgs: {},
+    audits: [],
   };
 
   setActive = (id) => this.setState({ active: id, navOpen: false });
@@ -2261,6 +2388,7 @@ class Component extends DCLogic {
       dbBrand: s.dbBrand || { name: s.company || 'Field2Bill', accent: '#2f6bff', logo: '', email: '', phone: '', addr1: '', addr2: '' },
       materials: [], rentals: [], purchaseOrders: [], rentalInvoices: [],
       jobs: [], employees: [], crews: [], equipment: [], tickets: [],
+      customers: [], qboOverrides: {}, audits: [],
     }));
     this.refreshBranding();
     this.refreshCrews();
@@ -2577,9 +2705,9 @@ class Component extends DCLogic {
     this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'approved' } : t) }));
     this.patchTicket(id, { status: 'approved' });
   };
-  applyInvoiced = (id, qboNum, bumpSeq) => {
+  applyInvoiced = (id, qboNum, bumpSeq, qboId) => {
     this.setState(s => ({
-      tickets: s.tickets.map(t => t.id === id ? { ...t, invoiced: true, status: 'invoiced', qboNum } : t),
+      tickets: s.tickets.map(t => t.id === id ? { ...t, invoiced: true, status: 'invoiced', qboNum, qboId: qboId || t.qboId } : t),
       qboSeq: bumpSeq ? s.qboSeq + 1 : s.qboSeq,
     }));
     this.patchTicket(id, { status: 'invoiced', invoiced: true, qbo_num: qboNum });
@@ -2606,7 +2734,7 @@ class Component extends DCLogic {
         if (res.ok) {
           const data = await res.json();
           const qboNum = data.docNumber ? ('#' + data.docNumber) : fallbackNum;
-          this.applyInvoiced(id, qboNum, false);
+          this.applyInvoiced(id, qboNum, false, data.qboId);
           this.setMsg('bill', 'Invoice ' + qboNum + ' created in QuickBooks \u2713');
           return;
         }
@@ -2698,9 +2826,104 @@ class Component extends DCLogic {
     try { await this.authFetch('/api/qbo-disconnect', { method: 'POST' }); } catch (e) {}
     this.setState({ qboConnected: false, qboRealmName: '' });
   };
-  mapCustomer = (name) => this.setState(s => ({
-    qboOverrides: { ...s.qboOverrides, [name]: { qbo: name + ' LLC', email: 'ap@' + name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com', mapped: true } },
-  }));
+  // Delete a wrong invoice out of QuickBooks and reopen the ticket for billing.
+  voidInvoice = async (id) => {
+    const t = this.state.tickets.find(x => x.id === id);
+    if (!t) return;
+    if (!window.confirm('Delete invoice ' + (t.qboNum || '') + ' from QuickBooks? This permanently removes it from your QuickBooks company and reopens the ticket so you can re-send a corrected one.')) return;
+    if (this.state.qboConnected && this.state.authToken) {
+      try {
+        const res = await this.authFetch('/api/qbo-invoice', {
+          method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ qboId: t.qboId || undefined, docNumber: (t.qboNum || '').replace(/^#/, '') }),
+        });
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          return this.setMsg('bill', e.error || 'QuickBooks could not delete the invoice.');
+        }
+      } catch (e) { return this.setMsg('bill', 'Network error deleting the invoice.'); }
+    }
+    this.setState(s => ({ tickets: s.tickets.map(x => x.id === id ? { ...x, invoiced: false, status: 'approved', qboNum: undefined, qboId: undefined } : x) }));
+    this.patchTicket(id, { status: 'approved', invoiced: false });
+    this.setMsg('bill', 'Invoice deleted from QuickBooks — ticket reopened for billing.');
+  };
+  // Persist a material row to the database (upsert by code, scoped to company).
+  persistMaterial = (m) => {
+    if (!this.state.authToken || !m) return;
+    this.authFetch('/api/materials', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: m.code, name: m.name, category: m.category, qty: m.qty,
+        unit_cost: m.unitCost, unit_cubic: m.unitCubic, po: m.po || null, lot: m.lot || null, purchase_date: m.purchaseDate || null }),
+    }).catch(() => {});
+  };
+  // Remove a material from the catalog (lost / damaged / no longer stocked).
+  deleteMaterial = (id) => {
+    const m = this.state.materials.find(x => x.id === id);
+    if (!m) return;
+    if (!window.confirm('Remove \u201c' + m.name + '\u201d (' + m.code + ') from the inventory catalog? Use this for lost or damaged stock that you no longer hold.')) return;
+    this.setState(s => ({ materials: s.materials.filter(x => x.id !== id) }));
+    if (this.state.authToken) this.authFetch('/api/materials?code=' + encodeURIComponent(m.code), { method: 'DELETE' }).catch(() => {});
+    this.setMsg('material', 'Material removed from the catalog');
+  };
+  // Inventory audit: write off stock that's missing / damaged / sold. The
+  // quantity comes off on-hand (and therefore available) and is logged.
+  recordAudit = () => {
+    const f = this.state.form;
+    const mat = this.state.materials.find(m => m.id === f.auditMat);
+    if (!mat) return this.setMsg('audit', 'Select a material to write off');
+    const qty = parseInt(f.auditQty, 10);
+    if (!qty || qty <= 0) return this.setMsg('audit', 'Enter a quantity greater than zero');
+    if (qty > mat.qty) return this.setMsg('audit', 'Only ' + mat.qty + ' on hand \u2014 cannot write off ' + qty);
+    const date = f.auditDate || this.todayISO();
+    const reason = f.auditReason || 'Damaged';
+    const note = (f.auditNote || '').trim();
+    const ident = this.IDENTITIES && this.IDENTITIES[this.state.role];
+    const by = this.state.tenantUserName || (ident && ident.name) || this.state.role || '';
+    const rec = { id: 'AUD-' + Date.now(), date, code: mat.code, name: mat.name, reason, qty, note, by };
+    this.setState(s => ({
+      materials: s.materials.map(m => m.id === mat.id ? { ...m, qty: Math.max(0, m.qty - qty) } : m),
+      audits: [rec, ...s.audits],
+      form: { ...s.form, auditMat: '', auditQty: '', auditNote: '' },
+    }), () => {
+      const mm = this.state.materials.find(m => m.id === mat.id);
+      if (mm) this.persistMaterial(mm);
+      if (this.state.authToken) this.authFetch('/api/inventory-audits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rec) }).catch(() => {});
+    });
+    this.setMsg('audit', qty + ' \u00d7 ' + mat.code + ' written off (' + reason.toLowerCase() + ') \u2713');
+  };
+  refreshCustomers = async () => {
+    try {
+      const res = await this.authFetch('/api/customers');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (!Array.isArray(rows)) return;
+      this.setState({ customers: rows.map(r => ({ name: r.name, qbo_id: r.qbo_id || '', email: r.email || '' })) });
+    } catch (e) { /* offline preview */ }
+  };
+  mapCustomer = (name) => {
+    const email = 'ap@' + name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com';
+    const qbo = name + ' LLC';
+    this.setState(s => ({ qboOverrides: { ...s.qboOverrides, [name]: { qbo, email, mapped: true } } }));
+    this.setMsg('cust', name + ' linked to QuickBooks \u2713');
+    if (this.state.authToken) this.authFetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, qbo_id: qbo, email }) }).catch(() => {});
+  };
+  // Undo a wrong mapping so the client can be re-linked to the correct QuickBooks customer.
+  unmapCustomer = (name) => {
+    if (!window.confirm('Unlink \u201c' + name + '\u201d from QuickBooks? Invoices for this client will need to be mapped again before they can send.')) return;
+    this.setState(s => ({ qboOverrides: { ...s.qboOverrides, [name]: { qbo: '', email: '', mapped: false } } }));
+    this.setMsg('cust', name + ' unlinked from QuickBooks');
+    if (this.state.authToken) this.authFetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, qbo_id: '', email: '' }) }).catch(() => {});
+  };
+  // Add a brand-new client/customer to this company's workspace.
+  addClient = () => {
+    const name = (this.state.form.newClient || '').trim();
+    if (!name) return this.setMsg('cust', 'Enter a client name first');
+    const exists = this.state.customers.some(c => c.name.toLowerCase() === name.toLowerCase()) || (!this.state.authToken && !!this.CLIENTS[name]);
+    if (exists) return this.setMsg('cust', 'That client already exists');
+    this.setState(s => ({ customers: [...s.customers, { name, qbo_id: '', email: '' }], form: { ...s.form, newClient: '' } }));
+    this.setMsg('cust', '\u201c' + name + '\u201d added \u2014 map it to QuickBooks to start invoicing');
+    if (this.state.authToken) this.authFetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) }).catch(() => {});
+  };
 
   SEED_POS = [
     { id: 'PO-01012026', po: '01012026', date: '2026-01-01', supplier: 'Opening Inventory',
@@ -2821,6 +3044,10 @@ class Component extends DCLogic {
       case 'materials': {
         const rows = s.materials.map(m => [m.code, m.name, m.category, m.qty, m.qty - this.onRentByCode(m.code), m.unitCubic, money(m.unitCost), m.po || '', m.purchaseDate ? this.fmtDate(m.purchaseDate) : '']);
         return D('Material Catalog', 'material-catalog', ['Code', 'Material', 'Category', 'On hand', 'Available', 'Unit ft\u00b3', 'Unit cost', 'PO / Lot', 'Purchased'], rows);
+      }
+      case 'audits': {
+        const rows = s.audits.map(a => [this.fmtDate(a.date), a.code, a.name, a.reason, a.qty, a.note || '', a.by || '']);
+        return D('Inventory Audit \u2014 Write-offs', 'inventory-audit', ['Date', 'Code', 'Material', 'Reason', 'Qty out', 'Note', 'By'], rows);
       }
       case 'crews': {
         const rows = s.crews.map(c => [c.name, (c.members || []).join('; '), (c.equipment || []).join('; '), (c.members || []).length]);
@@ -2962,8 +3189,14 @@ class Component extends DCLogic {
       const rec = { id, po, date: f.poDate, supplier: f.poSupplier.trim() || '—', totalOverride, lines: newLines };
       const purchaseOrders = existing ? s.purchaseOrders.map(p => p.id === f.editPoId ? rec : p) : [rec, ...s.purchaseOrders];
       return { materials, purchaseOrders, form: { ...s.form, poNum: '', poSupplier: '', poLines: [], editPoId: '', poTotal: '', poLineMat: '', poLineQty: '', poLineCost: '', poDate: new Date().toISOString().slice(0, 10) } };
+    }, () => {
+      // Push the updated on-hand quantities (and PO/date/cost) back to the database.
+      f.poLines.forEach(ln => {
+        const mm = this.state.materials.find(x => (ln.materialId && x.id === ln.materialId) || x.code === ln.code);
+        if (mm) this.persistMaterial(mm);
+      });
     });
-    this.setMsg('po', editing ? 'PO ' + po + ' updated ✓' : 'PO ' + po + ' recorded — inventory updated ✓');
+    this.setMsg('po', editing ? 'PO ' + po + ' updated ✓' : 'PO ' + po + ' recorded — inventory & database updated ✓');
   };
 
   daysBetween(a, b) {
@@ -3281,6 +3514,22 @@ class Component extends DCLogic {
     });
     const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
+    // Low-stock alert — materials with under 20% of on-hand still available
+    const lowStock = s.materials
+      .map(m => { const avail = m.qty - this.onRentByCode(m.code); const pct = m.qty > 0 ? avail / m.qty : 1; return { code: m.code, name: m.name, qty: m.qty, avail, pct }; })
+      .filter(x => x.qty > 0 && x.pct < 0.20)
+      .sort((a, b) => a.pct - b.pct)
+      .map(x => { const p = Math.round(x.pct * 100); return { code: x.code, name: x.name, qty: x.qty.toLocaleString('en-US'), avail: x.avail.toLocaleString('en-US'), pct: p, barPct: Math.max(0, Math.min(100, p)), barColor: p <= 5 ? '#e5484d' : '#e0a23a', pctColor: p <= 5 ? '#e5484d' : '#b3760a' }; });
+    const lowStockCount = lowStock.length;
+    const hasLowStock = lowStockCount > 0;
+
+    // Crew availability — a person is available to dispatch unless a cert is expired
+    const crewPeople = s.employees.map(e => { const st = this.empStatus(e.certs); const avail = st !== 'Expired'; return { name: e.name, role: e.role, avail }; })
+      .sort((a, b) => (b.avail ? 1 : 0) - (a.avail ? 1 : 0));
+    const crewAvailCount = crewPeople.filter(p => p.avail).length;
+    const crewAvailRows = crewPeople.map(p => ({ name: p.name, role: p.role, dotColor: p.avail ? '#0f9d6b' : '#e5484d', badgeBg: p.avail ? '#e8f6ef' : '#fde9ea', badgeFg: p.avail ? '#0f9d6b' : '#e5484d', badgeLabel: p.avail ? 'Available' : 'Cert expired' }));
+    const crewAvailSummary = crewAvailCount + ' of ' + crewPeople.length + ' available';
+
     // Admin view models
     const chipBase = 'padding:7px 12px;border-radius:8px;font:600 12.5px \'IBM Plex Sans\';cursor:pointer;transition:.12s;';
     const employeeChips = s.employees.map(e => {
@@ -3350,6 +3599,7 @@ class Component extends DCLogic {
         showApprove: isPending && canApprove, awaitingReview: isPending && !canApprove,
         showSend: isApproved && canBill, awaitingBill: isApproved && !canBill,
         invoiced: t.invoiced, qboNum: t.qboNum || '',
+        showVoid: t.invoiced && canBill, onVoid: () => this.voidInvoice(t.id),
         onApprove: () => this.approveTicket(t.id), onInvoice: () => this.generateInvoice(t.id),
         onView: () => this.openTicketDetail(t.id),
       };
@@ -3368,7 +3618,9 @@ class Component extends DCLogic {
         invoiced: vtRec.invoiced, qboNum: vtRec.qboNum || '',
         showApprove: vtRec.status === 'pending' && canApprove,
         showSend: vtRec.status === 'approved' && !vtRec.invoiced && canBill,
+        showVoid: vtRec.invoiced && canBill,
         onApprove: () => this.approveTicket(vtRec.id), onInvoice: () => this.generateInvoice(vtRec.id),
+        onVoid: () => this.voidInvoice(vtRec.id),
       };
     }
     const crewOptions = s.crews.map(c => c.name);
@@ -3382,11 +3634,23 @@ class Component extends DCLogic {
     const tWorked = (f.tMembers || []).filter(m => m.worked && (parseFloat(m.hours) || 0) > 0);
     const tTotHours = tWorked.reduce((a, m) => a + (parseFloat(m.hours) || 0), 0);
     const ticketCrewSummary = tWorked.length + (tWorked.length === 1 ? ' person · ' : ' people · ') + tTotHours + ' hrs';
-    const qboCustomerRows = Object.keys(this.CLIENTS).map(name => {
-      const m = s.qboOverrides[name] || this.QBO_CUSTOMERS[name] || { qbo: '', email: '', mapped: false };
+    const isRealTenant = !!s.authToken;
+    const clientNames = isRealTenant
+      ? s.customers.map(c => c.name)
+      : [...Object.keys(this.CLIENTS), ...s.customers.map(c => c.name).filter(n => !this.CLIENTS[n])];
+    const qboCustomerRows = clientNames.map(name => {
+      let base;
+      if (isRealTenant) {
+        const cust = s.customers.find(c => c.name === name) || {};
+        base = { qbo: cust.qbo_id ? name : '', email: cust.email || '', mapped: !!(cust.qbo_id || cust.email) };
+      } else {
+        base = this.QBO_CUSTOMERS[name] || { qbo: '', email: '', mapped: false };
+      }
+      const m = s.qboOverrides[name] || base;
       return {
-        name, qbo: m.mapped ? m.qbo : '—', email: m.mapped ? m.email : 'Not linked',
+        name, qbo: m.mapped ? (m.qbo || name) : '—', email: m.mapped ? m.email : 'Not linked',
         needsMap: !m.mapped, onMap: () => this.mapCustomer(name),
+        canUnlink: m.mapped, onUnlink: () => this.unmapCustomer(name),
         badgeBg: m.mapped ? '#e8f6ef' : '#fdf1e1', badgeFg: m.mapped ? '#0f9d6b' : '#b3760a',
         badgeLabel: m.mapped ? 'Linked' : 'Needs mapping',
       };
@@ -3435,6 +3699,8 @@ class Component extends DCLogic {
     });
     const categoryOptions = [...new Set(s.materials.map(m => m.category))].sort();
     const materialSelectOptions = s.materials.map(m => ({ value: m.id, label: m.code + ' · ' + m.name }));
+    const AUD_COLORS = { Missing: ['#fdf1e1', '#b3760a'], Damaged: ['#fde9ea', '#d23b3f'], Sold: ['#e8f0fe', '#2356d6'], Other: ['#eef0f3', '#5b6472'] };
+    const auditRows = s.audits.map(a => { const cc = AUD_COLORS[a.reason] || AUD_COLORS.Other; return { date: this.fmtDate(a.date), name: a.name, code: a.code, reason: a.reason, reasonBg: cc[0], reasonFg: cc[1], qty: a.qty, note: a.note || '—', by: a.by || '—' }; });
     const coMatQ = (f.coMatSearch || '').trim().toLowerCase();
     const coMaterialOptions = coMatQ ? materialOptions.filter(o => o.label.toLowerCase().includes(coMatQ)) : materialOptions;
     const coSuggestions = coMaterialOptions.slice(0, 12).map(o => ({ value: o.value, label: o.label, onSelect: () => this.selectCoMaterial(o.value) }));
@@ -3452,7 +3718,7 @@ class Component extends DCLogic {
     const catalogRows = filtered.map(m => {
       const avail = m.qty - this.onRentByCode(m.code);
       const cc = catColor(m.category);
-      return { code: m.code, name: m.name, category: m.category, catBg: cc[0], catFg: cc[1], qty: m.qty.toLocaleString('en-US'), avail: avail.toLocaleString('en-US'), availColor: avail <= 0 ? '#e5484d' : (avail < m.qty * 0.15 ? '#d6920a' : '#0c1322'), purchased: this.fmtDate(m.purchaseDate), po: m.po || '—', cubic: m.unitCubic, cost: this.fmt2(m.unitCost || 0) };
+      return { code: m.code, name: m.name, category: m.category, catBg: cc[0], catFg: cc[1], qty: m.qty.toLocaleString('en-US'), avail: avail.toLocaleString('en-US'), availColor: avail <= 0 ? '#e5484d' : (avail < m.qty * 0.15 ? '#d6920a' : '#0c1322'), purchased: this.fmtDate(m.purchaseDate), po: m.po || '—', cubic: m.unitCubic, cost: this.fmt2(m.unitCost || 0), id: m.id, onDelete: () => this.deleteMaterial(m.id) };
     });
 
     // ===== Purchase orders (Admin) =====
@@ -3571,7 +3837,7 @@ class Component extends DCLogic {
     const periodLabel = period.label || '—';
     const _ctb = s.tenants[s.tenantId] || s.dbBrand;
     const companyOptions = _ctb ? [_ctb.name] : Object.keys(this.ISSUERS);
-    const clientOptions = Object.keys(this.CLIENTS);
+    const clientOptions = clientNames;
 
     const rentalInvoiceRows = s.rentalInvoices.map(iv => ({ num: iv.num, client: iv.to, period: iv.periodLabel, date: this.fmtDate(iv.date), total: this.fmt2(iv.total), onView: () => this.openInvoice(iv) }));
 
@@ -3660,7 +3926,7 @@ class Component extends DCLogic {
       onRemoveLogo: () => this.removeTenantLogo(s.tenantId),
     } : {};
 
-    const _xpKeys = ['materials', 'crews', 'equipment', 'employees', 'tickets', 'pos', 'rentals', 'reports', 'customers'];
+    const _xpKeys = ['materials', 'crews', 'equipment', 'employees', 'tickets', 'pos', 'rentals', 'reports', 'customers', 'audits'];
     const xp = {};
     _xpKeys.forEach(k => { xp[k + 'Csv'] = () => this.downloadCsv(k); xp[k + 'Print'] = () => this.openPrint(k); });
     const pd = s.printDoc;
@@ -3705,6 +3971,13 @@ class Component extends DCLogic {
       pageTitle, pageDesc, goNewTicket: this.goNewTicket,
       invOn: can('inventory') && a === 'inventory', invOff: can('inventory') && a !== 'inventory', goInv: () => this.setActive('inventory'),
       showInventory: a === 'inventory',
+      auditRows, hasAudits: s.audits.length > 0, noAudits: s.audits.length === 0,
+      auditMatOptions: materialSelectOptions, recordAudit: this.recordAudit,
+      onAuditMat: e => this.setField('auditMat', e.target.value),
+      onAuditQty: e => this.setField('auditQty', e.target.value),
+      onAuditReason: e => this.setField('auditReason', e.target.value),
+      onAuditDate: e => this.setField('auditDate', e.target.value),
+      onAuditNote: e => this.setField('auditNote', e.target.value),
       invKpis, materialOptions, coMaterialOptions, coSuggestions, showCoSuggestions: (f.coMatSearch || '').trim().length > 0 && !f.coLineMat && coSuggestions.length > 0, coMatCount: coSuggestions.length, categoryOptions, catalogRows,
       onCoMatSearch: e => this.setState(s => ({ form: { ...s.form, coMatSearch: e.target.value, coLineMat: '' } })),
       onCoLineSelect: e => this.selectCoMaterial(e.target.value),
@@ -3796,11 +4069,14 @@ class Component extends DCLogic {
       showSparklines, showActivity,
       kpis, revenueChartEl: this.revenueChartEl(accent), months,
       readyAmt, readyCount, invoicedCount, pipeStages, jobCost, activity,
+      lowStock, hasLowStock, noLowStock: !hasLowStock, lowStockCount,
+      crewAvailRows, crewAvailSummary,
       form: f, msgs: s.msgs,
       employeeChips, equipChips, crewRows, empRows,
       canApprove, canBill, qboConnected: s.qboConnected, qboDisconnected: !s.qboConnected,
       connectQbo: this.connectQbo, disconnectQbo: this.disconnectQbo,
       qboCompany: (s.qboConnected && s.qboRealmName) ? s.qboRealmName : (curTenant ? curTenant.name : this.QBO_COMPANY), qboCustomerRows,
+      addClient: this.addClient, onNewClient: e => this.setField('newClient', e.target.value),
       showCompanyProfile: cpOn,
       cpName: cp.name, cpEmail: cp.email, cpPhone: cp.phone, cpAddr1: cp.addr1, cpAddr2: cp.addr2,
       cpLogoEl: cp.logoEl, cpHasLogo: cp.hasLogo, cpNoLogo: cp.noLogo, cpAccent: cp.accent, cpInitials: cp.initials, cpSwatches: cp.swatches,
@@ -3838,6 +4114,7 @@ class Component extends DCLogic {
       vtInvoiced: vt ? vt.invoiced : false, vtNotInvoiced: vt ? !vt.invoiced : false, vtQbo: vt ? vt.qboNum : '',
       vtShowApprove: vt ? vt.showApprove : false, vtShowSend: vt ? vt.showSend : false,
       vtApprove: vt ? vt.onApprove : (() => {}), vtInvoice: vt ? vt.onInvoice : (() => {}),
+      vtShowVoid: vt ? vt.showVoid : false, vtVoid: vt ? vt.onVoid : (() => {}),
     };
   }
 }
