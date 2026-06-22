@@ -304,4 +304,35 @@ const handlers = {
     res.setHeader('Allow', 'GET, POST');
     return res.status(405).json({ error: 'Method not allowed' });
   },
+
+  // ---- /api/branding -------------------------------------------------------
+  // Per-company branding (logo, accent colour, billing details) shown across
+  // the app and on invoices. GET loads the signed-in company's branding;
+  // POST upserts it. Scoped by the tenant token, like the other resources.
+  async branding(req, res) {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
+    if (req.method === 'GET') {
+      const { rows } = await sql`
+        SELECT display_name, accent, logo, email, phone, addr1, addr2
+        FROM tenant_branding WHERE company = ${company}`;
+      return res.status(200).json(rows[0] || {});
+    }
+    if (req.method === 'POST') {
+      const b = req.body || {};
+      const { rows } = await sql`
+        INSERT INTO tenant_branding (company, display_name, accent, logo, email, phone, addr1, addr2)
+        VALUES (${company}, ${b.display_name || null}, ${b.accent || null}, ${b.logo || null},
+                ${b.email || null}, ${b.phone || null}, ${b.addr1 || null}, ${b.addr2 || null})
+        ON CONFLICT (company) DO UPDATE
+          SET display_name = EXCLUDED.display_name, accent = EXCLUDED.accent, logo = EXCLUDED.logo,
+              email = EXCLUDED.email, phone = EXCLUDED.phone, addr1 = EXCLUDED.addr1,
+              addr2 = EXCLUDED.addr2, updated_at = now()
+        RETURNING display_name, accent, logo, email, phone, addr1, addr2`;
+      return res.status(200).json(rows[0]);
+    }
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  },
 };
