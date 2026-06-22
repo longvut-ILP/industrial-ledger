@@ -10,6 +10,15 @@ Marketing homepage + ROI page + the embedded **Field2Bill** product demo.
   folder as `Field2Bill-App.html`, or it will load blank.
 - `screenshots/` — product screenshots used on the homepage and ROI page.
 - `vercel.json` — static-hosting config.
+- `api/` — Serverless functions (run automatically on Vercel).
+
+> **Vercel Hobby (free) plan note:** Hobby caps a deployment at **12 Serverless
+> Functions**, and every file in `api/` counts as one. To stay under the cap, the
+> simple per-resource endpoints (crews, customers, employees, equipment, invoices,
+> jobs, materials, tickets, users) are all served by a single dynamic file,
+> `api/[resource].js`. The public URLs are unchanged — `/api/jobs`,
+> `/api/customers`, etc. still work exactly as before. Do not split them back into
+> one-file-per-resource unless you're on the Pro plan, or you'll exceed the limit.
 
 > Add your own `photo-010.jpg` (Long's headshot) and `favicon.png` to this folder —
 > they're referenced by the pages and live on your domain.
@@ -96,6 +105,10 @@ file. **Disconnect** clears it.
 > company you select during the connect step, not into the accountant login itself.
 
 ### API files
+- `api/[resource].js` — all tenant data CRUD (crews, customers, employees,
+  equipment, invoices, jobs, materials, tickets) + admin `users`, in one function.
+- `api/login.js` — issues the signed login token.
+- `api/_auth.js` — shared token signing/verification (underscore = not routed).
 - `api/_qbo.js` — Intuit OAuth + token refresh + authenticated API calls.
 - `api/qbo-connect.js` / `api/qbo-callback.js` — the OAuth handshake.
 - `api/qbo-status.js` / `api/qbo-disconnect.js` — connection state.
