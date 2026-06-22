@@ -1921,11 +1921,11 @@ class Component extends DCLogic {
     navOpen: false,
     loginStyle: 'split',
     role: 'Owner / Admin',
-    workspace: 'Scaffold Monkey',
+    workspace: 'Northwind Scaffolding',
     wsOpen: false,
     loginEmail: '',
     loginPass: '',
-    loginWs: 'Scaffold Monkey',
+    loginWs: 'Northwind Scaffolding',
     loginError: '',
     devMode: false,
     tenants: {},
@@ -1942,6 +1942,7 @@ class Component extends DCLogic {
     qboRealmName: '',
     qboSeq: 1862,
     qboOverrides: {},
+    dbBrand: null,
     hoverNav: '',
     jobs: [
       { name: 'Site A — Pipeline Maintenance', budget: 50000, actual: 32500 },
@@ -2032,7 +2033,7 @@ class Component extends DCLogic {
       dispatchJob: '', dispatchResource: '',
       ticketJob: '', ticketCrew: '', tMembers: [], ticketEquip: 'None', tEquipHours: '', equipRate: '',
       coJob: '', coTag: '__new__', coNewTag: '', coStart: new Date().toISOString().slice(0, 10), coItems: [], coLineMat: '', coLineQty: '', coLineCube: '', coMatSearch: '',
-      invJob: '', invTag: '__all__', invMethod: 'cubic', invFrom: 'Scaffold Monkey', invClient: 'Targa Resources',
+      invJob: '', invTag: '__all__', invMethod: 'cubic', invFrom: 'Northwind Scaffolding', invClient: 'Targa Resources',
       invMode: 'month', invMonth: new Date().toISOString().slice(0, 7), invStart: '', invEnd: '',
       matSearch: '', matCat: '',
       mtlEditId: '', mtlCode: '', mtlName: '', mtlCat: 'Accessories', mtlQty: '', mtlCubic: '', mtlCost: '', mtlDate: '', mtlPO: '',
@@ -2070,7 +2071,7 @@ class Component extends DCLogic {
     'Billing / Accounting': 'Billing & reports',
     'Read-only viewer': 'View only',
   };
-  WS_INITIALS = { 'Scaffold Monkey': 'SM', 'Apex Access Systems': 'AA' };
+  WS_INITIALS = { 'Northwind Scaffolding': 'NW', 'Apex Access Systems': 'AA' };
 
   // ---------------- Platform dev console · tenant provisioning ----------------
   DEV_EMAIL = 'long.vu.t@gmail.com';
@@ -2114,9 +2115,9 @@ class Component extends DCLogic {
     tenants[id] = { ...tenants[id], ...patch };
     this.saveTenants(tenants); this.setState({ tenants });
   };
-  setTenantAccent = (id, accent) => { this.updateTenant(id, { accent }); this.devNotify('Theme updated'); };
-  setTenantLogo = (id, file) => this.readLogo(file, (dataUrl) => { this.updateTenant(id, { logo: dataUrl }); this.devNotify('Logo updated'); });
-  removeTenantLogo = (id) => this.updateTenant(id, { logo: '' });
+  setTenantAccent = (id, accent) => { if (!id) return this.setBrandField('accent', accent); this.updateTenant(id, { accent }); this.devNotify('Theme updated'); };
+  setTenantLogo = (id, file) => this.readLogo(file, (dataUrl) => { if (!id) return this.setBrandField('logo', dataUrl); this.updateTenant(id, { logo: dataUrl }); this.devNotify('Logo updated'); });
+  removeTenantLogo = (id) => { if (!id) return this.setBrandField('logo', ''); this.updateTenant(id, { logo: '' }); };
   deleteTenant = (id) => {
     const tenants = { ...this.state.tenants };
     const nm = tenants[id] ? tenants[id].name : '';
@@ -2162,7 +2163,7 @@ class Component extends DCLogic {
     this.devNotify('Saved ' + name);
   };
   // In-app company profile editing (current tenant) — writes straight through to the registry
-  setTenantField = (k, v) => { if (this.state.tenantId) this.updateTenant(this.state.tenantId, { [k]: v }); };
+  setTenantField = (k, v) => { if (this.state.tenantId) this.updateTenant(this.state.tenantId, { [k]: v }); else this.setBrandField(k, v); };
 
   exitDev = () => this.setState({ devMode: false, loginPass: '' });
 
@@ -2251,10 +2252,22 @@ class Component extends DCLogic {
     return fetch(path, { ...opts, headers });
   };
   refreshAll = () => {
+    // A real account is signed in. The hardcoded demo seed data is for the
+    // offline preview only — start from a clean slate and load just this
+    // company's data from the database (empty for a brand-new tenant).
+    this._demoSeedBlocked = true;
+    clearTimeout(this._matTmr);
+    this.setState(s => ({
+      dbBrand: s.dbBrand || { name: s.company || 'Field2Bill', accent: '#2f6bff', logo: '', email: '', phone: '', addr1: '', addr2: '' },
+      materials: [], rentals: [], purchaseOrders: [], rentalInvoices: [],
+      jobs: [], employees: [], crews: [], equipment: [], tickets: [],
+    }));
+    this.refreshBranding();
     this.refreshCrews();
     this.refreshEmployees();
     this.refreshEquipment();
     this.refreshJobs();
+    this.refreshMaterials();
     this.refreshTickets();
     this.refreshInvoices();
     this.refreshQbo();
@@ -2295,7 +2308,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/crews');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) {
+      if (Array.isArray(rows)) {
         this.setState({ crews: rows.map(r => ({
           name: r.name,
           members: r.members || [],
@@ -2342,7 +2355,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/equipment');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) {
+      if (Array.isArray(rows)) {
         this.setState({ equipment: rows.map(r => ({ name: r.name, type: r.type || 'General', rate: r.rate != null ? Number(r.rate) : 0 })) });
       }
     } catch (e) { /* no backend in preview — keep local state */ }
@@ -2385,7 +2398,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/employees');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) {
+      if (Array.isArray(rows)) {
         this.setState({ employees: rows.map(r => ({ name: r.name, role: r.role || 'Crew', rate: r.rate != null ? Number(r.rate) : 0, certs: r.certs || [] })) });
       }
     } catch (e) { /* no backend in preview */ }
@@ -2425,7 +2438,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/jobs');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) {
+      if (Array.isArray(rows)) {
         this.setState(s => ({ jobs: rows.map(r => {
           const existing = s.jobs.find(j => j.name === r.name);
           return { name: r.name, budget: Number(r.budget) || 0, actual: existing ? existing.actual : 0 };
@@ -2548,7 +2561,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/tickets');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) {
+      if (Array.isArray(rows)) {
         this.setState({ tickets: rows.map(r => { const laborLines = Array.isArray(r.labor_lines) ? r.labor_lines : []; const la = Number(r.labor_amount) || laborLines.reduce((a, l) => a + (Number(l.amount) || 0), 0); const eh = Number(r.equip_hours) || 0; const er = Number(r.equip_rate) || 0; const ea = Number(r.equip_amount) || 0; const hours = Number(r.hours) || laborLines.reduce((a, l) => a + (Number(l.hours) || 0), 0); return {
           id: r.label, job: r.job_name, crew: r.crew || '', laborLines, laborAmount: la,
           equip: r.equip || 'None', equipHours: eh, equipRate: er, equipAmount: ea,
@@ -2614,6 +2627,45 @@ class Component extends DCLogic {
       this.setState({ qboConfigured: !!st.configured, qboConnected: !!st.connected, qboRealmName: st.companyName || '' });
     } catch (e) { this.setState({ qboConnected: false }); /* offline preview */ }
   };
+  // ---- Per-company branding (DB-backed, real logins) --------------------
+  refreshBranding = async () => {
+    if (!this.state.authToken) return;
+    try {
+      const res = await this.authFetch('/api/branding');
+      if (!res.ok) return;
+      const b = await res.json();
+      this.setState(s => ({ dbBrand: {
+        name: b.display_name || s.company || 'Field2Bill',
+        accent: b.accent || '#2f6bff', logo: b.logo || '',
+        email: b.email || '', phone: b.phone || '', addr1: b.addr1 || '', addr2: b.addr2 || '',
+      } }));
+    } catch (e) { /* offline preview */ }
+  };
+  setBrandField = (k, v) => this.setState(s => ({ dbBrand: { ...(s.dbBrand || {}), [k]: v } }), this.saveBrandingDebounced);
+  saveBrandingDebounced = () => {
+    clearTimeout(this._brandTmr);
+    this._brandTmr = setTimeout(() => {
+      if (!this.state.authToken) return;
+      const b = this.state.dbBrand || {};
+      this.authFetch('/api/branding', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ display_name: b.name || '', accent: b.accent || '', logo: b.logo || '', email: b.email || '', phone: b.phone || '', addr1: b.addr1 || '', addr2: b.addr2 || '' }),
+      }).catch(() => {});
+    }, 700);
+  };
+  refreshMaterials = async () => {
+    try {
+      const res = await this.authFetch('/api/materials');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (!Array.isArray(rows)) return;
+      this.setState({ materials: rows.map((r, i) => ({
+        id: 'M' + i, code: r.code, name: r.name, category: r.category || 'Accessories',
+        qty: Number(r.qty) || 0, unitCubic: Number(r.unit_cubic) || 0, unitCost: Number(r.unit_cost) || 0,
+        po: r.po || '', lot: r.lot || '', purchaseDate: r.purchase_date || '',
+      })) });
+    } catch (e) { /* offline preview */ }
+  };
   connectQbo = () => {
     const token = this.state.authToken;
     if (!token) {
@@ -2662,7 +2714,7 @@ class Component extends DCLogic {
   ];
 
   ISSUERS = {
-    'Scaffold Monkey': { line1: '4820 Industrial Parkway', line2: 'Houston, TX 77029', email: 'billing@scaffoldmonkey.com', phone: '(713) 555-0142', accent: '#2f6bff' },
+    'Northwind Scaffolding': { line1: '4820 Industrial Parkway', line2: 'Houston, TX 77029', email: 'billing@northwindscaffold.com', phone: '(713) 555-0142', accent: '#2f6bff' },
     'Apex Access Systems': { line1: '1290 Refinery Road', line2: 'Pasadena, TX 77503', email: 'ar@apexaccess.com', phone: '(281) 555-0190', accent: '#0e9f8e' },
   };
   CLIENTS = {
@@ -2670,7 +2722,7 @@ class Component extends DCLogic {
     'Phillips 66': { line1: '2331 CityWest Boulevard', line2: 'Houston, TX 77042', attn: 'Accounts Payable' },
     'Cheniere Energy': { line1: '700 Milam Street, Suite 1900', line2: 'Houston, TX 77002', attn: 'Accounts Payable' },
   };
-  QBO_COMPANY = 'Scaffold Monkey Co.';
+  QBO_COMPANY = 'Northwind Scaffolding Co.';
   QBO_CUSTOMERS = {
     'Targa Resources': { qbo: 'Targa Resources LLC', email: 'ap@targaresources.com', mapped: true },
     'Phillips 66': { qbo: 'Phillips 66 Company', email: 'invoices@p66.com', mapped: true },
@@ -2733,7 +2785,7 @@ class Component extends DCLogic {
 
   issuerFor(name) {
     const s = this.state;
-    const ct = s.tenants[s.tenantId];
+    const ct = s.tenants[s.tenantId] || s.dbBrand;
     if (ct) return { name: ct.name, line1: ct.addr1 || '', line2: ct.addr2 || '', email: ct.email || '', phone: ct.phone || '', accent: ct.accent || '#2f6bff', logo: ct.logo || '' };
     return Object.assign({ name: name, logo: '' }, this.ISSUERS[name] || {});
   }
@@ -2760,7 +2812,7 @@ class Component extends DCLogic {
 
   dataset(key) {
     const s = this.state;
-    const ct = s.tenants[s.tenantId];
+    const ct = s.tenants[s.tenantId] || s.dbBrand;
     const org = ct ? ct.name : 'Field2Bill';
     const stampISO = this.todayISO();
     const D = (title, file, headers, rows) => ({ key, title, file: file + '-' + stampISO, org, stamp: this.fmtDate(stampISO), headers, rows, count: rows.length });
@@ -2839,6 +2891,7 @@ class Component extends DCLogic {
     this.restoreSession();
     this.loadTenants();
     const load = () => {
+      if (this._demoSeedBlocked || this.state.authToken) return; // real login loads from the DB instead
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
       const mats = window.F2B_MATERIALS.map((m, i) => ({ ...m, id: 'M' + i }));
       const byCode = {};
@@ -3051,7 +3104,7 @@ class Component extends DCLogic {
 
   genRentalInvoice = () => {
     const f = this.state.form;
-    const _ct = this.state.tenants[this.state.tenantId];
+    const _ct = this.state.tenants[this.state.tenantId] || this.state.dbBrand;
     const curTenantName = _ct ? _ct.name : '';
     if (!curTenantName && !f.invFrom) return this.setMsg('rentalInv', 'Select the issuing company');
     if (!f.invClient) return this.setMsg('rentalInv', 'Select a client to bill');
@@ -3100,7 +3153,7 @@ class Component extends DCLogic {
       const res = await this.authFetch('/api/invoices');
       if (!res.ok) return;
       const rows = await res.json();
-      if (Array.isArray(rows) && rows.length) this.setState({ rentalInvoices: rows });
+      if (Array.isArray(rows)) this.setState({ rentalInvoices: rows });
     } catch (e) { /* no backend in preview */ }
   };
 
@@ -3516,7 +3569,8 @@ class Component extends DCLogic {
     const invoiceLines = invActive.map(x => ({ name: 'Tag ' + x.tag, detail: x.basis, amount: this.fmt2(x.amount) }));
     const invTotalNum = invActive.reduce((acc, x) => acc + x.amount, 0);
     const periodLabel = period.label || '—';
-    const companyOptions = s.tenants[s.tenantId] ? [s.tenants[s.tenantId].name] : Object.keys(this.ISSUERS);
+    const _ctb = s.tenants[s.tenantId] || s.dbBrand;
+    const companyOptions = _ctb ? [_ctb.name] : Object.keys(this.ISSUERS);
     const clientOptions = Object.keys(this.CLIENTS);
 
     const rentalInvoiceRows = s.rentalInvoices.map(iv => ({ num: iv.num, client: iv.to, period: iv.periodLabel, date: this.fmtDate(iv.date), total: this.fmt2(iv.total), onView: () => this.openInvoice(iv) }));
@@ -3534,7 +3588,7 @@ class Component extends DCLogic {
     // ----- Per-tenant branding + dev console view-models -----
     const shade = (hex, p) => { const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; r = Math.round(r * (1 - p)); g = Math.round(g * (1 - p)); b = Math.round(b * (1 - p)); return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); };
     const imgEl = (src) => src ? React.createElement('img', { src, alt: '', style: { width: '100%', height: '100%', objectFit: 'contain' } }) : null;
-    const curTenant = s.tenants[s.tenantId] || null;
+    const curTenant = s.tenants[s.tenantId] || s.dbBrand || null;
     const brandAccent = curTenant ? curTenant.accent : '#2f6bff';
     const brandAccentDark = shade(brandAccent, 0.3);
     const brandLogo = curTenant ? (curTenant.logo || '') : '';
