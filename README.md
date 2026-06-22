@@ -55,6 +55,20 @@ signed in and scoped to the same company.
    table that the Admin → "Add / edit equipment" card reads and writes).
 3. In Vercel → Project → Settings → Environment Variables, set **`AUTH_SECRET`**
    to a long random string (this signs the login tokens). Redeploy.
+4. Run `schema-additions-6-branding.sql` (creates the `tenant_branding` table —
+   per-company logo, brand colour and billing details, shown across the app and
+   on invoices). Each company sets these under **Admin → Company profile**.
+
+### A new tenant starts empty
+When someone signs in with a real database account, the app loads **only that
+company's** crews, employees, materials, jobs, tickets and invoices from the
+database — so a brand-new tenant starts with a clean slate (no demo data). The
+sample crews/employees/materials you see in the offline preview are demo-only
+and never appear for a real login.
+
+> The in-app **“Client workspaces → create tenant”** screen is a local/offline
+> demo (browser storage only). Real accounts are created with `create-user.sql`
+> (see below) — those are the ones that load real data and can connect QuickBooks.
 
 ### Onboarding company #2
 1. Add their login with `create-user.sql` (set their `company`). Their `company`
@@ -66,6 +80,14 @@ signed in and scoped to the same company.
 > ⚠️ The `company` value in `users` must match the data tags exactly (e.g.
 > `Scaffold Monkey Co`, no trailing period). The migration backfills existing
 > data to `Scaffold Monkey Co` to match `auth-setup.sql`.
+
+### Company branding (logo, colour, billing details)
+Each company sets its own branding under **Admin → Company profile**: company
+name, billing email, phone, address, brand colour and logo. It saves to the
+`tenant_branding` table (per company) and is applied everywhere — the sidebar,
+and the “bill from” details on generated invoices. Edits auto-save. Because it's
+stored in the database, every user on that account sees the same branding (it is
+**not** the per-browser master-console screen).
 
 ## Live QuickBooks Online invoicing
 Each tenant connects its **own** QuickBooks Online company once, then the
