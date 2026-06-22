@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/api/:resource(jobs|customers|crews|employees|equipment|invoices|materials|tickets|users)",
+      "source": "/api/:resource(jobs|customers|crews|employees|equipment|invoices|materials|tickets|users|branding)",
       "destination": "/api/data?resource=:resource"
     }
   ]
