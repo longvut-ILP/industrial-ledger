@@ -55,3 +55,48 @@ signed in and scoped to the same company.
 > ⚠️ The `company` value in `users` must match the data tags exactly (e.g.
 > `Scaffold Monkey Co`, no trailing period). The migration backfills existing
 > data to `Scaffold Monkey Co` to match `auth-setup.sql`.
+
+## Live QuickBooks Online invoicing
+Each tenant connects its **own** QuickBooks Online company once, then the
+"send to QuickBooks" button on an approved ticket creates a **real invoice**
+in that company (creating the customer if it doesn't exist). Tokens are stored
+per company, so one tenant can never post into another's books.
+
+> If QuickBooks isn't configured/connected, the app falls back to the demo
+> behaviour (a placeholder `QBO-####` number) — nothing breaks.
+
+### One-time setup
+1. **Create an Intuit app** at [developer.intuit.com](https://developer.intuit.com)
+   → *Dashboard → Create an app → QuickBooks Online and Payments*.
+2. In the app's **Keys & credentials**, copy the **Client ID** and **Client Secret**
+   (use the *Development* keys to test against a sandbox company, *Production*
+   keys for live books — a production app needs Intuit review).
+3. Add a **Redirect URI** that exactly matches your domain:
+   `https://YOUR-DOMAIN/api/qbo-callback`
+4. Run `schema-additions-5-quickbooks.sql` in the Query tab (creates `qbo_tokens`).
+5. In Vercel → Project → Settings → **Environment Variables**, set:
+
+   | Variable | Value |
+   |---|---|
+   | `QBO_CLIENT_ID` | from Intuit |
+   | `QBO_CLIENT_SECRET` | from Intuit |
+   | `QBO_REDIRECT_URI` | `https://YOUR-DOMAIN/api/qbo-callback` |
+   | `QBO_ENV` | `sandbox` while testing, `production` when live |
+
+   Redeploy after setting them.
+
+### Connecting a company
+In the app: **Admin → QuickBooks → Connect to QuickBooks**. A window opens,
+the user signs into QuickBooks and approves access, and the connection is saved
+for that tenant. From then on, approved tickets bill straight into that company
+file. **Disconnect** clears it.
+
+> Must be **QuickBooks Online** (not Desktop). A *QuickBooks Online Accountant*
+> login connects to a specific **client company file** — invoices post into the
+> company you select during the connect step, not into the accountant login itself.
+
+### API files
+- `api/_qbo.js` — Intuit OAuth + token refresh + authenticated API calls.
+- `api/qbo-connect.js` / `api/qbo-callback.js` — the OAuth handshake.
+- `api/qbo-status.js` / `api/qbo-disconnect.js` — connection state.
+- `api/qbo-invoice.js` — find/create the customer, then create the invoice.

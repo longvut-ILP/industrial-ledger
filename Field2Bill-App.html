@@ -541,15 +541,27 @@
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-                <span style="display:flex;align-items:center;gap:6px;font:600 12px 'IBM Plex Sans';color:#2ca01c;background:#eaf7e6;border-radius:20px;padding:5px 12px;"><span style="width:7px;height:7px;border-radius:50%;background:#2ca01c;"></span>Connected</span>
-                <button style="padding:7px 14px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b7488;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Disconnect</button>
+                <sc-if value="{{ qboConnected }}" hint-placeholder-val="{{ true }}">
+                  <span style="display:flex;align-items:center;gap:6px;font:600 12px 'IBM Plex Sans';color:#2ca01c;background:#eaf7e6;border-radius:20px;padding:5px 12px;"><span style="width:7px;height:7px;border-radius:50%;background:#2ca01c;"></span>Connected</span>
+                  <button onClick="{{ disconnectQbo }}" style="padding:7px 14px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#6b7488;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Disconnect</button>
+                </sc-if>
+                <sc-if value="{{ qboDisconnected }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ connectQbo }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:none;border-radius:9px;background:#2ca01c;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#26901a;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>Connect to QuickBooks</button>
+                </sc-if>
               </div>
             </div>
+            <sc-if value="{{ qboConnected }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f8f9fb;border-radius:10px;margin-bottom:18px;">
               <span style="font:500 12px 'IBM Plex Sans';color:#6b7488;">Company file</span>
               <span style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;">{{ qboCompany }}</span>
               <span style="margin-left:auto;font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;">Last sync · just now</span>
             </div>
+            </sc-if>
+            <sc-if value="{{ qboDisconnected }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff8ed;border:1px solid #f3e0c0;border-radius:10px;margin-bottom:18px;">
+              <span style="font:500 12px 'IBM Plex Sans';color:#9a6a1c;">Not connected — click <b>Connect to QuickBooks</b> to link your company file. Until then, invoices use a placeholder number.</span>
+            </div>
+            </sc-if>
             <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#8a92a4;margin-bottom:10px;">Customer mapping</div>
             <div style="display:flex;justify-content:flex-end;gap:7px;margin-bottom:12px;">
               <button onClick="{{ customersCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#0e8a72;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#e2f6f1;border-color:#0e8a72;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
@@ -1914,6 +1926,8 @@ class Component extends DCLogic {
     devMsg: '',
     devMsgType: 'ok',
     qboConnected: true,
+    qboConfigured: true,
+    qboRealmName: '',
     qboSeq: 1862,
     qboOverrides: {},
     hoverNav: '',
@@ -2231,6 +2245,7 @@ class Component extends DCLogic {
     this.refreshJobs();
     this.refreshTickets();
     this.refreshInvoices();
+    this.refreshQbo();
   };
   toggleWs = () => this.setState(s => ({ wsOpen: !s.wsOpen }));
   setWorkspace = (ws) => this.setState({ workspace: ws, wsOpen: false });
@@ -2537,13 +2552,75 @@ class Component extends DCLogic {
     this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'approved' } : t) }));
     this.patchTicket(id, { status: 'approved' });
   };
-  generateInvoice = (id) => {
-    const qboNum = 'QBO-' + this.state.qboSeq;
+  applyInvoiced = (id, qboNum, bumpSeq) => {
     this.setState(s => ({
       tickets: s.tickets.map(t => t.id === id ? { ...t, invoiced: true, status: 'invoiced', qboNum } : t),
-      qboSeq: s.qboSeq + 1,
+      qboSeq: bumpSeq ? s.qboSeq + 1 : s.qboSeq,
     }));
     this.patchTicket(id, { status: 'invoiced', invoiced: true, qbo_num: qboNum });
+  };
+  // Push an approved ticket to QuickBooks as a real invoice. Falls back to a
+  // local demo number when there's no backend (e.g. the offline preview).
+  generateInvoice = async (id) => {
+    const t = this.state.tickets.find(x => x.id === id);
+    const fallbackNum = 'QBO-' + this.state.qboSeq;
+    if (this.state.qboConnected && this.state.authToken) {
+      try {
+        const customerName = (t && t.job ? t.job.split('\u2014')[0].trim() : '') || 'Field Customer';
+        const res = await this.authFetch('/api/qbo-invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName,
+            ticketLabel: id,
+            memo: 'Field ticket ' + id + (t && t.job ? ' \u00b7 ' + t.job : ''),
+            amount: t ? t.amount : 0,
+            lines: [{ description: (t && t.job) ? t.job : ('Field ticket ' + id), amount: t ? t.amount : 0 }],
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const qboNum = data.docNumber ? ('#' + data.docNumber) : fallbackNum;
+          this.applyInvoiced(id, qboNum, false);
+          this.setMsg('bill', 'Invoice ' + qboNum + ' created in QuickBooks \u2713');
+          return;
+        }
+        const err = await res.json().catch(() => ({}));
+        this.setMsg('bill', err.error || 'QuickBooks rejected the invoice.');
+        return;
+      } catch (e) { /* network/offline \u2014 fall through to demo number */ }
+    }
+    this.applyInvoiced(id, fallbackNum, true);
+  };
+  // QuickBooks connection status + OAuth.
+  refreshQbo = async () => {
+    if (!this.state.authToken) return; // demo sign-in or offline preview \u2014 keep demo defaults
+    try {
+      const res = await this.authFetch('/api/qbo-status');
+      if (!res.ok) return;
+      const st = await res.json();
+      this.setState({ qboConfigured: !!st.configured, qboConnected: !!st.connected, qboRealmName: st.companyName || '' });
+    } catch (e) { /* offline preview */ }
+  };
+  connectQbo = () => {
+    const token = this.state.authToken;
+    if (!token) { this.setMsg('bill', 'Sign in to connect QuickBooks.'); return; }
+    const url = '/api/qbo-connect?token=' + encodeURIComponent(token);
+    const w = window.open(url, 'qbo-connect', 'width=640,height=740');
+    const onMsg = (e) => {
+      if (e.data && e.data.type === 'qbo-connected') {
+        window.removeEventListener('message', onMsg);
+        this.refreshQbo();
+      }
+    };
+    window.addEventListener('message', onMsg);
+    if (w) {
+      const iv = setInterval(() => { if (w.closed) { clearInterval(iv); this.refreshQbo(); } }, 1200);
+    }
+  };
+  disconnectQbo = async () => {
+    try { await this.authFetch('/api/qbo-disconnect', { method: 'POST' }); } catch (e) {}
+    this.setState({ qboConnected: false, qboRealmName: '' });
   };
   mapCustomer = (name) => this.setState(s => ({
     qboOverrides: { ...s.qboOverrides, [name]: { qbo: name + ' LLC', email: 'ap@' + name.toLowerCase().replace(/[^a-z0-9]+/g, '') + '.com', mapped: true } },
@@ -3643,7 +3720,9 @@ class Component extends DCLogic {
       readyAmt, readyCount, invoicedCount, pipeStages, jobCost, activity,
       form: f, msgs: s.msgs,
       employeeChips, equipChips, crewRows, empRows,
-      canApprove, canBill, qboConnected: s.qboConnected, qboCompany: curTenant ? curTenant.name : this.QBO_COMPANY, qboCustomerRows,
+      canApprove, canBill, qboConnected: s.qboConnected, qboDisconnected: !s.qboConnected,
+      connectQbo: this.connectQbo, disconnectQbo: this.disconnectQbo,
+      qboCompany: (s.qboConnected && s.qboRealmName) ? s.qboRealmName : (curTenant ? curTenant.name : this.QBO_COMPANY), qboCustomerRows,
       showCompanyProfile: cpOn,
       cpName: cp.name, cpEmail: cp.email, cpPhone: cp.phone, cpAddr1: cp.addr1, cpAddr2: cp.addr2,
       cpLogoEl: cp.logoEl, cpHasLogo: cp.hasLogo, cpNoLogo: cp.noLogo, cpAccent: cp.accent, cpInitials: cp.initials, cpSwatches: cp.swatches,
