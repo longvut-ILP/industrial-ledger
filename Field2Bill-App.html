@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field2Bill</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -1247,8 +1250,8 @@
             <sc-if value="{{ hasReqs }}" hint-placeholder-val="{{ true }}">
               <sc-for list="{{ reqRows }}" as="r" hint-placeholder-count="2">
                 <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #f2f3f6;">
-                  <div style="font:600 12px 'IBM Plex Mono';color:#2f6bff;flex-shrink:0;min-width:62px;">{{ r.tag }}</div>
-                  <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.job }}</div><div style="font:400 10.5px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ r.reqNo }} · {{ r.requester }}{{ r.sizeSuffix }}</div></div>
+                  <button onClick="{{ r.onTag }}" title="View the linked rental tag on site" style="font:600 12px 'IBM Plex Mono';color:#2f6bff;background:#eef3ff;border:1px solid #d8e3ff;border-radius:7px;padding:3px 9px;flex-shrink:0;min-width:62px;text-align:center;cursor:pointer;" style-hover="background:#2f6bff;color:#fff;">{{ r.tag }}</button>
+                  <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.job }}</div><div style="font:400 10.5px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ r.reqNo }} · {{ r.requester }}{{ r.sizeSuffix }}{{ r.onSiteSuffix }}</div></div>
                   <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};flex-shrink:0;">{{ r.statusLabel }}</span>
                   <button onClick="{{ r.onView }}" style="font:600 11.5px 'IBM Plex Sans';color:#2f6bff;background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0;" style-hover="text-decoration:underline;">View</button>
                 </div>
@@ -2602,9 +2605,10 @@ class Component extends DCLogic {
         const data = await res.json();
         const u = data.user || {};
         const token = data.token || '';
-        this.persistSession({ token, company: u.company || '', role: u.role || 'Owner / Admin' });
+        const name = u.name || this.nameFromEmail(u.email || email);
+        this.persistSession({ token, company: u.company || '', role: u.role || 'Owner / Admin', name, email: u.email || email });
         this.setState(
-          { authed: true, authToken: token, role: u.role || 'Owner / Admin', company: u.company || '', loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' },
+          { authed: true, authToken: token, role: u.role || 'Owner / Admin', company: u.company || '', tenantUserName: name, loginEmail: '', loginPass: '', loginError: '', loginBusy: false, active: 'dashboard' },
           this.refreshAll
         );
         return;
@@ -2629,8 +2633,14 @@ class Component extends DCLogic {
   // Every data request carries the signed token so the API returns only the
   // logged-in company's rows. Keep the session in sessionStorage so a page
   // refresh stays signed in (and stays scoped to the same company).
-  persistSession = ({ token, company, role }) => {
-    try { sessionStorage.setItem('f2b_session', JSON.stringify({ token, company, role })); } catch (e) {}
+  persistSession = ({ token, company, role, name, email }) => {
+    try { sessionStorage.setItem('f2b_session', JSON.stringify({ token, company, role, name, email })); } catch (e) {}
+  };
+  // Derive a friendly display name from a login email (e.g. long.vu.t@x \u2192 "Long Vu T").
+  nameFromEmail = (email) => {
+    const local = (email || '').split('@')[0] || '';
+    if (!local) return '';
+    return local.split(/[._+-]+/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
   };
   restoreSession = () => {
     try {
@@ -2639,7 +2649,7 @@ class Component extends DCLogic {
       const s = JSON.parse(raw);
       if (!s || !s.token) return false;
       this.setState(
-        { authed: true, authToken: s.token, company: s.company || '', role: s.role || 'Owner / Admin', active: 'dashboard' },
+        { authed: true, authToken: s.token, company: s.company || '', role: s.role || 'Owner / Admin', tenantUserName: s.name || this.nameFromEmail(s.email || ''), active: 'dashboard' },
         this.refreshAll
       );
       return true;
@@ -4173,7 +4183,7 @@ class Component extends DCLogic {
     const _activeTags = new Set(s.rentals.filter(r => !r.invoiced).map(r => r.tag));
     const _knownTags = new Set(s.rentals.map(r => r.tag));
     const _tagStatusOf = (tag) => { if (!tag || tag === 'Pending') return null; if (_activeTags.has(tag)) return 'On rent'; if (_knownTags.has(tag)) return 'Off rent'; return null; };
-    const reqRows = s.scaffReqs.slice(0, 6).map(r => { const st = _tagStatusOf(r.tag) || r.status; const b = _reqStatusBadge(st); const size = (r.len && r.wid && r.ht) ? (r.len + ' \u00d7 ' + r.wid + ' \u00d7 ' + r.ht + ' ft') : ''; return { reqNo: r.reqNo, tag: r.tag, job: r.job, requester: r.requester, sizeSuffix: size ? ' \u00b7 ' + size : '', statusLabel: st, badgeBg: b.bg, badgeFg: b.fg, onView: () => this.openRequest(r) }; });
+    const reqRows = s.scaffReqs.slice(0, 6).map(r => { const st = _tagStatusOf(r.tag) || r.status; const b = _reqStatusBadge(st); const size = (r.len && r.wid && r.ht) ? (r.len + ' \u00d7 ' + r.wid + ' \u00d7 ' + r.ht + ' ft') : ''; const onSite = _activeTags.has(r.tag); const accrued = onSite ? this.fmt2(this.tagCubicAccrue(r.job, r.tag, this.tagSchedStart(r.job, r.tag), this.todayISO(), (this.props.rentalRate ?? 0.008))) : ''; return { reqNo: r.reqNo, tag: r.tag, job: r.job, requester: r.requester, sizeSuffix: size ? ' \u00b7 ' + size : '', onSiteSuffix: onSite ? ' \u00b7 on site \u00b7 ' + accrued + ' accrued' : '', statusLabel: st, badgeBg: b.bg, badgeFg: b.fg, onView: () => this.openRequest(r), onTag: onSite ? () => this.openReport('tag', r.job, r.tag) : () => this.openRequest(r) }; });
     const rq = s.viewRequest;
     // Autocomplete: reuse previously-entered requesters / contacts, or add a new one.
     const _people = new Set();
