@@ -1120,18 +1120,39 @@
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Contractor / GC</label>
-                  <input value="{{ reqContractorV }}" onChange="{{ onReqContractor }}" placeholder="e.g. Targa Resources" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <div style="position:relative;">
+                    <input value="{{ reqContractorV }}" onChange="{{ onReqContractor }}" onFocus="{{ focusGc }}" onBlur="{{ blurSuggest }}" autocomplete="off" placeholder="e.g. Targa Resources" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <sc-if value="{{ showGcSuggest }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:#fff;border:1px solid #e6e8ee;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.15);overflow:hidden;max-height:224px;overflow-y:auto;">
+                        <sc-for list="{{ gcSuggestRows }}" as="o" hint-placeholder-count="0"><button onMouseDown="{{ o.onPick }}" type="button" style="display:block;width:100%;text-align:left;padding:9px 13px;border:none;border-bottom:1px solid #f3f4f6;background:#fff;cursor:pointer;font:500 13px 'IBM Plex Sans';color:#2b3344;" style-hover="background:#f3f6fb;">{{ o.name }}</button></sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
                 </div>
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Location</label>
-                  <input value="{{ reqLocationV }}" onChange="{{ onReqLocation }}" placeholder="e.g. North Process Area" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <div style="position:relative;">
+                    <input value="{{ reqLocationV }}" onChange="{{ onReqLocation }}" onFocus="{{ focusLoc }}" onBlur="{{ blurSuggest }}" autocomplete="off" placeholder="e.g. North Process Area" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <sc-if value="{{ showLocSuggest }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:#fff;border:1px solid #e6e8ee;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.15);overflow:hidden;max-height:224px;overflow-y:auto;">
+                        <sc-for list="{{ locSuggestRows }}" as="o" hint-placeholder-count="0"><button onMouseDown="{{ o.onPick }}" type="button" style="display:block;width:100%;text-align:left;padding:9px 13px;border:none;border-bottom:1px solid #f3f4f6;background:#fff;cursor:pointer;font:500 13px 'IBM Plex Sans';color:#2b3344;" style-hover="background:#f3f6fb;">{{ o.name }}</button></sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
                 </div>
               </div>
 
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Unit / area</label>
-                  <input value="{{ reqUnitV }}" onChange="{{ onReqUnit }}" placeholder="e.g. Unit 4 · North Rack" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <div style="position:relative;">
+                    <input value="{{ reqUnitV }}" onChange="{{ onReqUnit }}" onFocus="{{ focusUnit }}" onBlur="{{ blurSuggest }}" autocomplete="off" placeholder="e.g. Unit 4 · North Rack" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <sc-if value="{{ showUnitSuggest }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:#fff;border:1px solid #e6e8ee;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.15);overflow:hidden;max-height:224px;overflow-y:auto;">
+                        <sc-for list="{{ unitSuggestRows }}" as="o" hint-placeholder-count="0"><button onMouseDown="{{ o.onPick }}" type="button" style="display:block;width:100%;text-align:left;padding:9px 13px;border:none;border-bottom:1px solid #f3f4f6;background:#fff;cursor:pointer;font:500 13px 'IBM Plex Sans';color:#2b3344;" style-hover="background:#f3f6fb;">{{ o.name }}</button></sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
                 </div>
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Date erected <span style="font-weight:400;color:#9aa1b0;">— scaffold age</span></label>
@@ -1162,7 +1183,14 @@
                 </div>
                 <div>
                   <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Estimated duration</label>
-                  <input value="{{ reqDurationV }}" onChange="{{ onReqDuration }}" placeholder="e.g. 2 weeks" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <div style="display:flex;gap:8px;">
+                    <input value="{{ reqDurQtyV }}" onChange="{{ onReqDurQty }}" type="number" min="0" placeholder="2" style="width:88px;flex-shrink:0;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <select value="{{ reqDurUnitV }}" onChange="{{ onReqDurUnit }}" style="flex:1;min-width:0;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;cursor:pointer;" style-focus="border-color:#2f6bff;background:#fff;">
+                      <option value="Days">Days</option>
+                      <option value="Weeks">Weeks</option>
+                      <option value="Months">Months</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -1218,7 +1246,10 @@
               <div style="font:400 12.5px/1.5 'IBM Plex Sans';color:#8a92a4;margin-bottom:18px;">Look up an existing tag to extend it, change its status, or add a note — keeps the office in sync.</div>
               <div style="margin-bottom:14px;">
                 <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Tag #</label>
-                <input value="{{ updTagV }}" onChange="{{ onUpdTag }}" placeholder="e.g. TAG-1001" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <select value="{{ updTagV }}" onChange="{{ onUpdTagSelect }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;cursor:pointer;" style-focus="border-color:#2f6bff;background:#fff;">
+                  <option value="">Select a tag…</option>
+                  <sc-for list="{{ updTagOptions }}" as="o" hint-placeholder-count="2"><option value="{{ o }}">{{ o }}</option></sc-for>
+                </select>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
                 <div>
@@ -1240,6 +1271,22 @@
               </div>
               <button onClick="{{ updateTag }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;">Update tag</button>
               <div style="text-align:center;min-height:18px;margin-top:12px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.request }}</div>
+              <div style="margin-top:18px;border-top:1px solid #f1f2f5;padding-top:16px;">
+                <div style="font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:10px;">All tags &amp; status <span style="font-weight:400;color:#9aa1b0;">— tap a tag to load it above</span></div>
+                <sc-if value="{{ hasTags }}" hint-placeholder-val="{{ true }}">
+                  <div style="border:1px solid #eceef2;border-radius:11px;overflow:hidden;">
+                    <sc-for list="{{ allTagRows }}" as="t" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:11px;padding:10px 13px;border-bottom:1px solid #f3f4f6;{{ t.selStyle }}">
+                        <button onClick="{{ t.onPick }}" style="font:600 12px 'IBM Plex Mono';color:#2f6bff;background:#eef3ff;border:1px solid #d8e3ff;border-radius:7px;padding:3px 9px;flex-shrink:0;cursor:pointer;" style-hover="background:#2f6bff;color:#fff;">{{ t.tag }}</button>
+                        <div style="flex:1;min-width:0;"><div style="font:500 12.5px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.job }}</div><div style="font:400 10.5px 'IBM Plex Mono';color:#9aa1b0;">{{ t.requester }}</div></div>
+                        <span style="font:600 10.5px 'IBM Plex Sans';padding:3px 9px;border-radius:20px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};flex-shrink:0;">{{ t.status }}</span>
+                        <button onClick="{{ t.onView }}" style="font:600 11px 'IBM Plex Sans';color:#2f6bff;background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0;" style-hover="text-decoration:underline;">View</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ noReqs }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #d8dce4;border-radius:11px;padding:20px;text-align:center;font:400 12.5px 'IBM Plex Sans';color:#9aa1b0;">No tags yet — submit a request or check out material to a job site.</div></sc-if>
+              </div>
             </sc-if>
           </div>
 
@@ -1329,7 +1376,10 @@
                     <td style="padding:13px 16px;border-bottom:1px solid #f1f2f5;text-align:right;white-space:nowrap;">
                       <button onClick="{{ r.onView }}" style="display:inline-flex;align-items:center;gap:5px;padding:7px 11px;margin-right:7px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>View</button>
                       <sc-if value="{{ r.showApprove }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onApprove }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:none;border-radius:8px;background:#2f6bff;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve</button></sc-if>
+                      <sc-if value="{{ r.showReview }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onReview }}" title="Edit ticket / amount" style="display:inline-flex;align-items:center;gap:5px;padding:7px 11px;margin-left:7px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit</button><button onClick="{{ r.onReview }}" title="Disapprove with a note" style="display:inline-flex;align-items:center;gap:5px;padding:7px 11px;margin-left:7px;border:1px solid #f3c0c2;border-radius:8px;background:#fff;color:#d23b3f;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="background:#fdecec;border-color:#d23b3f;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Disapprove</button></sc-if>
                       <sc-if value="{{ r.awaitingReview }}" hint-placeholder-val="{{ true }}"><span style="font:400 12px 'IBM Plex Sans';color:#aab1bf;">Awaiting review</span></sc-if>
+                      <sc-if value="{{ r.isDisapproved }}" hint-placeholder-val="{{ false }}"><span title="{{ r.reviewNote }}" style="font:600 12px 'IBM Plex Sans';color:#d23b3f;vertical-align:middle;">Disapproved · {{ r.reviewBy }}</span></sc-if>
+                      <sc-if value="{{ r.canReopen }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onReview }}" title="Edit &amp; reopen" style="display:inline-flex;align-items:center;gap:5px;padding:7px 11px;margin-left:9px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;vertical-align:middle;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit</button></sc-if>
                       <sc-if value="{{ r.showSend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onInvoice }}" style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:none;border-radius:8px;background:#2ca01c;color:#fff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#238016;"><span style="display:inline-flex;width:15px;height:15px;border-radius:50%;background:#fff;color:#2ca01c;align-items:center;justify-content:center;font:700 10px 'Space Grotesk';">$</span>Send to QuickBooks</button></sc-if>
                       <sc-if value="{{ r.awaitingBill }}" hint-placeholder-val="{{ false }}"><span style="font:400 12px 'IBM Plex Sans';color:#aab1bf;">Approved · awaiting billing</span></sc-if>
                       <sc-if value="{{ r.invoiced }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;font:600 12px 'IBM Plex Sans';color:#2ca01c;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2ca01c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>In QuickBooks · {{ r.qboNum }}</span></sc-if>
@@ -2157,6 +2207,37 @@
     </div>
   </sc-if>
 
+  <!-- ===== REVIEW / DISAPPROVE TICKET MODAL ===== -->
+  <sc-if value="{{ showReview }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1004;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:60px 16px;">
+      <div style="width:100%;max-width:460px;background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.4);overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px;border-bottom:1px solid #eceef2;">
+          <div>
+            <div style="font:600 15px 'Space Grotesk';color:#0c1322;">Review ticket {{ reviewTId }}</div>
+            <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">{{ reviewTJob }}</div>
+          </div>
+          <button onClick="{{ closeReview }}" style="width:30px;height:30px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#8a92a4;font:600 17px/1 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">×</button>
+        </div>
+        <div style="padding:20px 22px;">
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Amount</label>
+            <input value="{{ reviewAmountV }}" onChange="{{ onReviewAmount }}" type="number" min="0" step="0.01" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Note <span style="font-weight:400;color:#9aa1b0;">— reason / change (required to disapprove)</span></label>
+            <textarea value="{{ reviewNoteV }}" onChange="{{ onReviewNote }}" rows="3" placeholder="e.g. hours look high — confirm with crew before billing" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;resize:vertical;" style-focus="border-color:#2f6bff;background:#fff;"></textarea>
+          </div>
+          <div style="font:400 11.5px 'IBM Plex Sans';color:#9aa1b0;margin-bottom:18px;">Saved under your name. Editing a disapproved ticket reopens it for review.</div>
+          <div style="display:flex;gap:10px;">
+            <button onClick="{{ closeReview }}" style="flex:1;padding:11px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#6b7488;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Cancel</button>
+            <button onClick="{{ disapproveTicket }}" style="flex:1;padding:11px;border:1px solid #f3c0c2;border-radius:9px;background:#fff;color:#d23b3f;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#fdecec;border-color:#d23b3f;">Disapprove</button>
+            <button onClick="{{ saveReview }}" style="flex:1.4;padding:11px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===== ADD CONTACT MODAL ===== -->
   <sc-if value="{{ showAddContact }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:1004;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:60px 16px;">
@@ -2394,6 +2475,7 @@ class Component extends DCLogic {
     viewInvoice: null,
     viewReport: null,
     viewTicket: null,
+    reviewId: null,
     viewRequest: null,
     showAddContact: false,
     savedContacts: [],
@@ -2437,9 +2519,11 @@ class Component extends DCLogic {
       reqMode: 'new', reqJob: '', reqRequester: '', reqDesc: '', reqContractor: '', reqLocation: '', reqUnit: '', reqDate: new Date().toISOString().slice(0, 10),
       reqLen: '', reqWid: '', reqHt: '', reqBuild: false, reqAddition: false, reqDismantle: false, reqPartial: false, reqRevision: false, reqSuspend: false,
       reqConfined: 'No', reqDuration: '', reqComments: '',
+      reqDurQty: '', reqDurUnit: 'Weeks',
       reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '',
       acName: '', acEmail: '', acPhone: '',
       updTag: '', updStatus: 'On rent', updEnd: '', updNote: '',
+      reviewAmount: '', reviewNote: '',
     },
     msgs: {},
     audits: [],
@@ -2976,6 +3060,10 @@ class Component extends DCLogic {
   blurSuggest = () => { clearTimeout(this._sgT); this._sgT = setTimeout(() => this.setState({ suggestOpen: '' }), 150); };
   pickRequester = (n) => this.setState(s => ({ suggestOpen: '', form: { ...s.form, reqRequester: n } }));
   pickContact = (n) => { this.onReqContactNameChange(n); this.setState({ suggestOpen: '' }); };
+  focusGc = () => this.setState({ suggestOpen: 'gc' });
+  focusLoc = () => this.setState({ suggestOpen: 'loc' });
+  focusUnit = () => this.setState({ suggestOpen: 'unit' });
+  pickField = (key, val) => this.setState(s => ({ suggestOpen: '', form: { ...s.form, [key]: val } }));
   closeAddContact = () => this.setState({ showAddContact: false });
   saveAddContact = () => {
     const f = this.state.form;
@@ -3006,7 +3094,7 @@ class Component extends DCLogic {
       job: f.reqJob, desc: (f.reqDesc || '').trim() || '\u2014',
       len: len ? String(len) : '', wid: wid ? String(wid) : '', ht: ht ? String(ht) : '', cube: cube ? String(cube) : '',
       dateErected: f.reqDate || this.todayISO(), confined: f.reqConfined || 'No',
-      duration: (f.reqDuration || '').trim() || '\u2014', comments: (f.reqComments || '').trim(),
+      duration: (f.reqDurQty != null && String(f.reqDurQty).trim() !== '') ? (String(f.reqDurQty).trim() + ' ' + (f.reqDurUnit || 'Weeks')) : ((f.reqDuration || '').trim() || '\u2014'), comments: (f.reqComments || '').trim(),
       contactName: (f.reqContactName || '').trim(), contactEmail: (f.reqContactEmail || '').trim(), contactPhone: (f.reqContactPhone || '').trim(), signature: f.reqSignature || '',
       workTypes: types, date: this.todayISO(), preview: !!preview,
     };
@@ -3017,7 +3105,7 @@ class Component extends DCLogic {
     this.setState(s => ({
       scaffReqs: [rec, ...s.scaffReqs],
       reqSeq: s.reqSeq + 1,
-      form: { ...s.form, reqRequester: '', reqDesc: '', reqContractor: '', reqLocation: '', reqUnit: '', reqLen: '', reqWid: '', reqHt: '', reqBuild: false, reqAddition: false, reqDismantle: false, reqPartial: false, reqRevision: false, reqSuspend: false, reqConfined: 'No', reqDuration: '', reqComments: '', reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '' },
+      form: { ...s.form, reqRequester: '', reqDesc: '', reqContractor: '', reqLocation: '', reqUnit: '', reqLen: '', reqWid: '', reqHt: '', reqBuild: false, reqAddition: false, reqDismantle: false, reqPartial: false, reqRevision: false, reqSuspend: false, reqConfined: 'No', reqDuration: '', reqComments: '', reqDurQty: '', reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '' },
     }), () => { this.clearSignature(); this.setState({ viewRequest: rec }); this.persistScaffReq(rec); if (rec.contactEmail) this.emailRequest(rec); });
     this.setMsg('request', rec.reqNo + ' synced to office \u2713' + (rec.contactEmail ? ' \u2014 confirmation emailed to ' + rec.contactEmail : ' \u2014 tag pending dispatch'));
   };
@@ -3054,19 +3142,35 @@ class Component extends DCLogic {
   updateTag = () => {
     const f = this.state.form;
     const tag = (f.updTag || '').trim();
-    if (!tag) return this.setMsg('request', 'Enter the tag number to update');
-    const found = this.state.scaffReqs.some(r => r.tag.toLowerCase() === tag.toLowerCase());
-    if (!found) return this.setMsg('request', 'No request found for ' + tag);
+    if (!tag) return this.setMsg('request', 'Select a tag to update');
     const note = (f.updNote || '').trim();
     const end = f.updEnd ? ' \u00b7 needed until ' + this.fmtDate(f.updEnd) : '';
-    this.setState(s => ({
-      scaffReqs: s.scaffReqs.map(r => r.tag.toLowerCase() === tag.toLowerCase()
-        ? { ...r, status: f.updStatus || r.status, comments: (note ? note + end : r.comments + end).trim() }
-        : r),
-      form: { ...s.form, updNote: '', updEnd: '' },
-    }), () => { const r = this.state.scaffReqs.find(x => x.tag.toLowerCase() === tag.toLowerCase()); if (r) this.persistScaffReq(r); });
-    this.setMsg('request', tag + ' updated \u2713');
+    const by = this.signedInName();
+    this.setState(s => {
+      const exists = s.scaffReqs.some(r => r.tag.toLowerCase() === tag.toLowerCase());
+      let scaffReqs;
+      if (exists) {
+        scaffReqs = s.scaffReqs.map(r => r.tag.toLowerCase() === tag.toLowerCase()
+          ? { ...r, status: f.updStatus || r.status, comments: (note ? note + end : (r.comments || '') + end).trim() }
+          : r);
+        return { scaffReqs, form: { ...s.form, updNote: '', updEnd: '' } };
+      }
+      // Tag exists in inventory but has no request slip yet \u2014 create one so it's tracked + synced.
+      const rent = s.rentals.find(r => r.tag === tag) || {};
+      const rec = { reqNo: 'REQ-' + s.reqSeq, tag, wo: '\u2014', status: f.updStatus || 'On rent', requester: by, contractor: '\u2014', location: '\u2014', unit: '\u2014', job: rent.job || '', desc: 'Created from tag update', len: '', wid: '', ht: '', cube: '', dateErected: this.todayISO(), confined: 'No', duration: '\u2014', comments: (note + end).trim(), workTypes: {}, date: this.todayISO() };
+      return { scaffReqs: [rec, ...s.scaffReqs], reqSeq: s.reqSeq + 1, form: { ...s.form, updNote: '', updEnd: '' } };
+    }, () => { const r = this.state.scaffReqs.find(x => x.tag.toLowerCase() === tag.toLowerCase()); if (r) this.persistScaffReq(r); });
+    this.setMsg('request', tag + ' updated by ' + by + ' \u2713');
   };
+  // Pick a tag in the update board \u2014 prefill its current (live) status.
+  pickUpdTag = (tag) => this.setState(s => {
+    if (!tag) return { form: { ...s.form, updTag: '' } };
+    const active = s.rentals.some(r => !r.invoiced && r.tag === tag);
+    const known = s.rentals.some(r => r.tag === tag);
+    const cur = s.scaffReqs.find(r => r.tag === tag);
+    const status = active ? 'On rent' : (known ? 'Off rent' : (cur ? cur.status : 'On rent'));
+    return { form: { ...s.form, updTag: tag, updStatus: status } };
+  });
   openRequest = (rec) => this.setState({ viewRequest: rec });
   closeRequest = () => this.setState({ viewRequest: null });
   printRequest = () => { window.print(); };
@@ -3158,6 +3262,32 @@ class Component extends DCLogic {
   approveTicket = (id) => {
     this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'approved' } : t) }));
     this.patchTicket(id, { status: 'approved' });
+  };
+  // Who is acting \u2014 the signed-in user shown bottom-left.
+  signedInName = () => this.state.tenantUserName || (this.IDENTITIES[this.state.role] || {}).name || this.state.role || '';
+  // Edit / disapprove a ticket during billing review, stamped with the signed-in user + a note.
+  openReview = (id) => this.setState(s => { const t = s.tickets.find(x => x.id === id); return { reviewId: id, form: { ...s.form, reviewAmount: t ? String(t.amount) : '', reviewNote: t ? (t.reviewNote || '') : '' } }; });
+  closeReview = () => this.setState({ reviewId: null });
+  saveReview = () => {
+    const id = this.state.reviewId; if (!id) return;
+    const f = this.state.form;
+    const amt = parseFloat(f.reviewAmount);
+    const note = (f.reviewNote || '').trim();
+    const by = this.signedInName();
+    let newStatus = null;
+    this.setState(s => ({ tickets: s.tickets.map(t => { if (t.id !== id) return t; newStatus = t.status === 'disapproved' ? 'pending' : t.status; return { ...t, amount: (!isNaN(amt) && amt >= 0) ? amt : t.amount, status: newStatus, reviewNote: note, reviewBy: by, reviewAt: this.todayISO() }; }), reviewId: null }));
+    if (newStatus) this.patchTicket(id, { status: newStatus });
+    this.setMsg('bill', id + ' updated by ' + by + ' \u2713');
+  };
+  disapproveTicket = () => {
+    const id = this.state.reviewId; if (!id) return;
+    const f = this.state.form;
+    const note = (f.reviewNote || '').trim();
+    if (!note) return this.setMsg('bill', 'Add a note explaining why it was disapproved');
+    const by = this.signedInName();
+    this.setState(s => ({ tickets: s.tickets.map(t => t.id === id ? { ...t, status: 'disapproved', reviewNote: note, reviewBy: by, reviewAt: this.todayISO() } : t), reviewId: null }));
+    this.patchTicket(id, { status: 'disapproved' });
+    this.setMsg('bill', id + ' disapproved by ' + by);
   };
   applyInvoiced = (id, qboNum, bumpSeq, qboId) => {
     this.setState(s => ({
@@ -4114,12 +4244,13 @@ class Component extends DCLogic {
         approved: { bg: '#e8f6ef', fg: '#0f9d6b', label: 'Approved' },
         pending: { bg: '#fdf1e1', fg: '#b3760a', label: 'Pending' },
         invoiced: { bg: '#eef3ff', fg: '#2356d6', label: 'Invoiced' },
+        disapproved: { bg: '#fdecec', fg: '#d23b3f', label: 'Disapproved' },
       };
       return m[status] || m.pending;
     };
     const recentTickets = [...s.tickets].slice(-3).reverse().map(t => { const b = badgeFor(t.status); return { id: t.id, job: t.job, hours: t.hours, amount: this.fmt(t.amount), badgeBg: b.bg, badgeFg: b.fg, badgeLabel: b.label, onView: () => this.openTicketDetail(t.id) }; });
     const canApprove = s.role === 'Owner / Admin' || s.role === 'Operations Lead';
-    const canBill = s.role === 'Owner / Admin' || s.role === 'Billing / Accounting';
+    const reviewT = s.reviewId ? s.tickets.find(t => t.id === s.reviewId) : null;    const canBill = s.role === 'Owner / Admin' || s.role === 'Billing / Accounting';
     const billingRows = s.tickets.map(t => {
       const b = badgeFor(t.status);
       const isPending = t.status === 'pending';
@@ -4130,6 +4261,8 @@ class Component extends DCLogic {
         showSend: isApproved && canBill, awaitingBill: isApproved && !canBill,
         invoiced: t.invoiced, qboNum: t.qboNum || '',
         showVoid: t.invoiced && canBill, onVoid: () => this.voidInvoice(t.id),
+        showReview: isPending && canApprove, onReview: () => this.openReview(t.id),
+        isDisapproved: t.status === 'disapproved', reviewBy: t.reviewBy || '', reviewNote: t.reviewNote || '', canReopen: t.status === 'disapproved' && canApprove,
         onApprove: () => this.approveTicket(t.id), onInvoice: () => this.generateInvoice(t.id),
         onView: () => this.openTicketDetail(t.id),
       };
@@ -4185,6 +4318,12 @@ class Component extends DCLogic {
     const _tagStatusOf = (tag) => { if (!tag || tag === 'Pending') return null; if (_activeTags.has(tag)) return 'On rent'; if (_knownTags.has(tag)) return 'Off rent'; return null; };
     const reqRows = s.scaffReqs.slice(0, 6).map(r => { const st = _tagStatusOf(r.tag) || r.status; const b = _reqStatusBadge(st); const size = (r.len && r.wid && r.ht) ? (r.len + ' \u00d7 ' + r.wid + ' \u00d7 ' + r.ht + ' ft') : ''; const onSite = _activeTags.has(r.tag); const accrued = onSite ? this.fmt2(this.tagCubicAccrue(r.job, r.tag, this.tagSchedStart(r.job, r.tag), this.todayISO(), (this.props.rentalRate ?? 0.008))) : ''; return { reqNo: r.reqNo, tag: r.tag, job: r.job, requester: r.requester, sizeSuffix: size ? ' \u00b7 ' + size : '', onSiteSuffix: onSite ? ' \u00b7 on site \u00b7 ' + accrued + ' accrued' : '', statusLabel: st, badgeBg: b.bg, badgeFg: b.fg, onView: () => this.openRequest(r), onTag: onSite ? () => this.openReport('tag', r.job, r.tag) : () => this.openRequest(r) }; });
     const rq = s.viewRequest;
+    // Update-existing-tag board: every known tag (from requests + inventory) with its live status.
+    const _tagBoard = {};
+    s.scaffReqs.forEach(r => { if (r.tag && r.tag !== 'Pending') _tagBoard[r.tag] = { tag: r.tag, job: r.job, status: _tagStatusOf(r.tag) || r.status, requester: r.requester, reqNo: r.reqNo }; });
+    [...new Set(s.rentals.map(r => r.tag))].forEach(tg => { if (tg && !_tagBoard[tg]) { const rr = s.rentals.find(r => r.tag === tg) || {}; _tagBoard[tg] = { tag: tg, job: rr.job || '', status: _tagStatusOf(tg) || 'On rent', requester: '', reqNo: '' }; } });
+    const updTagOptions = Object.keys(_tagBoard).sort();
+    const allTagRows = updTagOptions.map(tg => { const t = _tagBoard[tg]; const bd = _reqStatusBadge(t.status); const onSite = _activeTags.has(tg); return { tag: t.tag, job: t.job || '\u2014', status: t.status, requester: t.requester || '\u2014', badgeBg: bd.bg, badgeFg: bd.fg, selStyle: (f.updTag === t.tag) ? 'background:#eef3ff;' : 'background:#fff;', onPick: () => this.pickUpdTag(t.tag), onView: onSite ? () => this.openReport('tag', t.job, t.tag) : (t.reqNo ? () => { const rec = s.scaffReqs.find(r => r.reqNo === t.reqNo); if (rec) this.openRequest(rec); } : () => {}) }; });
     // Autocomplete: reuse previously-entered requesters / contacts, or add a new one.
     const _people = new Set();
     s.scaffReqs.forEach(r => { if (r.requester) _people.add(r.requester); });
@@ -4202,6 +4341,14 @@ class Component extends DCLogic {
     const reqSuggestRows = (s.suggestOpen === 'req' ? reqRequesterOptions.filter(n => n.toLowerCase().includes(_rqv)).slice(0, 6) : []).map(n => ({ name: n, onPick: () => this.pickRequester(n) }));
     const _cnv = (f.reqContactName || '').toLowerCase();
     const conSuggestRows = (s.suggestOpen === 'con' ? reqContactOptions.filter(n => n.toLowerCase().includes(_cnv)).slice(0, 6) : []).map(n => ({ name: n, email: this._contactEmails[n] || '', hasEmail: !!this._contactEmails[n], onPick: () => this.pickContact(n) }));
+    const _uniqSug = (arr) => [...new Set(arr.filter(x => x && x !== '\u2014'))];
+    const _gcOpts = _uniqSug([...s.scaffReqs.map(r => r.contractor), ...(s.customers || []).map(c => c.name)]);
+    const _locOpts = _uniqSug(s.scaffReqs.map(r => r.location));
+    const _unitOpts = _uniqSug(s.scaffReqs.map(r => r.unit));
+    const _mkSug = (open, val, opts, key) => (s.suggestOpen === open ? opts.filter(n => n.toLowerCase().includes((val || '').toLowerCase())).slice(0, 6) : []).map(n => ({ name: n, onPick: () => this.pickField(key, n) }));
+    const gcSuggestRows = _mkSug('gc', f.reqContractor, _gcOpts, 'reqContractor');
+    const locSuggestRows = _mkSug('loc', f.reqLocation, _locOpts, 'reqLocation');
+    const unitSuggestRows = _mkSug('unit', f.reqUnit, _unitOpts, 'reqUnit');
     const _wtPdf = [['build', 'Build'], ['addition', 'Addition'], ['dismantle', 'Dismantle'], ['partial', 'Partial Dismantle'], ['revision', 'Revision'], ['suspend', 'Suspend']];
     const _pdfChipOn = "display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #0c1322;border-radius:8px;background:#0c1322;color:#fff;font:600 12px 'IBM Plex Sans';";
     const _pdfChipOff = "display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #d8dce4;border-radius:8px;background:#fff;color:#9aa1b0;font:600 12px 'IBM Plex Sans';";
@@ -4663,6 +4810,10 @@ class Component extends DCLogic {
       certTypeOptions: CERT_TYPES, employeeCerts: employeeCertsView, hasCerts: f.employeeCerts.length > 0, availCount,
       addCert: this.addCert, onNewCertType: e => this.setField('newCertType', e.target.value), onNewCertExp: e => this.setField('newCertExp', e.target.value),
       jobOptions, editJobOptions, editEmpOptions, equipOptions, resourceOptions, onSite, recentTickets, billingRows,
+      showReview: !!reviewT, reviewTId: reviewT ? reviewT.id : '', reviewTJob: reviewT ? reviewT.job : '',
+      reviewAmountV: f.reviewAmount, reviewNoteV: f.reviewNote,
+      onReviewAmount: e => this.setField('reviewAmount', e.target.value), onReviewNote: e => this.setField('reviewNote', e.target.value),
+      saveReview: this.saveReview, disapproveTicket: this.disapproveTicket, closeReview: this.closeReview,
       reportKpis, reportRows,
       saveCrew: this.saveCrew, saveEmployee: this.saveEmployee, saveEquipment: this.saveEquipment, saveJob: this.saveJob, assign: this.assign, submitTicket: this.submitTicket,
       editEquipOptions, equipRosterRows,
@@ -4694,6 +4845,10 @@ class Component extends DCLogic {
       onReqDate: e => this.setField('reqDate', e.target.value), onReqLen: e => this.setField('reqLen', e.target.value),
       onReqWid: e => this.setField('reqWid', e.target.value), onReqHt: e => this.setField('reqHt', e.target.value),
       onReqDuration: e => this.setField('reqDuration', e.target.value), onReqComments: e => this.setField('reqComments', e.target.value),
+      focusGc: this.focusGc, focusLoc: this.focusLoc, focusUnit: this.focusUnit,
+      gcSuggestRows, showGcSuggest: gcSuggestRows.length > 0, locSuggestRows, showLocSuggest: locSuggestRows.length > 0, unitSuggestRows, showUnitSuggest: unitSuggestRows.length > 0,
+      reqDurQtyV: f.reqDurQty, reqDurUnitV: f.reqDurUnit || 'Weeks',
+      onReqDurQty: e => this.setField('reqDurQty', e.target.value), onReqDurUnit: e => this.setField('reqDurUnit', e.target.value),
       reqWorkChips, reqCube,
       reqConfNoStyle: (f.reqConfined || 'No') === 'No' ? _segOn : _segBase, reqConfYesStyle: f.reqConfined === 'Yes' ? _segOn : _segBase,
       onReqConfNo: () => this.setField('reqConfined', 'No'), onReqConfYes: () => this.setField('reqConfined', 'Yes'),
@@ -4704,6 +4859,7 @@ class Component extends DCLogic {
       reqRows, hasReqs: s.scaffReqs.length > 0, noReqs: s.scaffReqs.length === 0,
       reqJobV: f.reqJob, reqRequesterV: f.reqRequester, reqDescV: f.reqDesc, reqContractorV: f.reqContractor, reqLocationV: f.reqLocation, reqUnitV: f.reqUnit, reqDateV: f.reqDate, reqLenV: f.reqLen, reqWidV: f.reqWid, reqHtV: f.reqHt, reqDurationV: f.reqDuration, reqCommentsV: f.reqComments,
       updTagV: f.updTag, updStatusV: f.updStatus, updEndV: f.updEnd, updNoteV: f.updNote,
+      updTagOptions, allTagRows, hasTags: updTagOptions.length > 0, onUpdTagSelect: e => this.pickUpdTag(e.target.value),
       showReqDoc: !!rq, closeRequest: this.closeRequest, printRequest: this.printRequest,
       sigRef: this.sigRef, clearSignature: this.clearSignature, reqSigEmpty: !f.reqSignature,
       onReqContactName: e => this.onReqContactNameChange(e.target.value), onReqContactEmail: e => this.setField('reqContactEmail', e.target.value),
