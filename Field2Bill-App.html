@@ -27,9 +27,10 @@
   ::-webkit-scrollbar-thumb:hover{background:#b4bac6;background-clip:content-box;}
   @media print {
     body * { visibility: hidden !important; }
-    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet *, #f2b-print-sheet, #f2b-print-sheet *, #f2b-req-sheet, #f2b-req-sheet * { visibility: visible !important; }
-    #f2b-inv-sheet, #f2b-tag-sheet, #f2b-print-sheet, #f2b-req-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
-    #f2b-inv-toolbar, #f2b-tag-toolbar, #f2b-print-toolbar, #f2b-req-toolbar { display: none !important; }
+    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet *, #f2b-print-sheet, #f2b-print-sheet *, #f2b-req-sheet, #f2b-req-sheet *, #f2b-rentrep-sheet, #f2b-rentrep-sheet * { visibility: visible !important; }
+    #f2b-inv-sheet, #f2b-tag-sheet, #f2b-print-sheet, #f2b-req-sheet, #f2b-rentrep-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
+    #f2b-inv-toolbar, #f2b-tag-toolbar, #f2b-print-toolbar, #f2b-req-toolbar, #f2b-rentrep-toolbar { display: none !important; }
+    #f2b-rentrep-sheet table { font-size: 10px !important; }
     @page { margin: 14mm; }
   }
   /* ===================== MOBILE / RESPONSIVE ===================== */
@@ -1432,6 +1433,77 @@
               </table>
             </div>
           </div>
+
+          <!-- Scaffold rental invoice report (editable, Targa-style) -->
+          <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px;flex-wrap:wrap;">
+              <div>
+                <div style="font:600 14px 'Space Grotesk';color:#0c1322;">Scaffold rental invoice report</div>
+                <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">Editable rental billing by work order — {{ rentReportCount }} tags · grand total {{ rentReportGrand }}</div>
+              </div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                <button onClick="{{ loadRentFromRentals }}" title="Rebuild rows from active rentals" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>Load from rentals</button>
+                <button onClick="{{ addRentRow }}" style="display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#3a4456;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Row</button>
+                <button onClick="{{ rentReportCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #0e8a72;border-radius:8px;background:#e2f6f1;color:#0e8a72;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0e8a72;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
+                <button onClick="{{ openRentRep }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #2f6bff;border-radius:8px;background:#eef3ff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2f6bff;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Preview / Print</button>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 16px;padding:13px 15px;background:#f8f9fb;border:1px solid #eceef2;border-radius:11px;">
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Company ID</label><select value="{{ rrCompanyId }}" onChange="{{ onRrCompanyId }}" style="width:170px;padding:7px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;cursor:pointer;" style-focus="border-color:#2f6bff;"><sc-for list="{{ rrCompanyOptions }}" as="o" hint-placeholder-count="2"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Billing date</label><input value="{{ rrBillingDate }}" onChange="{{ onRrBillingDate }}" type="month" style="width:150px;padding:6px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></div>
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Last billing</label><input value="{{ rrLastBill }}" onChange="{{ onRrLastBill }}" type="month" style="width:150px;padding:6px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></div>
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Rent (days)</label><input value="{{ rrRentDays }}" onChange="{{ onRrRentDays }}" type="number" min="0" style="width:90px;padding:7px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></div>
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Zone</label><input value="{{ rrZone }}" onChange="{{ onRrZone }}" style="width:110px;padding:7px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></div>
+              <div><label style="display:block;font:600 9px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#9aa1b0;margin-bottom:4px;">Rate /ft³/day</label><input value="{{ rrRate }}" onChange="{{ onRrRate }}" type="number" step="0.0001" min="0" style="width:110px;padding:7px 9px;border:1px solid #e1e4ea;border-radius:8px;font:400 12.5px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></div>
+            </div>
+
+            <div style="overflow-x:auto;border:1px solid #eceef2;border-radius:11px;">
+              <table style="width:100%;border-collapse:collapse;min-width:1180px;">
+                <thead><tr>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">WO #</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Tag #</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">M/S</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Approver</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Date Up</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Date Down</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Last Bill</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Size</th>
+                  <th style="text-align:right;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Cubic ft</th>
+                  <th style="text-align:right;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Daily RR</th>
+                  <th style="text-align:left;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Days</th>
+                  <th style="text-align:right;padding:9px 10px;font:600 9.5px 'IBM Plex Mono';letter-spacing:.4px;text-transform:uppercase;color:#8a92a4;background:#fafbfc;border-bottom:1px solid #eceef2;white-space:nowrap;">Amount</th>
+                  <th style="padding:9px 10px;background:#fafbfc;border-bottom:1px solid #eceef2;"></th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ rentReportGroups }}" as="g" hint-placeholder-count="2">
+                    <tr><td colspan="13" style="padding:8px 12px;background:#f3f6fb;border-bottom:1px solid #eceef2;font:600 11px 'IBM Plex Mono';color:#2f6bff;">Sum for WO# {{ g.wo }}</td></tr>
+                    <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3"><tr>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.wo }}" onChange="{{ r.onWo }}" style="width:100%;min-width:64px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.tag }}" onChange="{{ r.onTag }}" style="width:100%;min-width:74px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.ms }}" onChange="{{ r.onMs }}" style="width:42px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;text-align:center;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.approver }}" onChange="{{ r.onApprover }}" style="width:100%;min-width:110px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.dateUp }}" onChange="{{ r.onDateUp }}" type="date" style="width:138px;padding:5px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 11.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.dateDown }}" onChange="{{ r.onDateDown }}" type="date" style="width:138px;padding:5px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 11.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.lastBill }}" onChange="{{ r.onLastBill }}" type="date" style="width:138px;padding:5px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 11.5px 'IBM Plex Sans';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.size }}" onChange="{{ r.onSize }}" placeholder="5x10x17" style="width:92px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 10px;border-bottom:1px solid #f3f4f6;text-align:right;font:500 12px 'IBM Plex Mono';color:#6b7488;white-space:nowrap;">{{ r.cubic }}</td>
+                      <td style="padding:5px 10px;border-bottom:1px solid #f3f4f6;text-align:right;font:500 12px 'IBM Plex Mono';color:#6b7488;white-space:nowrap;">{{ r.dailyRRFmt }}</td>
+                      <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;"><input value="{{ r.billingDays }}" onChange="{{ r.onDays }}" type="number" min="0" style="width:60px;padding:6px 7px;border:1px solid #eef0f3;border-radius:6px;font:400 12px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;box-sizing:border-box;text-align:right;" style-focus="border-color:#2f6bff;"></td>
+                      <td style="padding:5px 10px;border-bottom:1px solid #f3f4f6;text-align:right;font:600 12.5px 'IBM Plex Mono';color:#0c1322;white-space:nowrap;">{{ r.amountFmt }}</td>
+                      <td style="padding:5px 8px;border-bottom:1px solid #f3f4f6;text-align:center;"><button onClick="{{ r.onRemove }}" title="Remove row" style="width:24px;height:24px;border:none;border-radius:6px;background:#f1f2f5;color:#8a92a4;font:600 13px/1 'IBM Plex Sans';cursor:pointer;" style-hover="background:#fde9ea;color:#e5484d;">×</button></td>
+                    </tr></sc-for>
+                    <tr><td colspan="11" style="padding:8px 12px;border-bottom:2px solid #eceef2;text-align:right;font:600 11px 'IBM Plex Sans';color:#6b7488;">Total for WO# {{ g.wo }}</td><td style="padding:8px 10px;border-bottom:2px solid #eceef2;text-align:right;font:700 12.5px 'IBM Plex Mono';color:#0c1322;white-space:nowrap;">{{ g.subtotalFmt }}</td><td style="border-bottom:2px solid #eceef2;"></td></tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:16px;align-items:center;margin-top:14px;padding-top:14px;border-top:2px solid #0c1322;">
+              <span style="font:600 11px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#6b7488;">Grand total</span>
+              <span style="font:700 17px 'Space Grotesk';color:#0c1322;">{{ rentReportGrand }}</span>
+            </div>
+          </div>
+
         </div>
       </sc-if>
 
@@ -2207,6 +2279,84 @@
     </div>
   </sc-if>
 
+  <!-- ===== RENTAL INVOICE REPORT PRINT OVERLAY ===== -->
+  <sc-if value="{{ showRentRep }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1003;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;">
+      <div id="f2b-rentrep-toolbar" style="width:100%;max-width:1000px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 16px;">
+        <button onClick="{{ closeRentRep }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back
+        </button>
+        <div style="display:flex;align-items:center;gap:9px;">
+          <button onClick="{{ rentReportCsv }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel
+          </button>
+          <button onClick="{{ printRentRep }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;box-shadow:0 2px 8px rgba(47,107,255,.35);" style-hover="background:#2356d6;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Download / Print PDF
+          </button>
+        </div>
+      </div>
+
+      <div id="f2b-rentrep-sheet" style="width:100%;max-width:1000px;background:#fff;margin:0 16px;box-shadow:0 24px 60px rgba(0,0,0,.4);padding:32px 40px 40px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px;border-bottom:2px solid #0c1322;padding-bottom:14px;">
+          <div>
+            <div style="font:700 19px 'Space Grotesk';color:#0c1322;letter-spacing:-.3px;">Rental Invoice Report</div>
+            <div style="font:400 12px 'IBM Plex Sans';color:#6b7488;margin-top:5px;">COMPANY ID = {{ rrCompanyId }} · Zone {{ rrZone }}</div>
+          </div>
+          <div style="text-align:right;font:400 12px/1.8 'IBM Plex Sans';color:#6b7488;">
+            <div style="font:700 15px 'Space Grotesk';color:#0c1322;margin-bottom:3px;">{{ rrCompanyId }}</div>
+            Billing Date: <strong style="color:#0c1322;font-weight:600;">{{ rrBillingDateFmt }}</strong><br>
+            Last Billing Date: {{ rrLastBillFmt }}<br>
+            Rent {{ rrRentDays }} days
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-top:12px;">
+          <table style="width:100%;border-collapse:collapse;min-width:900px;">
+            <thead><tr>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">WO #</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Tag #</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">M/S</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Approver</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Date Up</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Date Down</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Last Bill</th>
+              <th style="text-align:left;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Size</th>
+              <th style="text-align:right;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Cubic ft</th>
+              <th style="text-align:right;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Daily RR</th>
+              <th style="text-align:right;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Days</th>
+              <th style="text-align:right;padding:7px 8px;font:600 9px 'IBM Plex Mono';letter-spacing:.3px;text-transform:uppercase;color:#6b7488;border-bottom:1.5px solid #0c1322;white-space:nowrap;">Amount</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ rentReportGroups }}" as="g" hint-placeholder-count="2">
+                <tr><td colspan="12" style="padding:8px 8px 5px;font:600 11px 'IBM Plex Mono';color:#0c1322;border-bottom:1px solid #eceef2;">Sum for WO# {{ g.wo }}</td></tr>
+                <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3"><tr>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#3a4456;white-space:nowrap;">{{ r.wo }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:600 10.5px 'IBM Plex Mono';color:#0c1322;white-space:nowrap;">{{ r.tag }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#6b7488;text-align:center;">{{ r.ms }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Sans';color:#2b3344;white-space:nowrap;">{{ r.approver }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Sans';color:#6b7488;white-space:nowrap;">{{ r.dateUpFmt }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Sans';color:#6b7488;white-space:nowrap;">{{ r.dateDownFmt }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Sans';color:#6b7488;white-space:nowrap;">{{ r.lastBillFmt }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#3a4456;white-space:nowrap;">{{ r.size }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#6b7488;text-align:right;">{{ r.cubic }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#6b7488;text-align:right;white-space:nowrap;">{{ r.dailyRRFmt }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:400 10.5px 'IBM Plex Mono';color:#6b7488;text-align:right;">{{ r.billingDays }}</td>
+                  <td style="padding:6px 8px;border-bottom:1px solid #f1f2f5;font:600 11px 'IBM Plex Mono';color:#0c1322;text-align:right;white-space:nowrap;">{{ r.amountFmt }}</td>
+                </tr></sc-for>
+                <tr><td colspan="11" style="padding:7px 8px;text-align:right;font:600 10.5px 'IBM Plex Sans';color:#6b7488;border-bottom:1.5px solid #0c1322;">Total:</td><td style="padding:7px 8px;text-align:right;font:700 11.5px 'IBM Plex Mono';color:#0c1322;border-bottom:1.5px solid #0c1322;white-space:nowrap;">{{ g.subtotalFmt }}</td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:12px;">
+          <span style="font:600 11px 'IBM Plex Sans';color:#6b7488;">Total Scaffold Orders = {{ rentReportCount }}</span>
+          <span style="font:700 16px 'Space Grotesk';color:#0c1322;">Grand Total: {{ rentReportGrand }}</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===== REVIEW / DISAPPROVE TICKET MODAL ===== -->
   <sc-if value="{{ showReview }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:1004;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:60px 16px;">
@@ -2219,9 +2369,15 @@
           <button onClick="{{ closeReview }}" style="width:30px;height:30px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#8a92a4;font:600 17px/1 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">×</button>
         </div>
         <div style="padding:20px 22px;">
-          <div style="margin-bottom:14px;">
-            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Amount</label>
-            <input value="{{ reviewAmountV }}" onChange="{{ onReviewAmount }}" type="number" min="0" step="0.01" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div>
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Amount</label>
+              <input value="{{ reviewAmountV }}" onChange="{{ onReviewAmount }}" type="number" min="0" step="0.01" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            </div>
+            <div>
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Hours</label>
+              <input value="{{ reviewHoursV }}" onChange="{{ onReviewHours }}" type="number" min="0" step="0.5" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+            </div>
           </div>
           <div style="margin-bottom:14px;">
             <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Note <span style="font-weight:400;color:#9aa1b0;">— reason / change (required to disapprove)</span></label>
@@ -2471,6 +2627,8 @@ class Component extends DCLogic {
       { id: 'R4', job: 'Site B — Hydrovac Excavation', tag: 'TAG-1002', code: '9002104', name: '2x10x4 Scaffold Plank OSHA', qty: 40, cubic: 1.5, start: '2026-06-02', invoiced: false },
     ],
     rentalInvoices: [],
+    rentReport: { companyId: 'Targa', billingDate: new Date().toISOString().slice(0, 7), lastBillingDate: '', rentDays: 60, zone: 'T146-01', ratePerCubic: 0.0067, rows: [] },
+    showRentRep: false,
     purchaseOrders: [],
     viewInvoice: null,
     viewReport: null,
@@ -2523,7 +2681,7 @@ class Component extends DCLogic {
       reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '',
       acName: '', acEmail: '', acPhone: '',
       updTag: '', updStatus: 'On rent', updEnd: '', updNote: '',
-      reviewAmount: '', reviewNote: '',
+      reviewAmount: '', reviewNote: '', reviewHours: '',
     },
     msgs: {},
     audits: [],
@@ -3266,16 +3424,17 @@ class Component extends DCLogic {
   // Who is acting \u2014 the signed-in user shown bottom-left.
   signedInName = () => this.state.tenantUserName || (this.IDENTITIES[this.state.role] || {}).name || this.state.role || '';
   // Edit / disapprove a ticket during billing review, stamped with the signed-in user + a note.
-  openReview = (id) => this.setState(s => { const t = s.tickets.find(x => x.id === id); return { reviewId: id, form: { ...s.form, reviewAmount: t ? String(t.amount) : '', reviewNote: t ? (t.reviewNote || '') : '' } }; });
+  openReview = (id) => this.setState(s => { const t = s.tickets.find(x => x.id === id); return { reviewId: id, form: { ...s.form, reviewAmount: t ? String(t.amount) : '', reviewHours: t ? String(t.hours != null ? t.hours : '') : '', reviewNote: t ? (t.reviewNote || '') : '' } }; });
   closeReview = () => this.setState({ reviewId: null });
   saveReview = () => {
     const id = this.state.reviewId; if (!id) return;
     const f = this.state.form;
     const amt = parseFloat(f.reviewAmount);
+    const hrs = parseFloat(f.reviewHours);
     const note = (f.reviewNote || '').trim();
     const by = this.signedInName();
     let newStatus = null;
-    this.setState(s => ({ tickets: s.tickets.map(t => { if (t.id !== id) return t; newStatus = t.status === 'disapproved' ? 'pending' : t.status; return { ...t, amount: (!isNaN(amt) && amt >= 0) ? amt : t.amount, status: newStatus, reviewNote: note, reviewBy: by, reviewAt: this.todayISO() }; }), reviewId: null }));
+    this.setState(s => ({ tickets: s.tickets.map(t => { if (t.id !== id) return t; newStatus = t.status === 'disapproved' ? 'pending' : t.status; return { ...t, amount: (!isNaN(amt) && amt >= 0) ? amt : t.amount, hours: (!isNaN(hrs) && hrs >= 0) ? hrs : t.hours, status: newStatus, reviewNote: note, reviewBy: by, reviewAt: this.todayISO() }; }), reviewId: null }));
     if (newStatus) this.patchTicket(id, { status: newStatus });
     this.setMsg('bill', id + ' updated by ' + by + ' \u2713');
   };
@@ -3771,12 +3930,49 @@ class Component extends DCLogic {
     this.setMsg('checkout', 'Tag ' + nt + ' updated ✓');
   };
 
+  // ---- Scaffold Rental Invoice Report (Targa-style, editable) ----
+  // Format a billing value that may be a month (YYYY-MM -> month-end date) or a full date.
+  fmtBillMonth = (v) => { if (!v) return '\u2014'; if (/^\d{4}-\d{2}$/.test(v)) { const [y, m] = v.split('-').map(Number); const last = new Date(y, m, 0).getDate(); return this.fmtDate(v + '-' + String(last).padStart(2, '0')); } return this.fmtDate(v); };
+  rrParseCubic = (size) => { const p = String(size || '').split(/[x×X*,\s]+/).map(n => parseFloat(n)).filter(n => !isNaN(n)); return (p[0] || 0) * (p[1] || 0) * (p[2] || 0); };
+  setRentHeader = (key, val) => this.setState(s => ({ rentReport: { ...s.rentReport, [key]: val } }));
+  setRentRow = (id, key, val) => this.setState(s => ({ rentReport: { ...s.rentReport, rows: s.rentReport.rows.map(r => r.id === id ? { ...r, [key]: val } : r) } }));
+  addRentRow = () => this.setState(s => ({ rentReport: { ...s.rentReport, rows: [...s.rentReport.rows, { id: 'RR' + Date.now(), wo: '', tag: '', ms: 'M', approver: '', dateUp: '', dateDown: '', lastBill: '', size: '', billingDays: '30' }] } }));
+  removeRentRow = (id) => this.setState(s => ({ rentReport: { ...s.rentReport, rows: s.rentReport.rows.filter(r => r.id !== id) } }));
+  buildRentReportRows = () => {
+    const s = this.state; const jobWO = {}; let woSeq = 100825;
+    const woFor = (job) => { if (!jobWO[job]) jobWO[job] = String(woSeq++); return jobWO[job]; };
+    const rows = []; const seen = new Set();
+    (s.rentals || []).forEach(r => {
+      const key = r.job + '|' + r.tag; if (seen.has(key)) return; seen.add(key);
+      const req = (s.scaffReqs || []).find(x => x.tag === r.tag);
+      const size = (req && req.len && req.wid && req.ht) ? (req.len + 'x' + req.wid + 'x' + req.ht) : '';
+      const days = r.start ? Math.max(1, this.dayDiff(r.start, this.todayISO())) : 30;
+      rows.push({ id: 'RR' + rows.length, wo: woFor(r.job), tag: r.tag, ms: 'M', approver: (req && req.requester) || '', dateUp: r.start || '', dateDown: '', lastBill: '', size, billingDays: String(days) });
+    });
+    return rows;
+  };
+  loadRentFromRentals = () => this.setState(s => ({ rentReport: { ...s.rentReport, rows: this.buildRentReportRows() } }));
+  rentReportCsv = () => {
+    const rr = this.state.rentReport; const rate = Number(rr.ratePerCubic) || 0.0067;
+    const sorted = [...rr.rows].sort((a, b) => a.wo < b.wo ? -1 : a.wo > b.wo ? 1 : 0);
+    const headers = ['WO #', 'Scaffold Tag#', 'M/S', 'Approver', 'Date Up', 'Date Down', 'Last Bill', 'Size', 'Cubic Feet', 'Daily RR', 'Billing Days', 'Amount Billed'];
+    const lines = [headers.map(h => this.csvCell(h)).join(',')];
+    sorted.forEach(r => { const cubic = this.rrParseCubic(r.size); const daily = cubic * rate; const amt = daily * (Number(r.billingDays) || 0); lines.push([r.wo, r.tag, r.ms, r.approver, r.dateUp, r.dateDown, r.lastBill, r.size, cubic, daily.toFixed(2), r.billingDays, amt.toFixed(2)].map(c => this.csvCell(c)).join(',')); });
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'rental-invoice-report.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+  openRentRep = () => this.setState({ showRentRep: true });
+  closeRentRep = () => this.setState({ showRentRep: false });
+  printRentRep = () => { window.print(); };
+
   componentDidMount() {
     // Re-establish a prior session (and its company scope) on refresh.
     // Data is loaded by refreshAll() only once we have a token — an
     // unauthenticated request now returns 401 and would load nothing.
     this.restoreSession();
     this.loadTenants();
+    if (!this.state.rentReport.rows.length) this.setState(s => ({ rentReport: { ...s.rentReport, rows: this.buildRentReportRows() } }));
     const load = () => {
       if (this._demoSeedBlocked || this.state.authToken) return; // real login loads from the DB instead
       if (!window.F2B_MATERIALS) { this._matTmr = setTimeout(load, 80); return; }
@@ -4393,6 +4589,33 @@ class Component extends DCLogic {
       return { name: j.name, budget: this.fmt(j.budget), actual: this.fmt(j.actual), variance: (v >= 0 ? '+' : '') + v + '%', color: st.c, label: st.l, badgeBg: st.k === 'under' ? '#e8f6ef' : st.k === 'near' ? '#fdf1e1' : st.k === 'over' ? '#fde9ea' : '#f1f2f5' };
     });
 
+    // Scaffold Rental Invoice Report (Targa-style, editable) — grouped by WO with live totals.
+    const rr = s.rentReport;
+    const _rrRate = Number(rr.ratePerCubic) || 0.0067;
+    const _rrRows = [...rr.rows].sort((a, b) => a.wo < b.wo ? -1 : a.wo > b.wo ? 1 : 0);
+    const _woMap = {};
+    _rrRows.forEach(r => { const k = r.wo || '\u2014'; (_woMap[k] = _woMap[k] || []).push(r); });
+    let _rrGrand = 0;
+    const rentReportGroups = Object.keys(_woMap).map(wo => {
+      const grp = _woMap[wo]; let sub = 0;
+      const rows = grp.map(r => {
+        const cubic = this.rrParseCubic(r.size);
+        const daily = cubic * _rrRate;
+        const amount = daily * (Number(r.billingDays) || 0);
+        sub += amount; _rrGrand += amount;
+        return {
+          id: r.id, wo: r.wo, tag: r.tag, ms: r.ms, approver: r.approver, dateUp: r.dateUp, dateDown: r.dateDown, lastBill: r.lastBill, size: r.size, billingDays: r.billingDays,
+          dateUpFmt: r.dateUp ? this.fmtDate(r.dateUp) : '\u2014', dateDownFmt: r.dateDown ? this.fmtDate(r.dateDown) : '\u2014', lastBillFmt: r.lastBill ? this.fmtDate(r.lastBill) : '\u2014',
+          cubic: cubic.toLocaleString('en-US'), dailyRRFmt: this.fmt2(daily), amountFmt: this.fmt2(amount),
+          onWo: e => this.setRentRow(r.id, 'wo', e.target.value), onTag: e => this.setRentRow(r.id, 'tag', e.target.value), onMs: e => this.setRentRow(r.id, 'ms', e.target.value), onApprover: e => this.setRentRow(r.id, 'approver', e.target.value), onDateUp: e => this.setRentRow(r.id, 'dateUp', e.target.value), onDateDown: e => this.setRentRow(r.id, 'dateDown', e.target.value), onLastBill: e => this.setRentRow(r.id, 'lastBill', e.target.value), onSize: e => this.setRentRow(r.id, 'size', e.target.value), onDays: e => this.setRentRow(r.id, 'billingDays', e.target.value), onRemove: () => this.removeRentRow(r.id),
+        };
+      });
+      return { wo, subtotalFmt: this.fmt2(sub), rows };
+    });
+    const rentReportGrand = this.fmt2(_rrGrand);
+    const rentReportCount = _rrRows.length;
+    const rrCompanyOptions = [...new Set([rr.companyId, ...Object.keys(this.CLIENTS || {}), ...(s.customers || []).map(c => c.name)].filter(Boolean))];
+
     // ===== Inventory & rentals =====
     const rate = this.props.rentalRate ?? 0.008;
     const asOf = this.todayISO();
@@ -4814,7 +5037,13 @@ class Component extends DCLogic {
       reviewAmountV: f.reviewAmount, reviewNoteV: f.reviewNote,
       onReviewAmount: e => this.setField('reviewAmount', e.target.value), onReviewNote: e => this.setField('reviewNote', e.target.value),
       saveReview: this.saveReview, disapproveTicket: this.disapproveTicket, closeReview: this.closeReview,
+      reviewHoursV: f.reviewHours, onReviewHours: e => this.setField('reviewHours', e.target.value),
       reportKpis, reportRows,
+      rentReportGroups, rentReportGrand, rentReportCount,
+      rrCompanyId: rr.companyId, rrBillingDate: rr.billingDate, rrLastBill: rr.lastBillingDate, rrRentDays: rr.rentDays, rrZone: rr.zone, rrRate: rr.ratePerCubic,
+      rrBillingDateFmt: this.fmtBillMonth(rr.billingDate), rrLastBillFmt: rr.lastBillingDate ? this.fmtBillMonth(rr.lastBillingDate) : '\u2014', rrCompanyOptions,
+      onRrCompanyId: e => this.setRentHeader('companyId', e.target.value), onRrBillingDate: e => this.setRentHeader('billingDate', e.target.value), onRrLastBill: e => this.setRentHeader('lastBillingDate', e.target.value), onRrRentDays: e => this.setRentHeader('rentDays', e.target.value), onRrZone: e => this.setRentHeader('zone', e.target.value), onRrRate: e => this.setRentHeader('ratePerCubic', e.target.value),
+      addRentRow: this.addRentRow, loadRentFromRentals: this.loadRentFromRentals, rentReportCsv: this.rentReportCsv, openRentRep: this.openRentRep, closeRentRep: this.closeRentRep, printRentRep: this.printRentRep, showRentRep: s.showRentRep,
       saveCrew: this.saveCrew, saveEmployee: this.saveEmployee, saveEquipment: this.saveEquipment, saveJob: this.saveJob, assign: this.assign, submitTicket: this.submitTicket,
       editEquipOptions, equipRosterRows,
       onCrewName: e => this.setField('crewName', e.target.value),
