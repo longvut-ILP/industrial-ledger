@@ -230,7 +230,13 @@ const handlers = {
         RETURNING *`;
       return res.status(200).json(rows[0]);
     }
-    res.setHeader('Allow', 'GET, POST');
+    if (req.method === 'DELETE') {
+      const code = req.query.code;
+      if (!code) return res.status(400).json({ error: 'code is required' });
+      await sql`DELETE FROM materials WHERE company = ${company} AND code = ${code}`;
+      return res.status(200).json({ ok: true });
+    }
+    res.setHeader('Allow', 'GET, POST, DELETE');
     return res.status(405).json({ error: 'Method not allowed' });
   },
 
@@ -331,6 +337,84 @@ const handlers = {
               addr2 = EXCLUDED.addr2, updated_at = now()
         RETURNING display_name, accent, logo, email, phone, addr1, addr2`;
       return res.status(200).json(rows[0]);
+    }
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  },
+
+  // ---- /api/inventory-audits ----------------------------------------------
+  // Inventory write-off log: stock taken off-hand because it was missing,
+  // damaged, or sold. The material quantity itself is adjusted via the
+  // materials endpoint; this table is the audit trail. Scoped by tenant token.
+  async ['inventory-audits'](req, res) {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
+    if (req.method === 'GET') {
+      const { rows } = await sql`
+        SELECT audit_id AS id, audit_date AS date, code, name, reason, qty, note, recorded_by AS by
+        FROM inventory_audits WHERE company = ${company} ORDER BY audit_date DESC, id DESC`;
+      return res.status(200).json(rows);
+    }
+    if (req.method === 'POST') {
+      const a = req.body || {};
+      if (!a.code || !a.qty) return res.status(400).json({ error: 'code and qty are required' });
+      const { rows } = await sql`
+        INSERT INTO inventory_audits (company, audit_id, audit_date, code, name, reason, qty, note, recorded_by)
+        VALUES (${company}, ${a.id || null}, ${a.date || null}, ${a.code}, ${a.name || null},
+                ${a.reason || 'Damaged'}, ${a.qty}, ${a.note || null}, ${a.by || null})
+        ON CONFLICT (company, audit_id) DO UPDATE
+          SET audit_date = EXCLUDED.audit_date, code = EXCLUDED.code, name = EXCLUDED.name,
+              reason = EXCLUDED.reason, qty = EXCLUDED.qty, note = EXCLUDED.note,
+              recorded_by = EXCLUDED.recorded_by
+        RETURNING audit_id AS id, audit_date AS date, code, name, reason, qty, note, recorded_by AS by`;
+      return res.status(200).json(rows[0]);
+    }
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  },
+
+  // ---- /api/scaffold-requests ---------------------------------------------
+  // Digital scaffold request slips captured in Field Operations. Scoped by the
+  // tenant token; one row per client-generated req_no (idempotent upserts).
+  async ['scaffold-requests'](req, res) {
+    const company = requireCompany(req, res);
+    if (!company) return;
+
+    if (req.method === 'GET') {
+      const { rows } = await sql`
+        SELECT req_no AS "reqNo", tag, wo, status, requester, contractor, location, unit, job,
+               descr AS "desc", len, wid, ht, cube, date_erected AS "dateErected", confined,
+               duration, comments, work_types AS "workTypes", contact_name AS "contactName",
+               contact_email AS "contactEmail", contact_phone AS "contactPhone", signature, req_date AS "date"
+        FROM scaffold_requests WHERE company = ${company} ORDER BY id DESC`;
+      return res.status(200).json(rows);
+    }
+    if (req.method === 'POST') {
+      const a = req.body || {};
+      if (!a.reqNo) return res.status(400).json({ error: 'reqNo is required' });
+      const { rows } = await sql`
+        INSERT INTO scaffold_requests
+          (company, req_no, tag, wo, status, requester, contractor, location, unit, job, descr,
+           len, wid, ht, cube, date_erected, confined, duration, comments, work_types,
+           contact_name, contact_email, contact_phone, signature, req_date)
+        VALUES (${company}, ${a.reqNo}, ${a.tag || null}, ${a.wo || null}, ${a.status || null},
+           ${a.requester || null}, ${a.contractor || null}, ${a.location || null}, ${a.unit || null},
+           ${a.job || null}, ${a.desc || null}, ${a.len || null}, ${a.wid || null}, ${a.ht || null},
+           ${a.cube || null}, ${a.dateErected || null}, ${a.confined || null}, ${a.duration || null},
+           ${a.comments || null}, ${JSON.stringify(a.workTypes || {})}, ${a.contactName || null},
+           ${a.contactEmail || null}, ${a.contactPhone || null}, ${a.signature || null}, ${a.date || null})
+        ON CONFLICT (company, req_no) DO UPDATE
+          SET tag = EXCLUDED.tag, wo = EXCLUDED.wo, status = EXCLUDED.status, requester = EXCLUDED.requester,
+              contractor = EXCLUDED.contractor, location = EXCLUDED.location, unit = EXCLUDED.unit,
+              job = EXCLUDED.job, descr = EXCLUDED.descr, len = EXCLUDED.len, wid = EXCLUDED.wid,
+              ht = EXCLUDED.ht, cube = EXCLUDED.cube, date_erected = EXCLUDED.date_erected,
+              confined = EXCLUDED.confined, duration = EXCLUDED.duration, comments = EXCLUDED.comments,
+              work_types = EXCLUDED.work_types, contact_name = EXCLUDED.contact_name,
+              contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone,
+              signature = EXCLUDED.signature, req_date = EXCLUDED.req_date
+        RETURNING req_no AS "reqNo"`;
+      return res.status(200).json(rows[0] || { ok: true });
     }
     res.setHeader('Allow', 'GET, POST');
     return res.status(405).json({ error: 'Method not allowed' });
