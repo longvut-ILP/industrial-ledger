@@ -24,9 +24,9 @@
   ::-webkit-scrollbar-thumb:hover{background:#b4bac6;background-clip:content-box;}
   @media print {
     body * { visibility: hidden !important; }
-    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet *, #f2b-print-sheet, #f2b-print-sheet * { visibility: visible !important; }
-    #f2b-inv-sheet, #f2b-tag-sheet, #f2b-print-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
-    #f2b-inv-toolbar, #f2b-tag-toolbar, #f2b-print-toolbar { display: none !important; }
+    #f2b-inv-sheet, #f2b-inv-sheet *, #f2b-tag-sheet, #f2b-tag-sheet *, #f2b-print-sheet, #f2b-print-sheet *, #f2b-req-sheet, #f2b-req-sheet * { visibility: visible !important; }
+    #f2b-inv-sheet, #f2b-tag-sheet, #f2b-print-sheet, #f2b-req-sheet { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border-radius: 0 !important; }
+    #f2b-inv-toolbar, #f2b-tag-toolbar, #f2b-print-toolbar, #f2b-req-toolbar { display: none !important; }
     @page { margin: 14mm; }
   }
   /* ===================== MOBILE / RESPONSIVE ===================== */
@@ -1072,72 +1072,191 @@
       <!-- ===== FIELD OPS ===== -->
       <sc-if value="{{ showFieldops }}" hint-placeholder-val="{{ true }}">
         <div style="animation:f2bFade .4s ease;max-width:720px;display:flex;flex-direction:column;gap:18px;">
+          <!-- New scaffold request — digital version of the paper request form -->
           <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:24px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-            <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:3px;">Submit digital field ticket</div>
-            <div style="font:400 12.5px 'IBM Plex Sans';color:#8a92a4;margin-bottom:20px;">Capture Labor, Equipment & Materials — syncs straight to the back office.</div>
-            <div style="margin-bottom:15px;">
-              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Job site</label>
-              <select value="{{ form.ticketJob }}" onChange="{{ onTicketJob }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
-                <option value="">Select job site…</option>
-                <sc-for list="{{ jobOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
-              </select>
+            <div style="display:flex;gap:7px;padding:5px;background:#f3f4f7;border-radius:11px;margin-bottom:16px;">
+              <button onClick="{{ setReqNew }}" style="{{ reqTabNew }}">New request</button>
+              <button onClick="{{ setReqUpd }}" style="{{ reqTabUpd }}">Update existing tag #</button>
             </div>
-            <div style="margin-bottom:14px;">
-              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Crew on site <span style="font-weight:400;color:#9aa1b0;">— dispatched today</span></label>
-              <select value="{{ form.ticketCrew }}" onChange="{{ onTicketCrew }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
-                <option value="">Select crew…</option>
-                <sc-for list="{{ crewOptions }}" as="o" hint-placeholder-count="2"><option value="{{ o }}">{{ o }}</option></sc-for>
-              </select>
-            </div>
-            <sc-if value="{{ showTicketCrew }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-bottom:14px;">
-                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Who worked &amp; hours <span style="font-weight:400;color:#9aa1b0;">— tap to include / exclude</span></label>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                  <sc-for list="{{ ticketMembers }}" as="m" hint-placeholder-count="2">
-                    <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid #eceef2;border-radius:10px;background:{{ m.rowBg }};">
-                      <button onClick="{{ m.onToggle }}" style="{{ m.checkStyle }}">{{ m.check }}</button>
-                      <div style="flex:1;min-width:0;"><div style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;">{{ m.name }}</div><div style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;">{{ m.role }}</div></div>
-                      <input value="{{ m.hours }}" onChange="{{ m.onHours }}" type="number" min="0" placeholder="hrs" style="width:78px;padding:8px 10px;border:1px solid #e1e4ea;border-radius:8px;font:400 13px 'IBM Plex Mono';color:#2b3344;background:#fff;outline:none;text-align:right;" style-focus="border-color:#2f6bff;">
-                    </div>
-                  </sc-for>
+
+            <sc-if value="{{ reqShowNew }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px;">
+                <div style="font:400 12.5px/1.5 'IBM Plex Sans';color:#8a92a4;max-width:430px;">Turn a paper request form into a tagged digital ticket — captured on the tablet, synced to the office.</div>
+                <span style="flex-shrink:0;font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#2356d6;background:#eef3ff;border-radius:20px;padding:5px 10px;">Auto-tagged on submit</span>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Job site</label>
+                  <select value="{{ reqJobV }}" onChange="{{ onReqJob }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <option value="">Select job site…</option>
+                    <sc-for list="{{ jobOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Requester</label>
+                  <div style="position:relative;">
+                    <input value="{{ reqRequesterV }}" onChange="{{ onReqRequester }}" onFocus="{{ focusRequester }}" onBlur="{{ blurSuggest }}" autocomplete="off" placeholder="Name / department" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <sc-if value="{{ showReqSuggest }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:#fff;border:1px solid #e6e8ee;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.15);overflow:hidden;max-height:224px;overflow-y:auto;">
+                        <sc-for list="{{ reqSuggestRows }}" as="o" hint-placeholder-count="0"><button onMouseDown="{{ o.onPick }}" type="button" style="display:block;width:100%;text-align:left;padding:9px 13px;border:none;border-bottom:1px solid #f3f4f6;background:#fff;cursor:pointer;font:500 13px 'IBM Plex Sans';color:#2b3344;" style-hover="background:#f3f6fb;">{{ o.name }}</button></sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <button onClick="{{ openNewContact }}" type="button" style="display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:0;border:none;background:none;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="text-decoration:underline;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add new contact
+                  </button>
                 </div>
               </div>
-            </sc-if>
-            <div style="margin-bottom:14px;">
-              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Equipment used <span style="font-weight:400;color:#9aa1b0;">— optional</span></label>
-              <select value="{{ form.ticketEquip }}" onChange="{{ onTicketEquip }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;">
-                <option value="None">None</option>
-                <sc-for list="{{ equipOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
-              </select>
-            </div>
-            <sc-if value="{{ showTicketEquip }}" hint-placeholder-val="{{ false }}">
+
               <div style="margin-bottom:14px;">
-                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Equipment hours <span style="font-weight:400;color:#9aa1b0;">— defaults to total crew hours</span></label>
-                <input value="{{ form.tEquipHours }}" onChange="{{ onTEquipHours }}" type="number" min="0" placeholder="hrs on site" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;" style-focus="border-color:#2f6bff;background:#fff;box-shadow:0 0 0 3px rgba(47,107,255,.12);">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Description of work</label>
+                <input value="{{ reqDescV }}" onChange="{{ onReqDesc }}" placeholder="e.g. Access scaffold for valve replacement" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
               </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Contractor / GC</label>
+                  <input value="{{ reqContractorV }}" onChange="{{ onReqContractor }}" placeholder="e.g. Targa Resources" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Location</label>
+                  <input value="{{ reqLocationV }}" onChange="{{ onReqLocation }}" placeholder="e.g. North Process Area" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Unit / area</label>
+                  <input value="{{ reqUnitV }}" onChange="{{ onReqUnit }}" placeholder="e.g. Unit 4 · North Rack" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Date erected <span style="font-weight:400;color:#9aa1b0;">— scaffold age</span></label>
+                  <input value="{{ reqDateV }}" onChange="{{ onReqDate }}" type="date" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+              </div>
+
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Scaffold size</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px;">
+                <input value="{{ reqLenV }}" onChange="{{ onReqLen }}" type="number" min="0" placeholder="Length (ft)" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <input value="{{ reqWidV }}" onChange="{{ onReqWid }}" type="number" min="0" placeholder="Width (ft)" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                <input value="{{ reqHtV }}" onChange="{{ onReqHt }}" type="number" min="0" placeholder="Height (ft)" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div style="font:400 11.5px 'IBM Plex Mono';color:#9aa1b0;margin-bottom:16px;">{{ reqCube }}</div>
+
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Scaffold work</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+                <sc-for list="{{ reqWorkChips }}" as="c" hint-placeholder-count="6"><button onClick="{{ c.onToggle }}" style="{{ c.boxStyle }}">{{ c.mark }}{{ c.label }}</button></sc-for>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Confined space</label>
+                  <div style="display:flex;gap:7px;">
+                    <button onClick="{{ onReqConfNo }}" style="{{ reqConfNoStyle }}">No</button>
+                    <button onClick="{{ onReqConfYes }}" style="{{ reqConfYesStyle }}">Yes</button>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Estimated duration</label>
+                  <input value="{{ reqDurationV }}" onChange="{{ onReqDuration }}" placeholder="e.g. 2 weeks" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+              </div>
+
+              <div style="margin-bottom:18px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Comments</label>
+                <textarea value="{{ reqCommentsV }}" onChange="{{ onReqComments }}" rows="2" placeholder="Anything the crew should know…" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;resize:vertical;" style-focus="border-color:#2f6bff;background:#fff;"></textarea>
+              </div>
+
+              <!-- Contact + on-site sign-off -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Contact name</label>
+                  <div style="position:relative;">
+                    <input value="{{ reqContactNameV }}" onChange="{{ onReqContactName }}" onFocus="{{ focusContact }}" onBlur="{{ blurSuggest }}" autocomplete="off" placeholder="Site contact" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <sc-if value="{{ showConSuggest }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;background:#fff;border:1px solid #e6e8ee;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.15);overflow:hidden;max-height:224px;overflow-y:auto;">
+                        <sc-for list="{{ conSuggestRows }}" as="o" hint-placeholder-count="0"><button onMouseDown="{{ o.onPick }}" type="button" style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;text-align:left;padding:8px 13px;border:none;border-bottom:1px solid #f3f4f6;background:#fff;cursor:pointer;" style-hover="background:#f3f6fb;"><span style="font:500 13px 'IBM Plex Sans';color:#2b3344;">{{ o.name }}</span><sc-if value="{{ o.hasEmail }}" hint-placeholder-val="{{ false }}"><span style="font:400 11px 'IBM Plex Mono';color:#9aa1b0;">{{ o.email }}</span></sc-if></button></sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <button onClick="{{ openNewContact }}" type="button" style="display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:0;border:none;background:none;color:#2f6bff;font:600 11.5px 'IBM Plex Sans';cursor:pointer;" style-hover="text-decoration:underline;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add new contact
+                  </button>
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Confirmation email</label>
+                  <input value="{{ reqContactEmailV }}" onChange="{{ onReqContactEmail }}" type="email" placeholder="name@company.com" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+              </div>
+              <div style="font:400 11.5px 'IBM Plex Sans';color:#9aa1b0;margin-bottom:16px;">A copy of the request is emailed here as confirmation when you sync.</div>
+
+              <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:8px;">Requester signature <span style="font-weight:400;color:#9aa1b0;">— sign on the tablet</span></label>
+              <div style="position:relative;border:1px solid #e1e4ea;border-radius:9px;background:#f8f9fb;height:130px;overflow:hidden;margin-bottom:18px;">
+                <canvas ref="{{ sigRef }}" style="width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;"></canvas>
+                <sc-if value="{{ reqSigEmpty }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 12.5px 'IBM Plex Sans';color:#b9c0cc;pointer-events:none;">Sign here</span></sc-if>
+                <button onClick="{{ clearSignature }}" style="position:absolute;top:8px;right:8px;padding:5px 11px;border:1px solid #e1e4ea;border-radius:7px;background:#fff;color:#6b7488;font:600 11px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#d23b3f;color:#d23b3f;">Clear</button>
+              </div>
+
+              <div style="display:flex;gap:10px;">
+                <button onClick="{{ previewRequest }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;flex-shrink:0;padding:12px 18px;border:1px solid #d8dce4;border-radius:9px;background:#fff;color:#3a4456;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="border-color:#2f6bff;color:#2f6bff;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Preview
+                </button>
+                <button onClick="{{ submitRequest }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1;padding:12px 18px;border:none;border-radius:9px;background:#18a974;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0f9162;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+                  Sync request to office
+                </button>
+              </div>
+              <div style="text-align:center;min-height:18px;margin-top:12px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.request }}</div>
             </sc-if>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#f3f6fb;border-radius:11px;margin-bottom:18px;">
-              <span style="font:600 12px 'IBM Plex Sans';color:#404a5c;">Logged on this ticket</span>
-              <span style="font:600 13.5px 'IBM Plex Mono';color:#0c1322;">{{ ticketCrewSummary }}</span>
-            </div>
-            <button onClick="{{ submitTicket }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border:none;border-radius:9px;background:#18a974;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0f9162;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
-              Sync ticket to office
-            </button>
-            <div style="text-align:center;min-height:18px;margin-top:12px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.ticket }}</div>
+
+            <sc-if value="{{ reqShowUpd }}" hint-placeholder-val="{{ false }}">
+              <div style="font:400 12.5px/1.5 'IBM Plex Sans';color:#8a92a4;margin-bottom:18px;">Look up an existing tag to extend it, change its status, or add a note — keeps the office in sync.</div>
+              <div style="margin-bottom:14px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Tag #</label>
+                <input value="{{ updTagV }}" onChange="{{ onUpdTag }}" placeholder="e.g. TAG-1001" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Mono';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Status</label>
+                  <select value="{{ updStatusV }}" onChange="{{ onUpdStatus }}" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                    <option value="On rent">On rent</option>
+                    <option value="Off rent">Off rent</option>
+                    <option value="Dismantled">Dismantled</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Needed until</label>
+                  <input value="{{ updEndV }}" onChange="{{ onUpdEnd }}" type="date" style="width:100%;padding:10px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+                </div>
+              </div>
+              <div style="margin-bottom:18px;">
+                <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Note</label>
+                <input value="{{ updNoteV }}" onChange="{{ onUpdNote }}" placeholder="e.g. extend one week for tie-ins" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+              </div>
+              <button onClick="{{ updateTag }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13.5px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;">Update tag</button>
+              <div style="text-align:center;min-height:18px;margin-top:12px;font:600 12.5px 'IBM Plex Sans';color:#0f9d6b;">{{ msgs.request }}</div>
+            </sc-if>
           </div>
 
+          <!-- Recent requests -->
           <div style="background:#fff;border:1px solid #e9ebf0;border-radius:15px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-            <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:14px;">Synced today</div>
-            <sc-for list="{{ recentTickets }}" as="t" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #f2f3f6;">
-                <div style="font:600 12px 'IBM Plex Mono';color:#2f6bff;flex-shrink:0;">{{ t.id }}</div>
-                <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.job }}</div></div>
-                <div style="font:500 12px 'IBM Plex Mono';color:#6b7488;">{{ t.hours }}h</div>
-                <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};">{{ t.badgeLabel }}</span>
-                <button onClick="{{ t.onView }}" style="font:600 11.5px 'IBM Plex Sans';color:#2f6bff;background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0;" style-hover="text-decoration:underline;">Details</button>
-              </div>
-            </sc-for>
+            <div style="font:600 14px 'Space Grotesk';color:#0c1322;margin-bottom:5px;">Recent requests</div>
+            <div style="font:400 12px 'IBM Plex Sans';color:#8a92a4;margin-bottom:14px;">Synced to the office — tap to view or print the request slip.</div>
+            <sc-if value="{{ hasReqs }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ reqRows }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #f2f3f6;">
+                  <div style="font:600 12px 'IBM Plex Mono';color:#2f6bff;flex-shrink:0;min-width:62px;">{{ r.tag }}</div>
+                  <div style="flex:1;min-width:0;"><div style="font:500 13px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.job }}</div><div style="font:400 10.5px 'IBM Plex Mono';color:#9aa1b0;margin-top:2px;">{{ r.reqNo }} · {{ r.requester }}{{ r.sizeSuffix }}</div></div>
+                  <span style="font:600 11px 'IBM Plex Sans';padding:4px 10px;border-radius:20px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};flex-shrink:0;">{{ r.statusLabel }}</span>
+                  <button onClick="{{ r.onView }}" style="font:600 11.5px 'IBM Plex Sans';color:#2f6bff;background:none;border:none;cursor:pointer;padding:4px 6px;flex-shrink:0;" style-hover="text-decoration:underline;">View</button>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ noReqs }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px dashed #d8dce4;border-radius:11px;padding:24px;text-align:center;font:400 12.5px 'IBM Plex Sans';color:#9aa1b0;">No requests yet. Submit one above to generate a tag.</div>
+            </sc-if>
           </div>
         </div>
       </sc-if>
@@ -1468,7 +1587,8 @@
                   <option value="job">Group by job site</option>
                 </select>
                 <button onClick="{{ rentalsCsv }}" title="Export to Excel (CSV)" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #0e8a72;border-radius:8px;background:#e2f6f1;color:#0e8a72;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#0e8a72;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel</button>
-                <button onClick="{{ onPrintAll }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #2f6bff;border-radius:8px;background:#eef3ff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2f6bff;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Print all</button>
+                <button onClick="{{ onPrintAll }}" title="Preview the full rental report" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #2f6bff;border-radius:8px;background:#eef3ff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2f6bff;color:#fff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Preview report</button>
+                <button onClick="{{ emailAllReport }}" title="Email the full rental report" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#2f6bff;font:600 12px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#eef3ff;border-color:#2f6bff;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>Email</button>
               </div>
             </div>
             <sc-if value="{{ hasActiveRentals }}" hint-placeholder-val="{{ true }}">
@@ -1486,6 +1606,7 @@
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:#f7f8fa;border-bottom:1px solid #eceef2;">
                           <div style="display:flex;align-items:center;gap:10px;min-width:0;">
                             <span style="font:600 12px 'IBM Plex Mono';color:#2f6bff;background:#eef3ff;border:1px solid #d8e3ff;border-radius:7px;padding:3px 10px;flex-shrink:0;">{{ g.tag }}</span>
+                            <sc-if value="{{ g.hasReq }}" hint-placeholder-val="{{ false }}"><button onClick="{{ g.onViewReq }}" title="View scaffold request" style="font:600 10px 'IBM Plex Sans';padding:3px 9px;border-radius:20px;border:none;background:{{ g.reqBadgeBg }};color:{{ g.reqBadgeFg }};cursor:pointer;flex-shrink:0;white-space:nowrap;">{{ g.reqStatus }}</button></sc-if>
                             <button onClick="{{ g.onEdit }}" title="Edit tag" style="width:26px;height:26px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e1e4ea;border-radius:7px;background:#fff;color:#8a92a4;cursor:pointer;" style-hover="background:#eef3ff;color:#2f6bff;border-color:#2f6bff;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
                             <div style="min-width:0;"><div style="font:600 12.5px 'IBM Plex Sans';color:#0c1322;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ g.job }}</div><div style="font:400 10.5px 'IBM Plex Mono';color:#9aa1b0;">{{ g.itemCount }} · {{ g.cubeTotal }} ft³ on hire · since {{ g.started }}</div></div>
                           </div>
@@ -1776,9 +1897,14 @@
           <button onClick="{{ closeReport }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid #2c3850;border-radius:9px;background:transparent;color:#cdd3df;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#1a2740;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back
           </button>
-          <button onClick="{{ printInvoice }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;box-shadow:0 2px 8px rgba(47,107,255,.35);" style-hover="background:#2356d6;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Print
-          </button>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button onClick="{{ emailReport }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid #2c3850;border-radius:9px;background:transparent;color:#cdd3df;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#1a2740;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>Email
+            </button>
+            <button onClick="{{ printInvoice }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;box-shadow:0 2px 8px rgba(47,107,255,.35);" style-hover="background:#2356d6;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Print
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1925,6 +2051,137 @@
               </tr></sc-for>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== SCAFFOLD REQUEST PRINT OVERLAY ===== -->
+  <sc-if value="{{ showReqDoc }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1003;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;">
+      <div id="f2b-req-toolbar" style="width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 16px;">
+        <button onClick="{{ closeRequest }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back
+        </button>
+        <div style="display:flex;align-items:center;gap:9px;">
+          <button onClick="{{ emailRequest }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>Email
+          </button>
+          <button onClick="{{ exportRequestCsv }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:rgba(255,255,255,.18);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Excel
+          </button>
+          <button onClick="{{ printRequest }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;box-shadow:0 2px 8px rgba(47,107,255,.35);" style-hover="background:#2356d6;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Download / Print PDF
+          </button>
+        </div>
+      </div>
+
+      <div id="f2b-req-sheet" style="width:100%;max-width:860px;background:#fff;margin:0 16px;box-shadow:0 24px 60px rgba(0,0,0,.4);">
+        <div style="background:#0c1322;padding:26px 40px;display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(140deg,#3f7bff,#2f6bff);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+            </div>
+            <div>
+              <div style="font:700 17px 'Space Grotesk';color:#fff;letter-spacing:-.3px;">Field<span style="color:#f6a93b;">2</span>Bill</div>
+              <div style="font:400 11px 'IBM Plex Sans';color:#9aa3ba;margin-top:2px;">Scaffold operations · {{ reqTenant }}</div>
+              <div style="font:400 10.5px 'IBM Plex Sans';color:#7d88a0;margin-top:1px;">Dispatched first-come, first-serve unless emergency</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font:700 19px 'Space Grotesk';color:#fff;letter-spacing:.4px;">SCAFFOLD REQUEST</div>
+            <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.8px;color:#7d88a0;margin-top:6px;">REQ # {{ rqReqNo }}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #eceef2;">
+          <div style="padding:16px 24px;border-right:1px solid #eceef2;">
+            <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Tag #</div>
+            <div style="font:600 16px 'Space Grotesk';color:#2f6bff;">{{ rqTag }}</div>
+          </div>
+          <div style="padding:16px 24px;border-right:1px solid #eceef2;">
+            <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Work order #</div>
+            <div style="font:600 16px 'Space Grotesk';color:#0c1322;">{{ rqWO }}</div>
+          </div>
+          <div style="padding:16px 24px;">
+            <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Status</div>
+            <div style="font:600 16px 'Space Grotesk';color:#0c1322;">{{ rqStatus }}</div>
+          </div>
+        </div>
+
+        <div style="padding:26px 40px 40px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;margin-bottom:24px;">
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Requested by</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqRequester }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Company / contractor</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqContractor }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Location</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqLocation }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Unit / area</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqUnit }}</div></div>
+            <div style="grid-column:span 2;"><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Job site</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqJob }}</div></div>
+            <div style="grid-column:span 2;"><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Description of work</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqDesc }}</div></div>
+          </div>
+
+          <div style="background:#f3f6fb;border-radius:8px;padding:10px 16px;margin-bottom:14px;font:600 10.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#404a5c;">Scaffold description</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px;">
+            <sc-for list="{{ rqWorkChips }}" as="c" hint-placeholder-count="6"><div style="{{ c.boxStyle }}"><span style="font:700 12px 'IBM Plex Sans';width:13px;display:inline-block;text-align:center;">{{ c.check }}</span>{{ c.label }}</div></sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;margin-bottom:24px;">
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Scaffold size</div><div style="font:500 14px 'IBM Plex Mono';color:#0c1322;">{{ rqSize }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Volume</div><div style="font:500 14px 'IBM Plex Mono';color:#0c1322;">{{ rqCubeDoc }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Date erected</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqDateErected }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Confined space</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqConfined }}</div></div>
+            <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Estimated duration</div><div style="font:500 14px 'IBM Plex Sans';color:#0c1322;">{{ rqDuration }}</div></div>
+          </div>
+
+          <div style="margin-bottom:30px;">
+            <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.6px;text-transform:uppercase;color:#9aa1b0;margin-bottom:5px;">Comments</div>
+            <div style="font:400 13px/1.6 'IBM Plex Sans';color:#2b3344;">{{ rqComments }}</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-bottom:22px;">
+            <div><sc-if value="{{ rqHasSig }}" hint-placeholder-val="{{ false }}">{{ rqSigEl }}</sc-if><div style="height:1px;background:#0c1322;margin-bottom:8px;"></div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#9aa1b0;">Requester name — print &amp; signature</div></div>
+            <div><div style="height:1px;background:#0c1322;margin-bottom:8px;"></div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;color:#9aa1b0;">Approved by — {{ rqClientSig }} representative</div></div>
+          </div>
+
+          <sc-if value="{{ rqHasContact }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;background:#f3f6fb;border-radius:8px;padding:10px 14px;margin-bottom:14px;font:400 11.5px 'IBM Plex Sans';color:#3a4456;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2f6bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+              Confirmation emailed to <strong style="font-weight:600;color:#0c1322;">{{ rqContactEmail }}</strong>
+            </div>
+          </sc-if>
+          <div style="font:400 10px/1.6 'IBM Plex Sans';color:#9aa1b0;border-top:1px solid #f1f2f5;padding-top:14px;">General contractors: any work requested must be approved by a {{ rqClient }} representative. If the project is contracted between {{ reqTenant }} and the GC, {{ rqClient }} approval is not required. All requests are processed and dispatched on a first-come, first-serve basis unless an emergency.</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== ADD CONTACT MODAL ===== -->
+  <sc-if value="{{ showAddContact }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:1004;background:rgba(10,14,25,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:60px 16px;">
+      <div style="width:100%;max-width:420px;background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.4);overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 22px;border-bottom:1px solid #eceef2;">
+          <div>
+            <div style="font:600 15px 'Space Grotesk';color:#0c1322;">Add contact</div>
+            <div style="font:400 11.5px 'IBM Plex Sans';color:#8a92a4;margin-top:2px;">New contact — saved so you can reuse it on future requests.</div>
+          </div>
+          <button onClick="{{ closeAddContact }}" style="width:30px;height:30px;flex-shrink:0;border:1px solid #e1e4ea;border-radius:8px;background:#fff;color:#8a92a4;font:600 17px/1 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">×</button>
+        </div>
+        <div style="padding:20px 22px;">
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Contact name</label>
+            <input value="{{ acNameV }}" onChange="{{ onAcName }}" placeholder="Full name" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Email <span style="font-weight:400;color:#9aa1b0;">— confirmation is sent here</span></label>
+            <input value="{{ acEmailV }}" onChange="{{ onAcEmail }}" type="email" placeholder="name@company.com" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font:600 12px 'IBM Plex Sans';color:#404a5c;margin-bottom:6px;">Phone <span style="font-weight:400;color:#9aa1b0;">— optional</span></label>
+            <input value="{{ acPhoneV }}" onChange="{{ onAcPhone }}" placeholder="(000) 000-0000" style="width:100%;padding:11px 13px;border:1px solid #e1e4ea;border-radius:9px;font:400 13.5px 'IBM Plex Sans';color:#2b3344;background:#f8f9fb;outline:none;box-sizing:border-box;" style-focus="border-color:#2f6bff;background:#fff;">
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button onClick="{{ closeAddContact }}" style="flex:1;padding:11px;border:1px solid #e1e4ea;border-radius:9px;background:#fff;color:#6b7488;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#f3f4f7;">Cancel</button>
+            <button onClick="{{ saveAddContact }}" style="flex:2;padding:11px;border:none;border-radius:9px;background:#2f6bff;color:#fff;font:600 13px 'IBM Plex Sans';cursor:pointer;" style-hover="background:#2356d6;">Save contact</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2134,8 +2391,17 @@ class Component extends DCLogic {
     viewInvoice: null,
     viewReport: null,
     viewTicket: null,
+    viewRequest: null,
+    showAddContact: false,
+    savedContacts: [],
+    suggestOpen: '',
     printDoc: null,
     editItem: null,
+    reqSeq: 1042,
+    scaffReqs: [
+      { reqNo: 'REQ-1041', tag: 'TAG-1001', wo: 'WO-5567', status: 'On rent', requester: 'J. Martinez', contractor: 'Targa Resources', location: 'North Process Area', unit: 'Unit 4 \u00b7 North Rack', job: 'Site A \u2014 Pipeline Maintenance', desc: 'Access scaffold for valve replacement', len: '12', wid: '4', ht: '8', cube: '384', dateErected: '2026-06-18', confined: 'No', duration: '2 weeks', comments: 'Standard build, tie-ins at every lift.', workTypes: { build: true, addition: false, dismantle: false, partial: false, revision: false, suspend: false }, date: '2026-06-18' },
+      { reqNo: 'REQ-1040', tag: 'TAG-0998', wo: 'WO-5560', status: 'On rent', requester: 'D. Cole', contractor: 'Phillips 66', location: 'South Flare', unit: 'Unit 2 \u00b7 Flare Deck', job: 'Site C \u2014 Electrical Installation', desc: 'Dismantle scaffold after turnaround', len: '10', wid: '5', ht: '10', cube: '500', dateErected: '2026-06-12', confined: 'Yes', duration: '1 week', comments: '', workTypes: { build: false, addition: false, dismantle: true, partial: false, revision: false, suspend: false }, date: '2026-06-15' },
+    ],
     editItemEvents: [],
     editEvDate: '',
     editEvQty: '',
@@ -2165,6 +2431,12 @@ class Component extends DCLogic {
       poNum: '', poDate: new Date().toISOString().slice(0, 10), poSupplier: '', poLines: [], editPoId: '', poTotal: '',
       poLineMat: '', poLineQty: '', poLineCost: '',
       auditMat: '', auditQty: '', auditReason: 'Damaged', auditDate: new Date().toISOString().slice(0, 10), auditNote: '',
+      reqMode: 'new', reqJob: '', reqRequester: '', reqDesc: '', reqContractor: '', reqLocation: '', reqUnit: '', reqDate: new Date().toISOString().slice(0, 10),
+      reqLen: '', reqWid: '', reqHt: '', reqBuild: false, reqAddition: false, reqDismantle: false, reqPartial: false, reqRevision: false, reqSuspend: false,
+      reqConfined: 'No', reqDuration: '', reqComments: '',
+      reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '',
+      acName: '', acEmail: '', acPhone: '',
+      updTag: '', updStatus: 'On rent', updEnd: '', updNote: '',
     },
     msgs: {},
     audits: [],
@@ -2398,6 +2670,8 @@ class Component extends DCLogic {
     this.refreshMaterials();
     this.refreshTickets();
     this.refreshInvoices();
+    this.refreshAudits();
+    this.refreshScaffReqs();
     this.refreshQbo();
   };
   toggleWs = () => this.setState(s => ({ wsOpen: !s.wsOpen }));
@@ -2664,6 +2938,176 @@ class Component extends DCLogic {
   openTicketDetail = (id) => this.setState({ viewTicket: id });
   closeTicketDetail = () => this.setState({ viewTicket: null });
 
+  // ---- Scaffold requests (digital version of the paper request form) ----
+  setReqMode = (mode) => this.setState(s => ({ form: { ...s.form, reqMode: mode } }));
+  // Pick an existing contact (prior request or customer) \u2014 reuse its email for the confirmation.
+  onReqContactNameChange = (v) => {
+    this.setState(s => {
+      const email = (this._contactEmails && this._contactEmails[v]) || '';
+      const phone = (this._contactPhones && this._contactPhones[v]) || '';
+      const form = { ...s.form, reqContactName: v };
+      if (email) form.reqContactEmail = email;
+      if (phone) form.reqContactPhone = phone;
+      return { form };
+    });
+  };
+  // When the typed contact isn't on file, pop a dialog to capture their details.
+  onReqContactBlur = () => {
+    const v = (this.state.form.reqContactName || '').trim();
+    if (!v || this.state.showAddContact) return;
+    if (this._contactEmails && (v in this._contactEmails)) return;
+    this.openAddContact(v);
+  };
+  openAddContact = (name) => this.setState(s => ({ showAddContact: true, form: { ...s.form, acName: name || '', acEmail: s.form.reqContactEmail || '', acPhone: s.form.reqContactPhone || '' } }));
+  openNewContact = () => this.openAddContact((this.state.form.reqContactName || this.state.form.reqRequester || '').trim());
+  // Custom (styled) autocomplete dropdowns for requester / contact \u2014 replaces native datalists.
+  focusRequester = () => this.setState({ suggestOpen: 'req' });
+  focusContact = () => this.setState({ suggestOpen: 'con' });
+  blurSuggest = () => { clearTimeout(this._sgT); this._sgT = setTimeout(() => this.setState({ suggestOpen: '' }), 150); };
+  pickRequester = (n) => this.setState(s => ({ suggestOpen: '', form: { ...s.form, reqRequester: n } }));
+  pickContact = (n) => { this.onReqContactNameChange(n); this.setState({ suggestOpen: '' }); };
+  closeAddContact = () => this.setState({ showAddContact: false });
+  saveAddContact = () => {
+    const f = this.state.form;
+    const name = (f.acName || '').trim();
+    if (!name) return this.setMsg('request', 'Enter a contact name');
+    const email = (f.acEmail || '').trim();
+    const phone = (f.acPhone || '').trim();
+    this.setState(s => ({
+      showAddContact: false,
+      savedContacts: [{ name, email, phone }, ...s.savedContacts.filter(c => c.name !== name)],
+      form: { ...s.form, reqContactName: name, reqContactEmail: email, reqContactPhone: phone },
+    }));
+    this.setMsg('request', 'Contact ' + name + ' saved \u2713');
+  };
+  // Turn the on-site paper request into a tagged digital ticket synced to the office.
+  buildReqRecord = (preview) => {
+    const f = this.state.form;
+    if (!f.reqJob) { this.setMsg('request', 'Select a job site'); return null; }
+    if (!(f.reqRequester || '').trim()) { this.setMsg('request', 'Enter the requester name'); return null; }
+    const types = { build: !!f.reqBuild, addition: !!f.reqAddition, dismantle: !!f.reqDismantle, partial: !!f.reqPartial, revision: !!f.reqRevision, suspend: !!f.reqSuspend };
+    if (!Object.values(types).some(Boolean)) { this.setMsg('request', 'Pick at least one scaffold work type'); return null; }
+    const len = parseFloat(f.reqLen) || 0, wid = parseFloat(f.reqWid) || 0, ht = parseFloat(f.reqHt) || 0;
+    const cube = len && wid && ht ? Math.round(len * wid * ht) : 0;
+    return {
+      reqNo: preview ? 'DRAFT' : 'REQ-' + this.state.reqSeq, tag: 'Pending', wo: '\u2014', status: 'On rent',
+      requester: f.reqRequester.trim(), contractor: (f.reqContractor || '').trim() || '\u2014',
+      location: (f.reqLocation || '').trim() || '\u2014', unit: (f.reqUnit || '').trim() || '\u2014',
+      job: f.reqJob, desc: (f.reqDesc || '').trim() || '\u2014',
+      len: len ? String(len) : '', wid: wid ? String(wid) : '', ht: ht ? String(ht) : '', cube: cube ? String(cube) : '',
+      dateErected: f.reqDate || this.todayISO(), confined: f.reqConfined || 'No',
+      duration: (f.reqDuration || '').trim() || '\u2014', comments: (f.reqComments || '').trim(),
+      contactName: (f.reqContactName || '').trim(), contactEmail: (f.reqContactEmail || '').trim(), contactPhone: (f.reqContactPhone || '').trim(), signature: f.reqSignature || '',
+      workTypes: types, date: this.todayISO(), preview: !!preview,
+    };
+  };
+  submitRequest = () => {
+    const rec = this.buildReqRecord(false);
+    if (!rec) return;
+    this.setState(s => ({
+      scaffReqs: [rec, ...s.scaffReqs],
+      reqSeq: s.reqSeq + 1,
+      form: { ...s.form, reqRequester: '', reqDesc: '', reqContractor: '', reqLocation: '', reqUnit: '', reqLen: '', reqWid: '', reqHt: '', reqBuild: false, reqAddition: false, reqDismantle: false, reqPartial: false, reqRevision: false, reqSuspend: false, reqConfined: 'No', reqDuration: '', reqComments: '', reqContactName: '', reqContactEmail: '', reqContactPhone: '', reqSignature: '' },
+    }), () => { this.clearSignature(); this.setState({ viewRequest: rec }); this.persistScaffReq(rec); if (rec.contactEmail) this.emailRequest(rec); });
+    this.setMsg('request', rec.reqNo + ' synced to office \u2713' + (rec.contactEmail ? ' \u2014 confirmation emailed to ' + rec.contactEmail : ' \u2014 tag pending dispatch'));
+  };
+  // Preview the current form as the printable request slip without submitting.
+  previewRequest = () => {
+    const rec = this.buildReqRecord(true);
+    if (!rec) return;
+    this.setState({ viewRequest: rec });
+  };
+  // Export the open request slip to a spreadsheet (CSV opens in Excel).
+  exportRequestCsv = () => {
+    const r = this.state.viewRequest;
+    if (!r) return;
+    const labels = { build: 'Build', addition: 'Addition', dismantle: 'Dismantle', partial: 'Partial Dismantle', revision: 'Revision', suspend: 'Suspend' };
+    const wt = Object.keys(r.workTypes || {}).filter(k => r.workTypes[k]).map(k => labels[k]).join('; ');
+    const size = r.len && r.wid && r.ht ? (r.len + ' x ' + r.wid + ' x ' + r.ht + ' ft') : '';
+    const rows = [
+      ['REQ #', r.reqNo], ['Tag #', r.tag], ['Work order #', r.wo], ['Status', r.status],
+      ['Requested by', r.requester], ['Company / Contractor', r.contractor],
+      ['Location', r.location], ['Unit / area', r.unit], ['Job site', r.job],
+      ['Description of work', r.desc], ['Scaffold work', wt], ['Scaffold size', size],
+      ['Volume (ft3)', r.cube || ''], ['Date erected', r.dateErected ? this.fmtDate(r.dateErected) : ''],
+      ['Confined space', r.confined], ['Estimated duration', r.duration], ['Comments', r.comments || ''],
+    ];
+    const lines = [['Field', 'Value'].map(h => this.csvCell(h)).join(',')];
+    rows.forEach(rw => lines.push(rw.map(c => this.csvCell(c)).join(',')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'scaffold-request-' + (r.reqNo || 'draft') + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+  updateTag = () => {
+    const f = this.state.form;
+    const tag = (f.updTag || '').trim();
+    if (!tag) return this.setMsg('request', 'Enter the tag number to update');
+    const found = this.state.scaffReqs.some(r => r.tag.toLowerCase() === tag.toLowerCase());
+    if (!found) return this.setMsg('request', 'No request found for ' + tag);
+    const note = (f.updNote || '').trim();
+    const end = f.updEnd ? ' \u00b7 needed until ' + this.fmtDate(f.updEnd) : '';
+    this.setState(s => ({
+      scaffReqs: s.scaffReqs.map(r => r.tag.toLowerCase() === tag.toLowerCase()
+        ? { ...r, status: f.updStatus || r.status, comments: (note ? note + end : r.comments + end).trim() }
+        : r),
+      form: { ...s.form, updNote: '', updEnd: '' },
+    }), () => { const r = this.state.scaffReqs.find(x => x.tag.toLowerCase() === tag.toLowerCase()); if (r) this.persistScaffReq(r); });
+    this.setMsg('request', tag + ' updated \u2713');
+  };
+  openRequest = (rec) => this.setState({ viewRequest: rec });
+  closeRequest = () => this.setState({ viewRequest: null });
+  printRequest = () => { window.print(); };
+  // Requester signs on the tablet \u2014 stored as a PNG data URL on the request.
+  sigRef = (el) => {
+    if (!el || el === this._sigCanvas) return;
+    this._sigCanvas = el; this._sigInit = false; this.initSignature(el);
+  };
+  initSignature = (canvas) => {
+    if (this._sigInit) return; this._sigInit = true;
+    const ctx = canvas.getContext('2d');
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, Math.round((r.width || 300) * dpr));
+    canvas.height = Math.max(1, Math.round((r.height || 130) * dpr));
+    ctx.scale(dpr, dpr); ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0c1322';
+    let drawing = false, last = null;
+    const pt = (e) => { const b = canvas.getBoundingClientRect(); const p = (e.touches && e.touches[0]) || e; return { x: p.clientX - b.left, y: p.clientY - b.top }; };
+    const down = (e) => { drawing = true; last = pt(e); e.preventDefault(); };
+    const move = (e) => { if (!drawing) return; const p = pt(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; e.preventDefault(); };
+    const up = () => { if (!drawing) return; drawing = false; try { this.setField('reqSignature', canvas.toDataURL('image/png')); } catch (e) {} };
+    canvas.addEventListener('pointerdown', down);
+    canvas.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  clearSignature = () => {
+    const c = this._sigCanvas; if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); }
+    if (this.state.form.reqSignature) this.setField('reqSignature', '');
+  };
+  // Email a copy of the request as confirmation (opens the user's mail client).
+  emailRequest = (rec) => {
+    const r = (rec && rec.reqNo) ? rec : this.state.viewRequest;
+    if (!r) return;
+    const labels = { build: 'Build', addition: 'Addition', dismantle: 'Dismantle', partial: 'Partial Dismantle', revision: 'Revision', suspend: 'Suspend' };
+    const wt = Object.keys(r.workTypes || {}).filter(k => r.workTypes[k]).map(k => labels[k]).join(', ') || '\u2014';
+    const size = r.len && r.wid && r.ht ? (r.len + ' x ' + r.wid + ' x ' + r.ht + ' ft') : '\u2014';
+    const body = [
+      'Scaffold Request ' + r.reqNo, 'Tag: ' + r.tag + '   Status: ' + r.status, '',
+      'Requested by: ' + r.requester, 'Company / Contractor: ' + r.contractor,
+      'Location: ' + r.location, 'Unit / area: ' + r.unit, 'Job site: ' + r.job, '',
+      'Description: ' + r.desc, 'Scaffold work: ' + wt, 'Scaffold size: ' + size,
+      'Confined space: ' + r.confined, 'Estimated duration: ' + r.duration,
+      'Comments: ' + (r.comments || '\u2014'), '',
+      'Confirmation generated by Field2Bill.',
+    ].join('\n');
+    const href = 'mailto:' + encodeURIComponent((r.contactEmail || '').trim())
+      + '?subject=' + encodeURIComponent('Scaffold Request ' + r.reqNo + ' \u2014 ' + r.job)
+      + '&body=' + encodeURIComponent(body);
+    try { window.location.href = href; } catch (e) {}
+  };
+
   saveTicket = async (rec) => {
     try {
       await this.authFetch('/api/tickets', {
@@ -2891,6 +3335,34 @@ class Component extends DCLogic {
     });
     this.setMsg('audit', qty + ' \u00d7 ' + mat.code + ' written off (' + reason.toLowerCase() + ') \u2713');
   };
+  // Reload the write-off log for this company from the database so audits
+  // survive a page reload (no-ops silently on offline preview / 404).
+  refreshAudits = async () => {
+    try {
+      const res = await this.authFetch('/api/inventory-audits');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows)) {
+        this.setState({ audits: rows.map(r => ({
+          id: r.id, date: r.date, code: r.code, name: r.name,
+          reason: r.reason, qty: Number(r.qty) || 0, note: r.note || '', by: r.by || '',
+        })) });
+      }
+    } catch (e) {}
+  };
+  // Persist scaffold requests to the backend so the Recent-requests list survives reloads.
+  refreshScaffReqs = async () => {
+    try {
+      const res = await this.authFetch('/api/scaffold-requests');
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows)) this.setState({ scaffReqs: rows.map(r => ({ ...r, workTypes: r.workTypes || {} })) });
+    } catch (e) {}
+  };
+  persistScaffReq = (rec) => {
+    if (!this.state.authToken || !rec || rec.preview) return;
+    this.authFetch('/api/scaffold-requests', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rec) }).catch(() => {});
+  };
   refreshCustomers = async () => {
     try {
       const res = await this.authFetch('/api/customers');
@@ -3087,6 +3559,54 @@ class Component extends DCLogic {
   }
   openReport = (type, job, tag) => this.setState({ viewReport: { type, job: job || '', tag: tag || '' } });
   closeReport = () => this.setState({ viewReport: null });
+  // Email the rental tag / report slip (opens the user's mail client).
+  emailReport = (rep) => {
+    rep = (rep && rep.sections) ? rep : this._lastRep;
+    if (!rep) return;
+    const lines = [rep.title + ' \u2014 ' + rep.scope];
+    if (rep.sub) lines.push(rep.sub);
+    const asOf = rep.asOf || this._lastRepAsOf;
+    if (asOf) lines.push('As of ' + asOf);
+    lines.push('');
+    rep.sections.forEach(sec => {
+      if (sec.showJobHeader) lines.push(sec.job + '  (' + sec.jobTotal + ')');
+      sec.tags.forEach(t => {
+        lines.push('Tag ' + t.tag + ' \u2014 ' + t.subtotal + '  (' + t.cubeLabel + ')');
+        t.lines.forEach(ln => lines.push('   ' + ln.qty + ' x ' + ln.name + ' (' + ln.code + ') since ' + ln.startFmt));
+      });
+      lines.push('');
+    });
+    if (rep.showGrand) lines.push('Total accrued: ' + rep.grand);
+    const href = 'mailto:?subject=' + encodeURIComponent(rep.title + ' \u2014 ' + rep.scope) + '&body=' + encodeURIComponent(lines.join('\n'));
+    try { window.location.href = href; } catch (e) {}
+  };
+  // Build a rental report object off-screen (for emailing the full report without opening the overlay).
+  computeRep = (vr) => {
+    const s = this.state;
+    const rate = this.props.rentalRate ?? 0.008;
+    const asOf = this.todayISO();
+    let rrs = s.rentals.filter(r => !r.invoiced);
+    if (vr.type === 'tag') rrs = rrs.filter(r => r.job === vr.job && r.tag === vr.tag);
+    else if (vr.type === 'job') rrs = rrs.filter(r => r.job === vr.job);
+    const jm = {};
+    rrs.forEach(r => { (jm[r.job] = jm[r.job] || {}); (jm[r.job][r.tag] = jm[r.job][r.tag] || []).push(r); });
+    const single = vr.type === 'tag';
+    const sections = Object.keys(jm).sort().map(job => {
+      const tags = Object.keys(jm[job]).sort().map(tag => {
+        const sstart = this.tagSchedStart(job, tag);
+        const cube = this.tagCubicAt(job, tag, asOf);
+        const days = this.dayDiff(sstart, asOf);
+        const accr = this.tagCubicAccrue(job, tag, sstart, asOf, rate);
+        const lns = jm[job][tag].map(r => ({ name: r.name, code: r.code, qty: this.rentQty(r).toLocaleString('en-US'), startFmt: this.fmtDate(this.rentStart(r)), days: this.dayDiff(this.rentStart(r), asOf) }));
+        return { tag, cubeLabel: cube.toLocaleString('en-US') + ' ft\u00b3 \u00b7 ' + days + ' d', lines: lns, subtotal: this.fmt2(accr), accrNum: accr };
+      });
+      const jobNum = tags.reduce((a, t) => a + t.accrNum, 0);
+      return { job, showJobHeader: !single, jobTotal: this.fmt2(jobNum), tags };
+    });
+    const grandNum = sections.reduce((a, sec) => a + sec.tags.reduce((b, t) => b + t.accrNum, 0), 0);
+    return { sections, title: single ? 'RENTAL TAG' : 'RENTAL REPORT', scope: single ? vr.tag : (vr.type === 'job' ? vr.job : 'All job sites'), sub: single ? vr.job : (vr.type === 'job' ? (sections[0] ? sections[0].tags.length + ' tags' : '') : Object.keys(jm).length + ' job sites'), grand: this.fmt2(grandNum), showGrand: !single, asOf: this.fmtDate(asOf) };
+  };
+  emailAllReport = () => this.emailReport(this.computeRep({ type: 'all', job: '', tag: '' }));
   startEditTag = (job, tag) => this.setState({ editTagOpen: true, editTagJob: job, editTagOld: tag, editTagName: tag, editTagSchedule: this.tagSchedule(job, tag).map(e => ({ ...e })), editTagSchedDate: this.todayISO(), editTagSchedCubic: '' });
   closeTagEdit = () => this.setState({ editTagOpen: false });
   addTagSchedEntry = () => {
@@ -3634,6 +4154,49 @@ class Component extends DCLogic {
     const tWorked = (f.tMembers || []).filter(m => m.worked && (parseFloat(m.hours) || 0) > 0);
     const tTotHours = tWorked.reduce((a, m) => a + (parseFloat(m.hours) || 0), 0);
     const ticketCrewSummary = tWorked.length + (tWorked.length === 1 ? ' person · ' : ' people · ') + tTotHours + ' hrs';
+    // ---- Scaffold request form + recent requests + printable request doc ----
+    const reqMode = f.reqMode || 'new';
+    const _tabBase = "flex:1;padding:9px 11px;border:none;border-radius:8px;font:600 12.5px 'IBM Plex Sans';cursor:pointer;transition:all .15s;";
+    const _tabOn = _tabBase + 'background:#2f6bff;color:#fff;box-shadow:0 1px 3px rgba(47,107,255,.35);';
+    const _tabOff = _tabBase + 'background:transparent;color:#6b7488;';
+    const _chipBase = "display:inline-flex;align-items:center;padding:9px 13px;border-radius:9px;font:600 12.5px 'IBM Plex Sans';cursor:pointer;transition:all .15s;";
+    const _chipOn = _chipBase + 'border:1px solid #2f6bff;background:#eef3ff;color:#2356d6;';
+    const _chipOff = _chipBase + 'border:1px solid #e1e4ea;background:#f8f9fb;color:#6b7488;';
+    const _wtDefs = [['reqBuild', 'Build'], ['reqAddition', 'Addition'], ['reqDismantle', 'Dismantle'], ['reqPartial', 'Partial Dismantle'], ['reqRevision', 'Revision'], ['reqSuspend', 'Suspend']];
+    const reqWorkChips = _wtDefs.map(([k, label]) => { const on = !!f[k]; return { label, mark: on ? '\u2713\u00a0' : '', boxStyle: on ? _chipOn : _chipOff, onToggle: () => this.setField(k, !f[k]) }; });
+    const _segBase = "flex:1;padding:9px 11px;border-radius:8px;font:600 12.5px 'IBM Plex Sans';cursor:pointer;transition:all .15s;border:1px solid #e1e4ea;background:#f8f9fb;color:#6b7488;";
+    const _segOn = "flex:1;padding:9px 11px;border-radius:8px;font:600 12.5px 'IBM Plex Sans';cursor:pointer;transition:all .15s;border:1px solid #2f6bff;background:#eef3ff;color:#2356d6;";
+    const _rl = parseFloat(f.reqLen) || 0, _rw = parseFloat(f.reqWid) || 0, _rh = parseFloat(f.reqHt) || 0;
+    const reqCube = _rl && _rw && _rh ? (_rl * _rw * _rh).toLocaleString('en-US') + ' ft\u00b3' : 'e.g. 3 \u00d7 5 \u00d7 10 \u2014 length \u00d7 width \u00d7 height';
+    const _reqStatusBadge = (st) => st === 'On rent' ? { bg: '#e8f6ef', fg: '#0f9d6b' } : (st === 'Dismantled' || st === 'Off rent') ? { bg: '#fdecec', fg: '#d23b3f' } : { bg: '#eef3ff', fg: '#2356d6' };
+    // Sync the recent-request status badge with the live inventory tag status.
+    const _activeTags = new Set(s.rentals.filter(r => !r.invoiced).map(r => r.tag));
+    const _knownTags = new Set(s.rentals.map(r => r.tag));
+    const _tagStatusOf = (tag) => { if (!tag || tag === 'Pending') return null; if (_activeTags.has(tag)) return 'On rent'; if (_knownTags.has(tag)) return 'Off rent'; return null; };
+    const reqRows = s.scaffReqs.slice(0, 6).map(r => { const st = _tagStatusOf(r.tag) || r.status; const b = _reqStatusBadge(st); const size = (r.len && r.wid && r.ht) ? (r.len + ' \u00d7 ' + r.wid + ' \u00d7 ' + r.ht + ' ft') : ''; return { reqNo: r.reqNo, tag: r.tag, job: r.job, requester: r.requester, sizeSuffix: size ? ' \u00b7 ' + size : '', statusLabel: st, badgeBg: b.bg, badgeFg: b.fg, onView: () => this.openRequest(r) }; });
+    const rq = s.viewRequest;
+    // Autocomplete: reuse previously-entered requesters / contacts, or add a new one.
+    const _people = new Set();
+    s.scaffReqs.forEach(r => { if (r.requester) _people.add(r.requester); });
+    (s.employees || []).forEach(e => { if (e.name) _people.add(e.name); });
+    const reqRequesterOptions = [..._people];
+    this._contactEmails = {};
+    s.scaffReqs.forEach(r => { if (r.contactName && !(r.contactName in this._contactEmails)) this._contactEmails[r.contactName] = r.contactEmail || ''; });
+    (s.customers || []).forEach(c => { if (c.name && !(c.name in this._contactEmails)) this._contactEmails[c.name] = c.email || ''; });
+    (s.savedContacts || []).forEach(c => { if (c.name && !(c.name in this._contactEmails)) this._contactEmails[c.name] = c.email || ''; });
+    this._contactPhones = {};
+    s.scaffReqs.forEach(r => { if (r.contactName && r.contactPhone && !(r.contactName in this._contactPhones)) this._contactPhones[r.contactName] = r.contactPhone; });
+    (s.savedContacts || []).forEach(c => { if (c.name && c.phone && !(c.name in this._contactPhones)) this._contactPhones[c.name] = c.phone; });
+    const reqContactOptions = [...new Set([...Object.keys(this._contactEmails), ...reqRequesterOptions])];
+    const _rqv = (f.reqRequester || '').toLowerCase();
+    const reqSuggestRows = (s.suggestOpen === 'req' ? reqRequesterOptions.filter(n => n.toLowerCase().includes(_rqv)).slice(0, 6) : []).map(n => ({ name: n, onPick: () => this.pickRequester(n) }));
+    const _cnv = (f.reqContactName || '').toLowerCase();
+    const conSuggestRows = (s.suggestOpen === 'con' ? reqContactOptions.filter(n => n.toLowerCase().includes(_cnv)).slice(0, 6) : []).map(n => ({ name: n, email: this._contactEmails[n] || '', hasEmail: !!this._contactEmails[n], onPick: () => this.pickContact(n) }));
+    const _wtPdf = [['build', 'Build'], ['addition', 'Addition'], ['dismantle', 'Dismantle'], ['partial', 'Partial Dismantle'], ['revision', 'Revision'], ['suspend', 'Suspend']];
+    const _pdfChipOn = "display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #0c1322;border-radius:8px;background:#0c1322;color:#fff;font:600 12px 'IBM Plex Sans';";
+    const _pdfChipOff = "display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #d8dce4;border-radius:8px;background:#fff;color:#9aa1b0;font:600 12px 'IBM Plex Sans';";
+    const rqWorkChips = rq ? _wtPdf.map(([key, label]) => { const on = !!(rq.workTypes && rq.workTypes[key]); return { label, boxStyle: on ? _pdfChipOn : _pdfChipOff, check: on ? '\u2713' : '' }; }) : [];
+    const rqSize = rq && rq.len && rq.wid && rq.ht ? (rq.wid + "\u2032 W \u00d7 " + rq.len + "\u2032 L \u00d7 " + rq.ht + "\u2032 H") : '\u2014';
     const isRealTenant = !!s.authToken;
     const clientNames = isRealTenant
       ? s.customers.map(c => c.name)
@@ -3752,11 +4315,16 @@ class Component extends DCLogic {
         const cube = this.tagCubicAt(g.job, g.tag, asOf);
         const sstart = this.tagSchedStart(g.job, g.tag);
         const days = this.dayDiff(sstart, asOf);
+        const _req = s.scaffReqs.find(r => r.tag === g.tag);
+        const _rs = _req ? (_tagStatusOf(_req.tag) || _req.status) : '';
+        const _rb = _reqStatusBadge(_rs || 'On rent');
         return {
           tag: g.tag, job: g.job, started: this.fmtDate(sstart),
           itemCount: g.lines.length + (g.lines.length === 1 ? ' item' : ' items'),
           perDay: this.fmt2(cube * rate), accrued: this.fmt2(this.tagCubicAccrue(g.job, g.tag, sstart, asOf, rate)), lines: g.lines,
           cubeTotal: cube.toLocaleString('en-US'),
+          hasReq: !!_req, reqStatus: _rs, reqBadgeBg: _rb.bg, reqBadgeFg: _rb.fg, reqNo: _req ? _req.reqNo : '', requester: _req ? _req.requester : '',
+          onViewReq: _req ? () => this.openRequest(_req) : () => {},
           onEdit: () => this.startEditTag(g.job, g.tag),
           onDetail: () => this.openReport('tag', g.job, g.tag),
         };
@@ -3809,6 +4377,7 @@ class Component extends DCLogic {
         grand: this.fmt2(grandNum),
         showGrand: !single,
       };
+      this._lastRep = rep; this._lastRepAsOf = this.fmtDate(asOf);
     }
 
     const ei = s.editItem ? s.rentals.find(r => r.id === s.editItem) : null;
@@ -3996,7 +4565,7 @@ class Component extends DCLogic {
       onEditEvDate: e => this.setState({ editEvDate: e.target.value }),
       onEditEvQty: e => this.setState({ editEvQty: e.target.value }),
       addEditEvent: this.addEditEvent, saveItemEdit: this.saveItemEdit, closeItemEdit: this.closeItemEdit,
-      onPrintAll: () => this.openReport('all'),
+      onPrintAll: () => this.openReport('all'), emailAllReport: this.emailAllReport,
       showTagEdit: s.editTagOpen, editTagName: s.editTagName, editTagOld: s.editTagOld,
       editTagSchedRows: s.editTagSchedule.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0).map((e, i) => ({ dateFmt: this.fmtDate(e.date), cubic: e.cubic.toLocaleString('en-US'), onRemove: () => this.removeTagSchedEntry(i) })),
       editTagSchedDate: s.editTagSchedDate, editTagSchedCubic: s.editTagSchedCubic,
@@ -4006,7 +4575,7 @@ class Component extends DCLogic {
       addTagSchedEntry: this.addTagSchedEntry,
       saveTagEdit: this.saveTagEdit, closeTagEdit: this.closeTagEdit,
       accruePerDay: this.fmt2(accruePerDayNum),
-      showReportOverlay: !!vr, closeReport: this.closeReport, printInvoice: this.printInvoice,
+      showReportOverlay: !!vr, closeReport: this.closeReport, printInvoice: this.printInvoice, emailReport: this.emailReport,
       repTitle: rep ? rep.title : '', repScope: rep ? rep.scope : '', repSub: rep ? rep.sub : '', repAsOf: this.fmtDate(asOf),
       repFrom: curTenant ? curTenant.name : f.invFrom, repFromLine1: this.issuerFor(f.invFrom).line1 || '', repFromLine2: this.issuerFor(f.invFrom).line2 || '', repFromPhone: this.issuerFor(f.invFrom).phone || '',
       repAccent: this.issuerFor(f.invFrom).accent || '#2f6bff', repAccentDark: shade(this.issuerFor(f.invFrom).accent || '#2f6bff', 0.3), repLogoEl: imgEl(this.issuerFor(f.invFrom).logo), repHasLogo: !!this.issuerFor(f.invFrom).logo, repNoLogo: !this.issuerFor(f.invFrom).logo, repInitials: this.initials(curTenant ? curTenant.name : f.invFrom),
@@ -4106,6 +4675,47 @@ class Component extends DCLogic {
       onTicketEquip: e => this.selectTicketEquip(e.target.value),
       onTEquipHours: e => this.setField('tEquipHours', e.target.value),
       crewOptions, showTicketCrew: !!f.ticketCrew, ticketMembers, ticketCrewSummary,
+      reqShowNew: reqMode === 'new', reqShowUpd: reqMode === 'update',
+      reqTabNew: reqMode === 'new' ? _tabOn : _tabOff, reqTabUpd: reqMode === 'update' ? _tabOn : _tabOff,
+      setReqNew: () => this.setReqMode('new'), setReqUpd: () => this.setReqMode('update'),
+      onReqJob: e => this.setField('reqJob', e.target.value), onReqRequester: e => this.setField('reqRequester', e.target.value),
+      onReqDesc: e => this.setField('reqDesc', e.target.value), onReqContractor: e => this.setField('reqContractor', e.target.value),
+      onReqLocation: e => this.setField('reqLocation', e.target.value), onReqUnit: e => this.setField('reqUnit', e.target.value),
+      onReqDate: e => this.setField('reqDate', e.target.value), onReqLen: e => this.setField('reqLen', e.target.value),
+      onReqWid: e => this.setField('reqWid', e.target.value), onReqHt: e => this.setField('reqHt', e.target.value),
+      onReqDuration: e => this.setField('reqDuration', e.target.value), onReqComments: e => this.setField('reqComments', e.target.value),
+      reqWorkChips, reqCube,
+      reqConfNoStyle: (f.reqConfined || 'No') === 'No' ? _segOn : _segBase, reqConfYesStyle: f.reqConfined === 'Yes' ? _segOn : _segBase,
+      onReqConfNo: () => this.setField('reqConfined', 'No'), onReqConfYes: () => this.setField('reqConfined', 'Yes'),
+      submitRequest: this.submitRequest, previewRequest: this.previewRequest, exportRequestCsv: this.exportRequestCsv,
+      onUpdTag: e => this.setField('updTag', e.target.value), onUpdStatus: e => this.setField('updStatus', e.target.value),
+      onUpdEnd: e => this.setField('updEnd', e.target.value), onUpdNote: e => this.setField('updNote', e.target.value),
+      updateTag: this.updateTag,
+      reqRows, hasReqs: s.scaffReqs.length > 0, noReqs: s.scaffReqs.length === 0,
+      reqJobV: f.reqJob, reqRequesterV: f.reqRequester, reqDescV: f.reqDesc, reqContractorV: f.reqContractor, reqLocationV: f.reqLocation, reqUnitV: f.reqUnit, reqDateV: f.reqDate, reqLenV: f.reqLen, reqWidV: f.reqWid, reqHtV: f.reqHt, reqDurationV: f.reqDuration, reqCommentsV: f.reqComments,
+      updTagV: f.updTag, updStatusV: f.updStatus, updEndV: f.updEnd, updNoteV: f.updNote,
+      showReqDoc: !!rq, closeRequest: this.closeRequest, printRequest: this.printRequest,
+      sigRef: this.sigRef, clearSignature: this.clearSignature, reqSigEmpty: !f.reqSignature,
+      onReqContactName: e => this.onReqContactNameChange(e.target.value), onReqContactEmail: e => this.setField('reqContactEmail', e.target.value),
+      reqContactNameV: f.reqContactName, reqContactEmailV: f.reqContactEmail,
+      reqRequesterOptions, reqContactOptions,
+      showReqSuggest: reqSuggestRows.length > 0, reqSuggestRows,
+      showConSuggest: conSuggestRows.length > 0, conSuggestRows,
+      focusRequester: this.focusRequester, focusContact: this.focusContact, blurSuggest: this.blurSuggest,
+      showAddContact: s.showAddContact, closeAddContact: this.closeAddContact, saveAddContact: this.saveAddContact, onReqContactBlur: this.onReqContactBlur, openNewContact: this.openNewContact,
+      acNameV: f.acName, acEmailV: f.acEmail, acPhoneV: f.acPhone,
+      onAcName: e => this.setField('acName', e.target.value), onAcEmail: e => this.setField('acEmail', e.target.value), onAcPhone: e => this.setField('acPhone', e.target.value),
+      emailRequest: this.emailRequest,
+      rqHasSig: !!(rq && rq.signature), rqSignature: rq ? (rq.signature || '') : '', rqSigEl: (rq && rq.signature) ? React.createElement('img', { src: rq.signature, alt: 'Requester signature', style: { display: 'block', maxHeight: '52px', maxWidth: '90%', marginBottom: '4px' } }) : null,
+      rqHasContact: !!(rq && rq.contactEmail), rqContactEmail: rq ? (rq.contactEmail || '') : '', rqContactName: rq ? (rq.contactName || '') : '',
+      reqTenant: s.company || brandName,
+      rqClient: (rq && rq.contractor && rq.contractor !== '\u2014') ? rq.contractor : 'the client',
+      rqClientSig: (rq && rq.contractor && rq.contractor !== '\u2014') ? rq.contractor : 'client',
+      rqReqNo: rq ? rq.reqNo : '', rqTag: rq ? rq.tag : '', rqWO: rq ? rq.wo : '', rqStatus: rq ? rq.status : '',
+      rqRequester: rq ? rq.requester : '', rqContractor: rq ? rq.contractor : '', rqLocation: rq ? rq.location : '', rqUnit: rq ? rq.unit : '', rqJob: rq ? rq.job : '', rqDesc: rq ? rq.desc : '',
+      rqSize, rqCubeDoc: rq && rq.cube ? Number(rq.cube).toLocaleString('en-US') + ' ft\u00b3' : '\u2014',
+      rqDateErected: rq && rq.dateErected ? this.fmtDate(rq.dateErected) : '\u2014', rqConfined: rq ? rq.confined : '', rqDuration: rq ? rq.duration : '', rqComments: rq && rq.comments ? rq.comments : '\u2014',
+      rqWorkChips,
       showTicketEquip: !!(f.ticketEquip && f.ticketEquip !== 'None'),
       showTicketDetail: !!vt, closeTicketDetail: this.closeTicketDetail,
       vtId: vt ? vt.id : '', vtJob: vt ? vt.job : '', vtCrew: vt ? vt.crew : '', vtBy: vt ? vt.by : '', vtDate: vt ? vt.dateFmt : '',
